@@ -9,6 +9,12 @@ from fleetpulse import ui
 from fleetpulse.data.loader import FD001LoadError, load_engine_history
 from fleetpulse.data.quality import validate_engine_history
 from fleetpulse.deployment import prediction_manifest
+from fleetpulse.models.forest_artifact import (
+    MANIFEST_FILENAME as FOREST_MANIFEST_FILENAME,
+)
+from fleetpulse.models.forest_artifact import (
+    MODEL_FILENAME as FOREST_MODEL_FILENAME,
+)
 from fleetpulse.models.usage_scope import classify_training_engine
 from fleetpulse.services import (
     PredictionArtifactError,
@@ -30,6 +36,21 @@ source = st.selectbox(
         "Illustrative synthetic example",
     ],
 )
+
+artifact_dir = ui.PROJECT_ROOT / "artifacts" / "development"
+tree_manifest = artifact_dir / "decision_tree_validation.json"
+forest_manifest = artifact_dir / FOREST_MANIFEST_FILENAME
+forest_model = artifact_dir / FOREST_MODEL_FILENAME
+model_options = ["Decision Tree"]
+if forest_manifest.is_file() and forest_model.is_file():
+    model_options.append("Random Forest")
+else:
+    st.info(
+        "Random Forest is unavailable in this workspace until its verified model bundle "
+        "is present in `artifacts/development/`."
+    )
+selected_model = st.selectbox("RUL model", model_options)
+
 partition = "FD001/train"
 if source == "Local FD001 training data":
     records = ui.render_training_data()
@@ -95,10 +116,10 @@ if records is not None:
     )
     if st.button("Predict remaining cycles"):
         prefix = [row for row in history if row["cycle"] <= cycle]
-        manifest = ui.PROJECT_ROOT / "artifacts/development/decision_tree_validation.json"
+        manifest = forest_manifest if selected_model == "Random Forest" else tree_manifest
         try:
             supplied = None
-            if not manifest.exists():
+            if selected_model == "Decision Tree" and not manifest.exists():
                 try:
                     supplied = st.secrets.get("deployment_model")
                 except StreamlitSecretNotFoundError:
