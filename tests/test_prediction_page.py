@@ -30,8 +30,8 @@ def test_selected_engine_and_cutoff_reach_service_without_future_or_target(monke
     monkeypatch.setattr(services, "predict_rul_with_context", predict)
     page.run()
     assert not calls
-    page.selectbox[1].select(2).run()
     page.selectbox[2].select(2).run()
+    page.selectbox[3].select(2).run()
     page.button[0].click().run()
     assert not page.exception
     assert [row["cycle"] for row in calls[0][0]] == [1, 2]
@@ -42,7 +42,7 @@ def test_selected_engine_and_cutoff_reach_service_without_future_or_target(monke
     assert page.metric[0].value == "12.50"
     assert any("test-model" in item.value and "test-v1" in item.value for item in page.markdown)
     assert any("short" in item.value for item in page.warning)
-    page.selectbox[2].select(1).run()
+    page.selectbox[3].select(1).run()
     assert not page.metric
 
 
@@ -71,7 +71,7 @@ def test_packaged_illustrative_history_is_distinct_and_has_no_future_rows(monkey
     page.run()
     page.selectbox[0].select("Illustrative synthetic example").run()
     assert any("not NASA data" in item.value for item in page.warning)
-    page.selectbox[2].select(2).run()
+    page.selectbox[3].select(2).run()
     page.button[0].click().run()
     assert not page.exception
     assert [row["cycle"] for row in calls[0][0]] == [1, 2]
@@ -106,7 +106,7 @@ def test_packaged_fd001_subset_uses_only_selected_training_prefix(monkeypatch, t
     page.run()
     page.selectbox[0].select("Packaged FD001/train parity subset").run()
     assert any("not a complete dataset" in item.value for item in page.info)
-    page.selectbox[2].select(164).run()
+    page.selectbox[3].select(164).run()
     page.button[0].click().run()
 
     assert not page.exception
@@ -117,3 +117,51 @@ def test_packaged_fd001_subset_uses_only_selected_training_prefix(monkeypatch, t
     assert calls[0][1]["dataset_partition"] == "FD001/train"
     assert calls[0][1]["unit_id"] == 4
     assert page.metric[0].value == "34.20"
+
+
+def test_forest_is_selectable_only_when_its_complete_bundle_is_present(monkeypatch, tmp_path):
+    page = _page(monkeypatch, tmp_path)
+    page.run()
+    assert list(page.selectbox[1].options) == ["Decision Tree"]
+    assert any("Random Forest is unavailable" in item.value for item in page.info)
+
+    artifact_dir = tmp_path / "artifacts/development"
+    artifact_dir.mkdir(parents=True)
+    (artifact_dir / "random_forest_validation.json").write_text("{}", encoding="utf-8")
+    (artifact_dir / "random_forest_model.joblib").write_bytes(b"test fixture")
+    page.run()
+    assert list(page.selectbox[1].options) == ["Decision Tree", "Random Forest"]
+    assert not any("Random Forest is unavailable" in item.value for item in page.info)
+
+
+def test_switching_models_keeps_engine_and_cycle_and_uses_matching_manifest(
+    monkeypatch, tmp_path
+):
+    page = _page(monkeypatch, tmp_path)
+    artifact_dir = tmp_path / "artifacts/development"
+    artifact_dir.mkdir(parents=True)
+    (artifact_dir / "random_forest_validation.json").write_text("{}", encoding="utf-8")
+    (artifact_dir / "random_forest_model.joblib").write_bytes(b"test fixture")
+    calls = []
+
+    def predict(history, **kwargs):
+        calls.append((history, kwargs))
+        if kwargs["manifest_path"].name == "random_forest_validation.json":
+            return RULPrediction(18.8, 18.8, "random-forest-rul", "random-forest-rul-v1", 2, 2, ())
+        return RULPrediction(12.5, 12.5, "decision-tree-rul", "decision-tree-rul-v1", 2, 2, ())
+
+    monkeypatch.setattr(services, "predict_rul_with_context", predict)
+    page.run()
+    page.selectbox[2].select(2).run()
+    page.selectbox[3].select(2).run()
+    page.selectbox[1].select("Random Forest").run()
+    assert page.selectbox[2].value == 2
+    assert page.selectbox[3].value == 2
+    page.button[0].click().run()
+
+    assert not page.exception
+    assert calls[0][1]["manifest_path"] == artifact_dir / "random_forest_validation.json"
+    assert [row["cycle"] for row in calls[0][0]] == [1, 2]
+    assert {row["unit_id"] for row in calls[0][0]} == {2}
+    assert page.metric[0].value == "18.80"
+    assert any("random-forest-rul-v1" in item.value for item in page.markdown)
