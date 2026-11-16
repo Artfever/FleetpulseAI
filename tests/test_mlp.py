@@ -18,6 +18,7 @@ from fleetpulse.models.mlp import (
     evaluate_mlp,
     train_mlp,
 )
+from fleetpulse.models.mlp_artifact import save_mlp_artifact, verify_mlp_artifact
 
 
 @pytest.fixture
@@ -158,3 +159,60 @@ def test_early_stopping_restores_best_validation_checkpoint(mlp_tables, monkeypa
     assert len(result.validation_losses) == 4
     for name, parameter in result.model.state_dict().items():
         assert torch.equal(parameter, model_states[1][name])
+
+
+def test_saved_mlp_bundle_reloads_on_cpu_and_reproduces_predictions(mlp_tables, tmp_path):
+    fitting, validation = mlp_tables
+    result = train_mlp(
+        fitting, validation, hidden_dims=(8, 4), max_epochs=3, patience=3, batch_size=8
+    )
+    saved = save_mlp_artifact(
+        result, fitting, validation, tmp_path,
+        fitting_dataset_sha256="b" * 64,
+        validation_dataset_sha256="c" * 64,
+    )
+
+    outcome = verify_mlp_artifact(
+        saved["manifest_path"], fitting, validation,
+        fitting_dataset_sha256="b" * 64,
+        validation_dataset_sha256="c" * 64,
+    )
+
+    assert outcome == {
+        "prediction_count": len(validation.rows),
+        "best_epoch": result.best_epoch,
+        "eval_mode": True,
+        "device": "cpu",
+        "max_prediction_difference_cycles": 0.0,
+    }
+    assert saved["payload"]["training"]["training_mse_cycles_squared"] == list(
+        result.training_losses
+    )
+    assert saved["payload"]["training"]["validation_mse_cycles_squared"] == list(
+        result.validation_losses
+    )
+    assert saved["payload"]["training"]["scaler"]["fitting_row_count"] == len(fitting.rows)
+
+
+def test_mlp_bundle_rejects_changed_weights_or_dataset_hash(mlp_tables, tmp_path):
+    fitting, validation = mlp_tables
+    result = train_mlp(fitting, validation, max_epochs=1, patience=1, batch_size=16)
+    saved = save_mlp_artifact(
+        result, fitting, validation, tmp_path,
+        fitting_dataset_sha256="b" * 64,
+        validation_dataset_sha256="c" * 64,
+    )
+    with pytest.raises(ValueError, match="provenance"):
+        verify_mlp_artifact(
+            saved["manifest_path"], fitting, validation,
+            fitting_dataset_sha256="d" * 64,
+            validation_dataset_sha256="c" * 64,
+        )
+
+    saved["weights_path"].write_bytes(saved["weights_path"].read_bytes() + b"tampered")
+    with pytest.raises(ValueError, match="weights hash"):
+        verify_mlp_artifact(
+            saved["manifest_path"], fitting, validation,
+            fitting_dataset_sha256="b" * 64,
+            validation_dataset_sha256="c" * 64,
+        )
