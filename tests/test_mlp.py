@@ -2,6 +2,7 @@
 
 from dataclasses import replace
 
+import numpy as np
 import pytest
 import torch
 
@@ -9,9 +10,11 @@ from fleetpulse.data.quality import READING_COLUMNS
 from fleetpulse.data.split_manifest import build_split_manifest
 from fleetpulse.features import FeatureConfig
 from fleetpulse.features.build_dataset import build_fitting_dataset, build_validation_dataset
+from fleetpulse.models import mlp
 from fleetpulse.models.mlp import (
     MAX_EPOCHS,
     DenseRULRegressor,
+    MLPEpochResult,
     evaluate_mlp,
     train_mlp,
 )
@@ -48,17 +51,23 @@ def test_dense_regressor_returns_one_value_per_row_and_checks_shape():
 
 def test_training_uses_batches_and_returns_finite_losses_and_predictions(mlp_tables):
     fitting, validation = mlp_tables
-    result = train_mlp(fitting, validation, epochs=2, batch_size=5, random_seed=7)
+    result = train_mlp(
+        fitting, validation, max_epochs=2, patience=2, batch_size=5, random_seed=7
+    )
 
-    assert len(result.training_losses) == len(result.validation_losses) == 2
+    assert 1 <= len(result.training_losses) <= 2
+    assert len(result.validation_losses) == len(result.training_losses)
     assert len(result.validation_predictions) == len(validation.rows)
     assert all(torch.isfinite(torch.tensor(loss)) for loss in (*result.training_losses,
                                                                *result.validation_losses))
     assert all(torch.isfinite(torch.tensor(value)) for value in result.validation_predictions)
     assert result.parameters["device"] == "cpu"
-    assert result.parameters["max_epochs"] == MAX_EPOCHS
+    assert result.parameters["max_epochs"] == 2
+    assert result.parameters["epoch_budget"] == MAX_EPOCHS
     assert result.model.training is False
     assert result.feature_names == fitting.feature_names
+    assert result.scaler.n_features_in_ == len(fitting.feature_names)
+    assert result.best_epoch == int(np.argmin(result.validation_losses)) + 1
     assert result.runtime_seconds >= 0
 
 
@@ -78,8 +87,9 @@ def test_validation_is_batched_and_does_not_update_parameters(mlp_tables):
 
 def test_training_is_repeatable_for_same_seed(mlp_tables):
     fitting, validation = mlp_tables
-    first = train_mlp(fitting, validation, epochs=2, batch_size=4, random_seed=11)
-    second = train_mlp(fitting, validation, epochs=2, batch_size=4, random_seed=11)
+    options = {"max_epochs": 2, "patience": 2, "batch_size": 4, "random_seed": 11}
+    first = train_mlp(fitting, validation, **options)
+    second = train_mlp(fitting, validation, **options)
 
     assert first.training_losses == second.training_losses
     assert first.validation_losses == second.validation_losses
@@ -102,9 +112,49 @@ def test_training_rejects_invalid_dataset_pairs(mlp_tables, fitting_change, vali
         validation = replace(validation, **validation_change)
 
     with pytest.raises(ValueError):
-        train_mlp(fitting, validation, epochs=1)
+        train_mlp(fitting, validation, max_epochs=1, patience=1)
 
 
 def test_training_rejects_epochs_over_run_budget(mlp_tables):
     with pytest.raises(ValueError, match="run budget"):
-        train_mlp(*mlp_tables, epochs=MAX_EPOCHS + 1)
+        train_mlp(*mlp_tables, max_epochs=MAX_EPOCHS + 1)
+
+
+def test_scaler_statistics_use_fitting_rows_only_and_validation_transform_does_not_refit(
+    mlp_tables,
+):
+    fitting, validation = mlp_tables
+    result = train_mlp(fitting, validation, max_epochs=1, patience=1, batch_size=4)
+    fitting_mean = np.asarray(fitting.X, dtype=np.float64).mean(axis=0)
+    combined_mean = np.concatenate((fitting.X, validation.X), axis=0).mean(axis=0)
+    saved_mean = result.scaler.mean_.copy()
+
+    evaluation = evaluate_mlp(result.model, validation, batch_size=1, scaler=result.scaler)
+
+    np.testing.assert_allclose(saved_mean, fitting_mean)
+    assert not np.allclose(saved_mean, combined_mean)
+    np.testing.assert_array_equal(result.scaler.mean_, saved_mean)
+    assert len(evaluation.predictions) == len(validation.rows)
+
+
+def test_early_stopping_restores_best_validation_checkpoint(mlp_tables, monkeypatch):
+    fitting, validation = mlp_tables
+    scores = iter((10.0, 9.0, 9.5, 9.6))
+    model_states = []
+
+    def controlled_evaluation(model, dataset, *, batch_size, scaler):
+        model_states.append(
+            {name: value.detach().clone() for name, value in model.state_dict().items()}
+        )
+        return MLPEpochResult(next(scores), (0.0,) * len(dataset.rows))
+
+    monkeypatch.setattr(mlp, "evaluate_mlp", controlled_evaluation)
+    result = train_mlp(
+        fitting, validation, max_epochs=6, patience=2, batch_size=4, random_seed=5
+    )
+
+    assert result.best_epoch == 2
+    assert result.stopped_early is True
+    assert len(result.validation_losses) == 4
+    for name, parameter in result.model.state_dict().items():
+        assert torch.equal(parameter, model_states[1][name])
