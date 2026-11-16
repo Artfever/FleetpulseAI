@@ -9,6 +9,8 @@ from fleetpulse.data.quality import validate_engine_history
 from fleetpulse.deployment import prediction_manifest
 from fleetpulse.models.forest_artifact import (
     MANIFEST_FILENAME as FOREST_MANIFEST_FILENAME,
+)
+from fleetpulse.models.forest_artifact import (
     MODEL_FILENAME as FOREST_MODEL_FILENAME,
 )
 from fleetpulse.services import (
