@@ -1,4 +1,4 @@
-"""Saved Decision Tree inference with separate raw and presentation contracts.
+"""Registered saved-model inference with separate raw and presentation contracts.
 
 Abdullah confirmed agreement with Shaheer and Taha on 13 November 2026:
 one observed engine prefix in the normalized 26-column schema, explicit
@@ -19,12 +19,12 @@ from pathlib import Path
 
 import joblib
 import sklearn
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree import DecisionTreeRegressor
 
 from fleetpulse.data.quality import validate_engine_history
 from fleetpulse.features import EngineFeatureVector, FeatureConfig, engineer_features
-from fleetpulse.models.train_tree import MODEL_VERSION
-from fleetpulse.models.tree_artifact import MODEL_FILENAME, TREE_ARTIFACT_SCHEMA
+from fleetpulse.models.registry import MODEL_REGISTRY
 
 
 class PredictionInputError(ValueError):
@@ -74,44 +74,53 @@ def _require_artifact(condition: bool, message: str) -> None:
 
 
 @lru_cache(maxsize=2)
-def _deserialize_tree(model_bytes: bytes) -> DecisionTreeRegressor:
+def _deserialize_model(
+    model_bytes: bytes, model_name: str
+) -> DecisionTreeRegressor | RandomForestRegressor:
     """Reuse an estimator only for exactly the same verified model bytes."""
+    spec = MODEL_REGISTRY[model_name]
     model = joblib.load(io.BytesIO(model_bytes))
     _require_artifact(
-        isinstance(model, DecisionTreeRegressor), "Saved model is not a DecisionTreeRegressor."
+        type(model) is spec.estimator_type,
+        f"Saved model is not a {spec.estimator_type.__name__}.",
     )
     return model
 
 
-def _load_model(manifest_path: str | Path) -> tuple[FeatureConfig, DecisionTreeRegressor, str, str]:
-    """Read the existing P06 bundle without requiring any evaluation dataset.
+def _load_model(
+    manifest_path: str | Path,
+) -> tuple[FeatureConfig, DecisionTreeRegressor | RandomForestRegressor, str, str]:
+    """Read a registered saved bundle without requiring any evaluation dataset.
 
     Only trusted project artifacts should be passed to joblib. Evaluation
     targets/predictions in the hashed P06 manifest are never used for inference.
     """
     path = Path(manifest_path)
+    title = "model"  # The artifact is unidentified until its manifest is validated.
     try:
         document = json.loads(path.read_text(encoding="utf-8"))
         payload = document["payload"]
         _require_artifact(
             document["sha256"] == hashlib.sha256(_canonical(payload)).hexdigest(),
-            "Decision Tree manifest content hash mismatch.",
-        )
-        _require_artifact(
-            payload["schema_version"] == TREE_ARTIFACT_SCHEMA,
-            "Unsupported Decision Tree artifact schema.",
+            "Saved model manifest content hash mismatch.",
         )
         info, training = payload["model"], payload["training"]
+        spec = MODEL_REGISTRY.get(info["name"])
+        _require_artifact(spec is not None, "Unsupported model name/version; unregistered model.")
+        title = spec.display_name
         _require_artifact(
-            info["name"] == "decision-tree-rul" and info["version"] == MODEL_VERSION,
-            "Unsupported Decision Tree model name/version.",
+            info["version"] == spec.version, f"Unsupported {title} model name/version."
+        )
+        _require_artifact(
+            payload["schema_version"] == spec.artifact_schema,
+            f"Unsupported {title} artifact schema.",
         )
         _require_artifact(
             info["scikit_learn_version"] == sklearn.__version__,
             "Saved scikit-learn version does not match the runtime.",
         )
         _require_artifact(
-            info["filename"] == MODEL_FILENAME, f"Expected the sibling model file {MODEL_FILENAME}."
+            info["filename"] == spec.filename, f"Expected the sibling model file {spec.filename}."
         )
         saved_config = training["feature_config"]
         _require_artifact(isinstance(saved_config["channels"], list), "Invalid saved channel list.")
@@ -126,28 +135,26 @@ def _load_model(manifest_path: str | Path) -> tuple[FeatureConfig, DecisionTreeR
             training["feature_names"] == list(config.output_schema),
             "Saved feature names/order do not match the feature configuration.",
         )
-        model_path = path.parent / MODEL_FILENAME
+        model_path = path.parent / spec.filename
         model_bytes = model_path.read_bytes()
         _require_artifact(
             hashlib.sha256(model_bytes).hexdigest() == info["sha256"],
-            "Decision Tree model file hash mismatch.",
+            f"{title} model file hash mismatch.",
         )
     except PredictionArtifactError:
         raise
     except OSError as error:
         failed_path = error.filename if error.filename is not None else path
         raise PredictionArtifactError(
-            f"Cannot read saved Decision Tree bundle at {path}; "
+            f"Cannot read saved {title} bundle at {path}; "
             f"unavailable file {failed_path}: {error.strerror or error}"
         ) from error
     except (KeyError, TypeError, ValueError, UnicodeError) as error:
-        raise PredictionArtifactError(
-            f"Invalid Decision Tree manifest at {path}: {error}"
-        ) from error
+        raise PredictionArtifactError(f"Invalid {title} manifest at {path}: {error}") from error
 
     try:
         # Integrity is checked on every call; only deserialization is cached by exact bytes.
-        model = _deserialize_tree(model_bytes)
+        model = _deserialize_model(model_bytes, spec.name)
         _require_artifact(
             model.n_features_in_ == len(config.output_schema) and model.n_outputs_ == 1,
             "Saved estimator dimensions do not match the feature schema.",
@@ -165,9 +172,7 @@ def _load_model(manifest_path: str | Path) -> tuple[FeatureConfig, DecisionTreeR
     except PredictionArtifactError:
         raise
     except Exception as error:
-        raise PredictionArtifactError(
-            f"Cannot load a compatible saved Decision Tree: {error}"
-        ) from error
+        raise PredictionArtifactError(f"Cannot load a compatible saved {title}: {error}") from error
     return config, model, info["name"], info["version"]
 
 
@@ -184,7 +189,7 @@ def _infer(
     hidden future rows before this call. Require all 26 normalized raw columns
     and reject extra target/lifetime fields. IDs and cycles remain metadata.
     Gaps and short histories follow the reviewed feature contract. No file is
-    read except the explicit P06 manifest and its sibling saved estimator.
+    read except the explicit registered manifest and its sibling saved estimator.
     """
     if not isinstance(dataset_partition, str) or not dataset_partition.strip():
         raise PredictionInputError("dataset_partition must be a nonempty string.")

@@ -181,7 +181,7 @@ def test_invalid_history_fails_before_loading_any_artifact(tmp_path, case):
 def test_missing_artifact_has_a_path_and_actionable_error(tmp_path):
     path = tmp_path / "not-present.json"
     with pytest.raises(
-        PredictionArtifactError, match="Cannot read saved Decision Tree bundle"
+        PredictionArtifactError, match="Cannot read saved model bundle"
     ) as error:
         _predict([_row(1)], path)
     assert str(path) in str(error.value)
@@ -346,7 +346,7 @@ def test_unfitted_estimator_is_rejected_before_predicting(synthetic_bundle):
     "case,message",
     [
         ("artifact_schema", "Unsupported Decision Tree artifact schema"),
-        ("model_name", "Unsupported Decision Tree model name/version"),
+        ("model_name", "Unsupported model name/version"),
         ("model_version", "Unsupported Decision Tree model name/version"),
         ("runtime_version", "scikit-learn version does not match"),
         ("parameters", "parameters differ from the manifest"),
@@ -392,7 +392,7 @@ def test_cache_reuses_verified_bytes_but_detects_changes_and_missing_files(synth
         calls.append(1)
         return original_load(*args, **kwargs)
 
-    predictor._deserialize_tree.cache_clear()
+    predictor._deserialize_model.cache_clear()
     monkeypatch.setattr(predictor.joblib, "load", counted_load)
     try:
         first = _predict([_row(1)], manifest)
@@ -417,7 +417,7 @@ def test_cache_reuses_verified_bytes_but_detects_changes_and_missing_files(synth
         assert _predict([_row(1)], manifest).raw_rul_cycles == -2.5
         assert len(calls) == 2
     finally:
-        predictor._deserialize_tree.cache_clear()
+        predictor._deserialize_model.cache_clear()
 
 
 def test_invalid_model_serialization_fails_even_when_its_byte_hash_matches(synthetic_bundle):
