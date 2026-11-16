@@ -147,6 +147,18 @@ def audit() -> dict[str, Any]:
                 float(row["prediction_cycles"]) - float(row["true_rul_cycles"])
             ),
         }
+    counterexample_results = {}
+    for label, record in records.items():
+        row = next(
+            item for item in record["rows"] if item["unit_id"] == 32 and item["cutoff_cycle"] == 190
+        )
+        counterexample_results[label] = {
+            "prediction_cycles": float(row["prediction_cycles"]),
+            "target_cycles": float(row["true_rul_cycles"]),
+            "absolute_error_cycles": abs(
+                float(row["prediction_cycles"]) - float(row["true_rul_cycles"])
+            ),
+        }
     return {
         "dataset_partition": "FD001/train",
         "sample_unit": "engine",
@@ -180,6 +192,7 @@ def audit() -> dict[str, Any]:
             label: records[label]["payload"]["model"]["sha256"] for label in records
         },
         "engine_4_partition": example["dataset_partition"],
+        "engine_32_cycle_190": counterexample_results,
         "xgboost_per_engine_absolute_error_counts": per_engine_comparison,
     }
 
