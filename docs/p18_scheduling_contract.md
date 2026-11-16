@@ -29,3 +29,29 @@ tasks. The plan's worked example uses a buffer of two cycles and completion as
 the deadline event; teammate agreement on that scheduling convention is still
 required at phase acceptance. No real fleet maintenance durations or priorities
 are inferred here.
+
+## Completion deadline and tardiness
+
+P18-S2's `calculate_job_timing(job, buffer_cycles=..., start_cycle=0)` applies
+the plan's convention: due completion cycle is
+`max(0, predicted_rul_cycles - buffer_cycles)`, completion is start plus service
+duration, and tardiness is `max(0, completion - due)`. RUL and buffer may be
+fractional cycles; start and service duration are integer cycles. The default
+start is relative cycle zero. A decoder can pass a later nonnegative integer
+start. Buffer must be finite and nonnegative. This function does not score jobs,
+assign teams, enforce capacity, or drop horizon overflow.
+
+For Appendix B's one-team inputs and two-cycle buffer:
+
+| Order | Engine | Due completion | Start | Completion | Tardiness (cycles) |
+| --- | --- | ---: | ---: | ---: | ---: |
+| A/B/C | 1 | 2 | 0 | 3 | 1 |
+| A/B/C | 2 | 3 | 3 | 4 | 1 |
+| A/B/C | 3 | 6 | 4 | 6 | 0 |
+| B/A/C | 2 | 3 | 0 | 1 | 0 |
+| B/A/C | 1 | 2 | 1 | 4 | 2 |
+| B/A/C | 3 | 6 | 4 | 6 | 0 |
+
+These are hand-calculated outputs for a synthetic example, not observed fleet
+outcomes. P18-S2's required teammate confirmation that the deadline event is
+completion rather than service start remains an acceptance check.

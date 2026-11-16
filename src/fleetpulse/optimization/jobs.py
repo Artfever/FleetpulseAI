@@ -60,3 +60,44 @@ def appendix_b_jobs() -> tuple[MaintenanceJob, ...]:
         MaintenanceJob(EngineIdentity(partition, 2), 5, 1, 5),
         MaintenanceJob(EngineIdentity(partition, 3), 8, 2, 1),
     )
+
+
+@dataclass(frozen=True)
+class JobTiming:
+    """Timing for one job; the due cycle refers to service completion."""
+
+    engine: EngineIdentity
+    due_completion_cycle: float
+    start_cycle: int
+    completion_cycle: int
+    tardiness_cycles: float
+
+
+def calculate_job_timing(
+    job: MaintenanceJob, *, buffer_cycles: float, start_cycle: int = 0
+) -> JobTiming:
+    """Calculate a completion deadline and lateness in relative cycle units.
+
+    ``due=max(0, predicted_rul-buffer)``, ``completion=start+duration``, and
+    ``tardiness=max(0, completion-due)``. Buffer is a nonnegative scenario
+    assumption. The default start is relative cycle zero; a scheduler may pass
+    the actual nonnegative start when evaluating an ordering.
+    """
+    if not isinstance(job, MaintenanceJob):
+        raise TypeError("job must be a MaintenanceJob.")
+    if isinstance(buffer_cycles, bool) or not isinstance(buffer_cycles, Real):
+        raise TypeError("buffer_cycles must be a real number.")
+    if not math.isfinite(buffer_cycles) or buffer_cycles < 0:
+        raise ValueError("buffer_cycles must be finite and nonnegative.")
+    if (
+        isinstance(start_cycle, bool)
+        or not isinstance(start_cycle, Integral)
+        or start_cycle < 0
+    ):
+        raise ValueError("start_cycle must be a nonnegative integer.")
+
+    start = int(start_cycle)
+    due = max(0.0, job.predicted_rul_cycles - float(buffer_cycles))
+    completion = start + job.duration_cycles
+    tardiness = max(0.0, completion - due)
+    return JobTiming(job.engine, due, start, completion, tardiness)
