@@ -1,5 +1,7 @@
 """Prediction-page behavior with synthetic history and controlled service results."""
 
+import json
+
 from streamlit.testing.v1 import AppTest
 
 from fleetpulse import PROJECT_ROOT, services, ui
@@ -16,7 +18,9 @@ def _page(monkeypatch, tmp_path):
         for cycle in (1, 2, 3)
     ]
     monkeypatch.setattr(ui, "render_training_data", lambda: rows)
-    return AppTest.from_file(str(PROJECT_ROOT / "app/pages/3_RUL_Prediction.py"), default_timeout=30)
+    return AppTest.from_file(
+        str(PROJECT_ROOT / "app/pages/3_RUL_Prediction.py"), default_timeout=30
+    )
 
 
 def test_selected_engine_and_cutoff_reach_service_without_future_or_target(monkeypatch, tmp_path):
@@ -35,15 +39,45 @@ def test_selected_engine_and_cutoff_reach_service_without_future_or_target(monke
     page.button[0].click().run()
     assert not page.exception
     assert [row["cycle"] for row in calls[0][0]] == [1, 2]
-    assert all(row["unit_id"] == 2 and set(row) == {"unit_id", "cycle", *READING_COLUMNS} for row in calls[0][0])
+    assert all(
+        row["unit_id"] == 2 and set(row) == {"unit_id", "cycle", *READING_COLUMNS}
+        for row in calls[0][0]
+    )
     assert calls[0][1]["dataset_partition"] == "FD001/train"
     assert calls[0][1]["unit_id"] == 2
-    assert calls[0][1]["manifest_path"] == tmp_path / "artifacts/development/decision_tree_validation.json"
+    assert (
+        calls[0][1]["manifest_path"]
+        == tmp_path / "artifacts/development/decision_tree_validation.json"
+    )
     assert page.metric[0].value == "12.50"
     assert any("test-model" in item.value and "test-v1" in item.value for item in page.markdown)
     assert any("short" in item.value for item in page.warning)
     page.selectbox[2].select(1).run()
     assert not page.metric
+
+
+def test_training_replay_is_labeled_by_saved_model_fit_membership(monkeypatch, tmp_path):
+    page = _page(monkeypatch, tmp_path)
+    split_path = tmp_path / "artifacts/split_manifest.json"
+    split_path.parent.mkdir(parents=True)
+    split_path.write_text(
+        json.dumps(
+            {
+                "fitting_engines": [{"dataset_partition": "FD001/train", "unit_id": 1}],
+                "validation_prefixes": [
+                    {"dataset_partition": "FD001/train", "unit_id": 2, "target_rul": 99}
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    page.run()
+    assert any("In-sample illustration" in item.value for item in page.warning)
+
+    page.selectbox[1].select(2).run()
+    assert any("Held-out development engine" in item.value for item in page.info)
+    assert any("does not load a final refitted model" in item.value for item in page.caption)
 
 
 def test_missing_bundle_shows_error_without_fabricating_prediction(monkeypatch, tmp_path):
@@ -90,8 +124,7 @@ def test_packaged_fd001_subset_uses_only_selected_training_prefix(monkeypatch, t
     subset_path = tmp_path / "data/demo/fd001_training_prefixes.txt"
     subset_path.parent.mkdir(parents=True)
     subset_path.write_text(
-        "\n".join(" ".join(str(row[column]) for column in HISTORY_COLUMNS) for row in rows)
-        + "\n",
+        "\n".join(" ".join(str(row[column]) for column in HISTORY_COLUMNS) for row in rows) + "\n",
         encoding="utf-8",
     )
     calls = []
