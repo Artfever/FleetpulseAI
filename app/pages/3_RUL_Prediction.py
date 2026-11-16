@@ -22,6 +22,15 @@ from fleetpulse.services import (
 st.title("RUL Prediction")
 st.caption("Estimate remaining useful life in operating cycles using a saved development model.")
 
+source = st.selectbox(
+    "History source",
+    [
+        "Local FD001 training data",
+        "Packaged FD001/train parity subset",
+        "Illustrative synthetic example",
+    ],
+)
+
 artifact_dir = ui.PROJECT_ROOT / "artifacts" / "development"
 tree_manifest = artifact_dir / "decision_tree_validation.json"
 forest_manifest = artifact_dir / FOREST_MANIFEST_FILENAME
@@ -36,14 +45,6 @@ else:
     )
 selected_model = st.selectbox("RUL model", model_options)
 
-source = st.selectbox(
-    "History source",
-    [
-        "Local FD001 training data",
-        "Packaged FD001/train parity subset",
-        "Illustrative synthetic example",
-    ],
-)
 partition = "FD001/train"
 if source == "Local FD001 training data":
     records = ui.render_training_data()
