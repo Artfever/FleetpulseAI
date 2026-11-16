@@ -16,6 +16,12 @@ from fleetpulse.evaluation import (
 )
 from fleetpulse.features.build_dataset import FeatureDataset
 from fleetpulse.models.constant_baseline import ConstantRULBaseline
+from fleetpulse.models.forest_artifact import (
+    MANIFEST_FILENAME as FOREST_MANIFEST_FILENAME,
+)
+from fleetpulse.models.forest_artifact import (
+    verify_random_forest_artifact,
+)
 from fleetpulse.models.tree_artifact import (
     MANIFEST_FILENAME,
     METRICS_FILENAME,
@@ -37,6 +43,55 @@ class ModelComparison:
     tree_metrics: ValidationMetrics
     predictions: tuple[dict[str, Any], ...]
     validation_engine_count: int
+
+
+@dataclass(frozen=True)
+class ForestValidationScores:
+    """Verified aggregate scores from the saved forest on this validation split."""
+
+    model_name: str
+    model_version: str
+    sample_count: int
+    mae_cycles: float
+    rmse_cycles: float
+
+
+def load_verified_forest_scores(
+    artifact_dir: str | Path,
+    validation: FeatureDataset,
+    *,
+    fitting_dataset_sha256: str,
+    validation_dataset_sha256: str,
+) -> ForestValidationScores | None:
+    """Verify the optional saved forest and return scores aligned to the P06 split."""
+    manifest_path = Path(artifact_dir) / FOREST_MANIFEST_FILENAME
+    if not manifest_path.exists():
+        return None
+    payload = _read_hashed_payload(manifest_path)
+    training = payload["training"]
+    _require(
+        training["fitting_dataset_sha256"] == fitting_dataset_sha256,
+        "forest fitting table hash mismatch",
+    )
+    _require(
+        training["validation_dataset_sha256"] == validation_dataset_sha256,
+        "forest validation table hash mismatch",
+    )
+    result = verify_random_forest_artifact(manifest_path, validation)
+    evaluation = payload["evaluation"]
+    _require(evaluation["partition"] == "FD001/train", "forest partition mismatch")
+    _require(evaluation["sample_unit"] == "engine", "forest sample unit mismatch")
+    _require(
+        evaluation["sample_count"] == len(validation.rows) == result["prediction_count"],
+        "forest validation sample count mismatch",
+    )
+    return ForestValidationScores(
+        model_name=payload["model"]["name"],
+        model_version=payload["model"]["version"],
+        sample_count=result["prediction_count"],
+        mae_cycles=result["mae_cycles"],
+        rmse_cycles=result["rmse_cycles"],
+    )
 
 
 def load_model_comparison(

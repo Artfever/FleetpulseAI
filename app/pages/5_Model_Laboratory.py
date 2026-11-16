@@ -8,7 +8,10 @@ import streamlit as st
 
 from fleetpulse import ui
 from fleetpulse.data.split_audit_view import verified_split_manifest
-from fleetpulse.evaluation.model_comparison import load_model_comparison
+from fleetpulse.evaluation.model_comparison import (
+    load_model_comparison,
+    load_verified_forest_scores,
+)
 from fleetpulse.features import FeatureConfig
 from fleetpulse.features.build_dataset import manifest_digest
 from fleetpulse.features.dataset_io import load_feature_dataset
@@ -17,7 +20,7 @@ from fleetpulse.ui import render_page
 render_page(
     "Model Laboratory",
     "Inspect model development and evaluation.",
-    "Compare the constant baseline and Decision Tree using verified held-out development results.",
+    "Compare saved development models using verified held-out development results.",
     "This page reports held-out development results only; it does not show official test performance.",
 )
 
@@ -89,11 +92,33 @@ else:
             f"from the repository root and check the local FD001 setup. Detail: {error}"
         )
     else:
-        st.subheader("Constant baseline and Decision Tree")
+        forest_scores = None
+        try:
+            forest_scores = load_verified_forest_scores(
+                artifact_dir,
+                validation_features,
+                fitting_dataset_sha256=fitting_sha,
+                validation_dataset_sha256=validation_sha,
+            )
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            st.warning(
+                "Random Forest scores are not shown because its saved development bundle "
+                f"could not be verified: {error}"
+            )
+        if forest_scores is None:
+            st.info(
+                "Verified Random Forest scores are unavailable until the matching saved "
+                "development model bundle is present."
+            )
+        st.subheader(
+            "Constant baseline, Decision Tree, and Random Forest"
+            if forest_scores is not None
+            else "Constant baseline and Decision Tree"
+        )
         st.caption(
-            f"Both models use the same {comparison.validation_engine_count} held-out FD001 training "
-            "engines and saved cutoff cycles. These are development-validation measurements, "
-            "not official test results."
+            f"All displayed model scores use the same {comparison.validation_engine_count} "
+            "held-out FD001 training engines and saved cutoff cycles. These are "
+            "development-validation measurements, not official test results."
         )
         metric_rows = [
             {
@@ -107,6 +132,14 @@ else:
                 "RMSE (cycles)": comparison.tree_metrics.rmse,
             },
         ]
+        if forest_scores is not None:
+            metric_rows.append(
+                {
+                    "Model": f"Random Forest ({forest_scores.model_version})",
+                    "MAE (cycles)": forest_scores.mae_cycles,
+                    "RMSE (cycles)": forest_scores.rmse_cycles,
+                }
+            )
         st.dataframe(metric_rows, hide_index=True, width="stretch")
         st.write(
             f"The constant baseline predicts {comparison.baseline_prediction:.2f} cycles for every engine. "
@@ -118,13 +151,23 @@ else:
             "These differences describe this held-out development split only; they do not establish "
             "future or official-test performance."
         )
+        if forest_scores is not None:
+            st.write(
+                f"The verified Random Forest ({forest_scores.model_name}, "
+                f"{forest_scores.model_version}) has MAE "
+                f"{forest_scores.mae_cycles:.2f} cycles and RMSE "
+                f"{forest_scores.rmse_cycles:.2f} cycles across "
+                f"{forest_scores.sample_count} held-out development engines. "
+                "This is a saved development-validation result, not official-test "
+                "performance or evidence of future performance."
+            )
         figure = px.scatter(
             comparison.predictions,
             x="Actual RUL (cycles)",
             y="Predicted RUL (cycles)",
             color="Model",
             hover_data=["Engine", "Cutoff cycle"],
-            title="Predicted versus actual RUL on held-out development engines",
+            title="Baseline and Decision Tree predictions on held-out development engines",
         )
         upper = max(
             max(row["Actual RUL (cycles)"] for row in comparison.predictions),
@@ -146,5 +189,6 @@ else:
         st.plotly_chart(figure, width="stretch")
         st.caption(
             "Points closer to the dashed line have smaller absolute error. Each point is one engine at its "
-            "saved validation cutoff. RUL estimates are not clipped."
+            "saved validation cutoff. The Random Forest aggregate scores appear in the table above. "
+            "RUL estimates are not clipped."
         )
