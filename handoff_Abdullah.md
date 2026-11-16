@@ -1,5 +1,13 @@
 # Abdullah handoff
 
+## Owner-directed takeover update: P09-A2 reload/runtime check (2026-11-16)
+
+- Shaheer assigned this session to take over remaining P08-P16 issues, including Abdullah's allocation. This P09-A2 work is being performed by the assistant for owner Shaheer; it is not attributed to Abdullah and no Abdullah review is claimed.
+- P09-A2 [#131](https://github.com/Artfever/FleetpulseAI/issues/131) is unblocked: predecessor gate #12 and P09-A1 #54 are CLOSED. It checks saved/reloaded prediction parity and runtime on the same batch.
+- Rebuilt the fixed-config in-memory XGBoost 3.4.1 estimator and compared it with the saved joblib candidate on the same ordered validation matrix (20 held-out FD001/train engines x 96 features). After five warmups, each estimator predicted the identical batch 200 times in alternating calls. Raw outputs matched 20/20 exactly (max difference 0.0 cycles). Mean per-batch predict-only time: in-memory 0.000644686 s; reloaded 0.000644960 s. This tiny machine-specific difference is not meaningful; fit, feature engineering, deserialization and service overhead are excluded.
+- Full evidence: `docs/p09_xgboost_reload_runtime.md`; reproducible script `scripts/audit_xgboost_reload_runtime.py`; ignored exact JSON `reports/P09_A2_xgboost_reload_runtime.json`. XGBoost 3.4.1, Python 3.12.10, candidate `xgboost-rul-v1`, model SHA `20801e897816f879c0f93f56dc199c49735c3afc3a544b595247f5c62d419612`. No official test histories/answers were opened.
+- Local checks: `.venv/Scripts/ruff.exe check .` PASS; `.venv/Scripts/python.exe -m pytest -q` PASS (381); reload/runtime audit PASS; `git diff --check` PASS. Branch `feat/P09-A2-xgboost-reload-runtime` is from `dev` at `0391fae4c91ced2e4b192bd0febd406b9d5d2f96`. No commit or PR yet. Next: commit and open task PR to `dev` with `Refs #131`, verify CI/conversations, merge, record in same PR, then record post-merge inspection and close #131. P09-A3 #248 follows this issue.
+
 ## P09-A1 merged; issue closeout blocked by network - 16 November 2026
 
 - [PR #362](https://github.com/Artfever/FleetpulseAI/pull/362) confirmed MERGED into dev as 6f18a125d41d0a379137ffb1a985e783a4a003a0 via REST merged=true. Work dd328fa1f1d55538705f7ef2b68f809cc6e4da9e and PR-record09242d562eefe7f1021c22218d6e0414bf6d7ca9 included. All five CI checks PASS on final09242d5/run43860254527: branch4s/quality34s/unit52s/smoke33s/gate3s; CLEAN, reviewThreads empty before normal squash merge. No bypass/approval claim/main push/teammate message. Local dev pulled successfully to6f18a12.
