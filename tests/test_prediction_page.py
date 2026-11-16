@@ -82,6 +82,8 @@ def test_training_replay_is_labeled_by_saved_model_fit_membership(monkeypatch, t
 
 def test_missing_bundle_shows_error_without_fabricating_prediction(monkeypatch, tmp_path):
     page = _page(monkeypatch, tmp_path).run()
+    assert "XGBoost" not in page.selectbox[1].options
+    assert any("XGBoost is unavailable" in item.value for item in page.info)
     page.button[0].click().run()
     assert not page.exception
     assert not page.metric
@@ -212,3 +214,35 @@ def test_switching_models_keeps_engine_and_cycle_and_uses_matching_manifest(
     assert {row["unit_id"] for row in calls[1][0]} == {2}
     assert page.metric[0].value == "12.50"
     assert any("decision-tree-rul-v1" in item.value for item in page.markdown)
+
+
+def test_xgboost_is_available_only_with_bundle_and_uses_registered_manifest(
+    monkeypatch, tmp_path
+):
+    page = _page(monkeypatch, tmp_path)
+    artifact_dir = tmp_path / "artifacts/development"
+    artifact_dir.mkdir(parents=True)
+    manifest = artifact_dir / "xgboost_validation.json"
+    model = artifact_dir / "xgboost_model.joblib"
+    manifest.write_text("{}", encoding="utf-8")
+    model.write_bytes(b"test fixture")
+    calls = []
+
+    def predict(history, **kwargs):
+        calls.append((history, kwargs))
+        return RULPrediction(28.6938, 28.69, "xgboost-rul", "xgboost-rul-v1", 2, 2, ())
+
+    monkeypatch.setattr(services, "predict_rul_with_context", predict)
+    page.run()
+    assert list(page.selectbox[1].options) == ["Decision Tree", "XGBoost"]
+    page.selectbox[2].select(2).run()
+    page.selectbox[3].select(2).run()
+    page.selectbox[1].select("XGBoost").run()
+    page.button[0].click().run()
+
+    assert not page.exception
+    assert calls[0][1]["manifest_path"] == manifest
+    assert [row["cycle"] for row in calls[0][0]] == [1, 2]
+    assert {row["unit_id"] for row in calls[0][0]} == {2}
+    assert page.metric[0].value == "28.69"
+    assert any("xgboost-rul-v1" in item.value for item in page.markdown)

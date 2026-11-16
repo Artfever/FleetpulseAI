@@ -10,7 +10,14 @@ from types import MappingProxyType
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree import DecisionTreeRegressor
 
-from fleetpulse.models import forest_artifact, train_forest, train_tree, tree_artifact
+from fleetpulse.models import (
+    forest_artifact,
+    train_forest,
+    train_tree,
+    train_xgboost,
+    tree_artifact,
+    xgboost_artifact,
+)
 
 
 @dataclass(frozen=True)
@@ -19,7 +26,7 @@ class ModelSpec:
     version: str
     artifact_schema: str
     filename: str
-    estimator_type: type
+    estimator_type: type | None
     display_name: str
 
 
@@ -40,6 +47,14 @@ MODEL_REGISTRY = MappingProxyType(
             forest_artifact.MODEL_FILENAME,
             RandomForestRegressor,
             "Random Forest",
+        ),
+        "xgboost-rul": ModelSpec(
+            "xgboost-rul",
+            train_xgboost.MODEL_VERSION,
+            xgboost_artifact.XGBOOST_ARTIFACT_SCHEMA,
+            xgboost_artifact.MODEL_FILENAME,
+            None,
+            "XGBoost",
         ),
     }
 )
