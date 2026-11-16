@@ -190,6 +190,7 @@ def test_switching_models_keeps_engine_and_cycle_and_uses_matching_manifest(
     page.selectbox[1].select("Random Forest").run()
     assert page.selectbox[2].value == 2
     assert page.selectbox[3].value == 2
+    assert any("available saved development model" in item.value for item in page.caption)
     page.button[0].click().run()
 
     assert not page.exception
@@ -198,3 +199,16 @@ def test_switching_models_keeps_engine_and_cycle_and_uses_matching_manifest(
     assert {row["unit_id"] for row in calls[0][0]} == {2}
     assert page.metric[0].value == "18.80"
     assert any("random-forest-rul-v1" in item.value for item in page.markdown)
+
+    page.selectbox[1].select("Decision Tree").run()
+    assert page.selectbox[2].value == 2
+    assert page.selectbox[3].value == 2
+    assert not any("P06" in item.value for item in page.caption)
+    page.button[0].click().run()
+
+    assert not page.exception
+    assert calls[1][1]["manifest_path"] == artifact_dir / "decision_tree_validation.json"
+    assert [row["cycle"] for row in calls[1][0]] == [1, 2]
+    assert {row["unit_id"] for row in calls[1][0]} == {2}
+    assert page.metric[0].value == "12.50"
+    assert any("decision-tree-rul-v1" in item.value for item in page.markdown)

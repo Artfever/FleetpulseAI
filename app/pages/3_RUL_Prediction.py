@@ -24,7 +24,7 @@ from fleetpulse.services import (
 
 st.title("RUL Prediction")
 st.caption(
-    "Estimate remaining useful life in operating cycles using the saved P06 development model. "
+    "Estimate remaining useful life in operating cycles using an available saved development model. "
     "This page does not load a final refitted model."
 )
 
