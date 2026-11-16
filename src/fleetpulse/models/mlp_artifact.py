@@ -17,12 +17,13 @@ from sklearn.preprocessing import StandardScaler
 
 from fleetpulse.features.build_dataset import FeatureDataset
 from fleetpulse.models.mlp import DenseRULRegressor, MLPTrainingResult, evaluate_mlp
+from fleetpulse.models.mlp_contract import (
+    MANIFEST_FILENAME,
+    MLP_ARTIFACT_SCHEMA,
+    MODEL_VERSION,
+    WEIGHTS_FILENAME,
+)
 from fleetpulse.models.training_validation import validate_training_datasets
-
-MLP_ARTIFACT_SCHEMA = "mlp-validation-checkpoint-v1"
-MODEL_VERSION = "dense-rul-mlp-v1"
-WEIGHTS_FILENAME = "mlp_best_state.pt"
-MANIFEST_FILENAME = "mlp_training_manifest.json"
 
 
 def sha256_file(path: str | Path) -> str:
