@@ -1,5 +1,7 @@
 """Predict remaining cycles for a selected simulated training-engine history."""
 
+import json
+
 import streamlit as st
 from streamlit.errors import StreamlitSecretNotFoundError
 
@@ -13,6 +15,7 @@ from fleetpulse.models.forest_artifact import (
 from fleetpulse.models.forest_artifact import (
     MODEL_FILENAME as FOREST_MODEL_FILENAME,
 )
+from fleetpulse.models.usage_scope import classify_training_engine
 from fleetpulse.services import (
     PredictionArtifactError,
     PredictionInputError,
@@ -20,7 +23,10 @@ from fleetpulse.services import (
 )
 
 st.title("RUL Prediction")
-st.caption("Estimate remaining useful life in operating cycles using a saved development model.")
+st.caption(
+    "Estimate remaining useful life in operating cycles using the saved P06 development model. "
+    "This page does not load a final refitted model."
+)
 
 source = st.selectbox(
     "History source",
@@ -70,8 +76,44 @@ if records is not None:
     history = sorted(
         (row for row in records if row["unit_id"] == engine), key=lambda row: row["cycle"]
     )
+    if partition == "FD001/train":
+        split_path = ui.PROJECT_ROOT / "artifacts" / "split_manifest.json"
+        try:
+            split_manifest = json.loads(split_path.read_text(encoding="utf-8"))
+            usage = classify_training_engine(
+                split_manifest, dataset_partition=partition, unit_id=engine
+            )
+        except (OSError, ValueError, TypeError) as error:
+            st.warning(
+                "Training-set membership for this model cannot be verified from the saved "
+                f"development split ({error}). Do not treat this replay as held-out evidence."
+            )
+        else:
+            if usage == "fitting":
+                st.warning(
+                    "In-sample illustration: according to the saved development split, this engine "
+                    "was used to fit the saved development model. Its prediction is not held-out evidence."
+                )
+            elif usage == "validation":
+                st.info(
+                    "Held-out development engine: according to the saved development split, this "
+                    "engine was not used to fit the saved development model. This is development "
+                    "evidence, not official-test performance."
+                )
+            else:
+                st.warning(
+                    "This engine is not listed in the saved development split, so its fit/holdout "
+                    "status is unknown. Do not treat this replay as held-out evidence."
+                )
+    else:
+        st.info(
+            "Illustrative synthetic example: it is not a NASA engine, held-out evaluation, "
+            "or maintenance result."
+        )
     cycle = st.selectbox("Observed cycle", [int(row["cycle"]) for row in history])
-    st.caption("Only readings through the selected cycle are used; this is not a maintenance guarantee.")
+    st.caption(
+        "Only readings through the selected cycle are used; this is not a maintenance guarantee."
+    )
     if st.button("Predict remaining cycles"):
         prefix = [row for row in history if row["cycle"] <= cycle]
         manifest = forest_manifest if selected_model == "Random Forest" else tree_manifest
@@ -84,7 +126,10 @@ if records is not None:
                     pass
             with prediction_manifest(manifest, supplied) as active_manifest:
                 result = predict_rul_with_context(
-                    prefix, dataset_partition=partition, unit_id=engine, manifest_path=active_manifest
+                    prefix,
+                    dataset_partition=partition,
+                    unit_id=engine,
+                    manifest_path=active_manifest,
                 )
         except (PredictionArtifactError, PredictionInputError) as error:
             st.warning(f"Prediction is unavailable: {error}")
@@ -98,10 +143,14 @@ if records is not None:
                 f"Raw estimate: {result.raw_rul_cycles:.2f} cycles."
             )
             if "short_window" in result.warnings:
-                st.warning("The available feature window is short; the estimate uses fewer observations.")
+                st.warning(
+                    "The available feature window is short; the estimate uses fewer observations."
+                )
             if "cycle_gaps" in result.warnings:
                 st.warning("The observed history contains gaps between cycles.")
             if "display_clipped_at_zero" in result.warnings:
-                st.warning("The displayed estimate is clipped to zero; the raw estimate is shown above.")
+                st.warning(
+                    "The displayed estimate is clipped to zero; the raw estimate is shown above."
+                )
 else:
     st.write("Choose an engine once the selected history is available.")
