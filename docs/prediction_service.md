@@ -4,7 +4,7 @@
 
 The service reads and verifies the manifest and sibling model bytes on every
 prediction. It keeps up to two deserialized estimators in a process-local cache,
-keyed by the complete verified model bytes; changed, corrupt, or missing files
+keyed by registered model name and the complete verified model bytes; changed, corrupt, or missing files
 cannot silently reuse a stale model. The saved feature schema and estimator
 parameters are validated on every request. Cache lifetime is the Python process;
 separate workers load independently. This saves repeated deserialization, not
@@ -30,7 +30,7 @@ raw_prediction_for_comparison = result.raw_rul_cycles
 
 The path is an example of the **existing P06 producer's** output, not a claim
 that the ignored bundle is installed in every clone. No default artifact path,
-training fallback, new registry or model selection is introduced.
+training fallback or automatic model selection is introduced. P08-A3 adds the explicit registry described below.
 
 ## Exact contract
 
@@ -308,3 +308,43 @@ remain as recorded above. No GitHub approval or automated teammate message is
 claimed. Real P06 inference/reload and #49 parity NOT RUN here: the real bundle
 is absent and was not retrained. Local Streamlit smoke NOT RUN:no app changes;
 full app tests pass. P07 model-card/deployment/parity remain other owners' work.
+
+
+## P08-A3: registered forest through the same service
+
+`fleetpulse.models.registry.MODEL_REGISTRY` is an immutable mapping of
+`decision-tree-rul` / `decision-tree-rul-v1` and
+`random-forest-rul` / `random-forest-rul-v1` to their schema, fixed sibling
+filename and exact estimator class. Both use the existing `engineer_features`;
+there is no separate forest feature calculation. The manifest path selects the
+bundle explicitly. Model identity, version, schema, runtime, hashes, feature
+order/config and estimator parameters are checked on each request. A tree
+binary relabelled as a forest is rejected. Missing or unknown models fail;
+there is no fallback or fit in the service.
+
+The P07 agreed contracts remain unchanged. Use the same `predict_rul` call with
+`manifest_path="artifacts/development/random_forest_validation.json"` for the
+forest. `RawRULPrediction` still contains only `raw_rul_cycles`.
+`predict_rul_with_context` retains its seven fields and reports the loaded
+model identity/version. Input is one engine's observed prefix in the normalized
+26-column schema with explicit partition/unit; no targets or future rows.
+These are existing agreed interfaces, not a newly claimed teammate review.
+Taha can consume the forest manifest with these functions in his separate UI
+selection task; Shaheer can use raw values for comparison.
+
+Actual 16 November replay (Python 3.12.16 / scikit-learn 1.9.1):
+
+```powershell
+.venv/Scripts/python.exe scripts/verify_forest_service.py artifacts/development/random_forest_validation.json data/raw/train_FD001.txt
+```
+
+All **20** saved FD001 development validation cutoffs exactly matched offline
+forest predictions, maximum absolute difference **0.0 cycles**. Engine 4 at
+cycle 164 returned **34.04320452065351**, engine 5 at cycle 58 returned
+**159.8769392222517**. The script verifies source SHA before truncating each
+prefix; labels never enter inference. The model and feature configuration are
+unchanged from the single P08-A1 run (seed42, 100 trees, depth12, leaf5,
+96 past-only-v1 features, 30-cycle window). No refit, tuning, official-test
+assessment, UI deployment or real Decision Tree replay was performed here.
+The original candidate discussion was confirmed by Abdullah on 16 November;
+these are the same candidate outputs, now verified through the service.
