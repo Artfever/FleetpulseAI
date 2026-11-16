@@ -10,7 +10,7 @@ Read this file on resumption. Shaheer's P02 tasks (#111 and #189), P03 tasks (#3
 - Example checked: FD001/train engine 4, cutoff 164; feature table records 164 observed rows through cutoff and 30 rows in the window, yielding the declared 96 features. Model file SHA-256 matches the manifest without deserialization. No training, refit, tuning, official-test file, or RUL answers were used.
 - Verification: `.venv/Scripts/python.exe scripts/audit_random_forest_validation.py` PASS (20 identities/targets/errors; model hash and metric provenance checked; MAE 18.833479230754712, RMSE 25.24302308237894 cycles); `.venv/Scripts/python.exe -m pytest -q` PASS (324); `.venv/Scripts/ruff.exe check .` PASS; `git diff --check` PASS. Streamlit smoke NOT RUN (documentation-only change).
 - Other open P08 tasks: Taha's #53 is open/unblocked, #130 waits on #53, and #247 waits on #130. Shaheer's #246 is in progress. The P08 gate #13 still needs actual held-out validation, reload parity, and real forest inference in the app; no phase completion is claimed.
-- Next: finish checks, commit report plus handoff, open a `dev` PR with `Refs #246`, verify required CI and conversations, then merge. The issue also asks for teammate inspection of a small example; do not claim that manual check until reported. Keep #246 open until its acceptance evidence is complete.
+- Evidence commit `6021a2a2e550828fbb132f47a05a1ff937a869f9` is on `feat/P08-S3-feature-version-audit`; [PR #366](https://github.com/Artfever/FleetpulseAI/pull/366) is open to `dev` with `Refs #246`. Verify required CI and resolved conversations, then merge. A separate manual human inspection of the example is still pending; keep #246 open until its acceptance evidence is complete.
 
 ## P08 evidence completed
 
