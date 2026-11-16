@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+from unittest.mock import Mock
 
 import pytest
 
@@ -16,7 +17,13 @@ from fleetpulse.models.xgboost_artifact import (
     save_xgboost_artifact,
     verify_xgboost_artifact,
 )
-from fleetpulse.services import PredictionArtifactError, predict_rul, predict_rul_with_context
+from fleetpulse.services import (
+    PredictionArtifactError,
+    PredictionInputError,
+    predict_rul,
+    predict_rul_with_context,
+)
+from fleetpulse.services import predictor as predictor_service
 
 
 def _row(cycle, unit):
@@ -149,3 +156,37 @@ def test_registry_rejects_reload_package_mismatch_after_manifest_rehash(candidat
             unit_id=1,
             manifest_path=path,
         )
+
+
+@pytest.mark.parametrize("invalid_reading", [float("nan"), float("inf"), float("-inf")])
+def test_nonfinite_xgboost_reading_is_rejected_before_model_load_or_predict(
+    candidate, invalid_reading, monkeypatch
+):
+    histories, validation, _, saved = candidate
+    validation_row = validation.rows[0]
+    engine = validation_row.vector.unit_id
+    cutoff = validation_row.vector.selected_cycle
+    prefix = [
+        dict(row)
+        for row in histories
+        if row["unit_id"] == engine and row["cycle"] <= cutoff
+    ]
+    prefix[0]["sensor_1"] = invalid_reading
+
+    model_load = Mock()
+    estimator = Mock()
+    deserializer = Mock(return_value=estimator)
+    monkeypatch.setattr(predictor_service, "_load_model", model_load)
+    monkeypatch.setattr(predictor_service, "_deserialize_model", deserializer)
+
+    with pytest.raises(PredictionInputError, match="non_finite_reading"):
+        predict_rul(
+            prefix,
+            dataset_partition="FD001/train",
+            unit_id=engine,
+            manifest_path=saved["manifest_path"],
+        )
+
+    model_load.assert_not_called()
+    deserializer.assert_not_called()
+    estimator.predict.assert_not_called()
