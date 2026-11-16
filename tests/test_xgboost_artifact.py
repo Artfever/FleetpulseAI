@@ -11,6 +11,8 @@ from fleetpulse.features import FeatureConfig, engineer_features
 from fleetpulse.features.build_dataset import build_fitting_dataset, build_validation_dataset
 from fleetpulse.models.train_xgboost import train_xgboost
 from fleetpulse.models.xgboost_artifact import (
+    RELOAD_DISTRIBUTIONS,
+    runtime_software_versions,
     save_xgboost_artifact,
     verify_xgboost_artifact,
 )
@@ -86,6 +88,10 @@ def test_candidate_artifact_and_service_replay_predictions(candidate):
     assert contextual.raw_rul_cycles == expected
     assert contextual.model_name == "xgboost-rul"
     assert contextual.model_version == "xgboost-rul-v1"
+    document = json.loads(saved["manifest_path"].read_text(encoding="utf-8"))
+    metadata = document["payload"]["model"]["runtime_versions"]
+    assert set(metadata) == {"python", *RELOAD_DISTRIBUTIONS}
+    assert metadata == runtime_software_versions()
 
 
 def test_registry_rejects_xgboost_version_mismatch_after_manifest_rehash(candidate):
@@ -99,6 +105,44 @@ def test_registry_rejects_xgboost_version_mismatch_after_manifest_rehash(candida
     path.write_text(json.dumps(document), encoding="utf-8")
 
     with pytest.raises(PredictionArtifactError, match="XGBoost version"):
+        predict_rul(
+            [_row(1, 1)],
+            dataset_partition="FD001/train",
+            unit_id=1,
+            manifest_path=path,
+        )
+
+
+def test_registry_rejects_missing_runtime_versions_after_manifest_rehash(candidate):
+    _, _, _, saved = candidate
+    path = saved["manifest_path"]
+    document = json.loads(path.read_text(encoding="utf-8"))
+    payload = document["payload"]
+    del payload["model"]["runtime_versions"]
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), allow_nan=False)
+    document["sha256"] = hashlib.sha256(encoded.encode()).hexdigest()
+    path.write_text(json.dumps(document), encoding="utf-8")
+
+    with pytest.raises(PredictionArtifactError, match="complete runtime version metadata"):
+        predict_rul(
+            [_row(1, 1)],
+            dataset_partition="FD001/train",
+            unit_id=1,
+            manifest_path=path,
+        )
+
+
+def test_registry_rejects_reload_package_mismatch_after_manifest_rehash(candidate):
+    _, _, _, saved = candidate
+    path = saved["manifest_path"]
+    document = json.loads(path.read_text(encoding="utf-8"))
+    payload = document["payload"]
+    payload["model"]["runtime_versions"]["numpy"] = "0.0.0"
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), allow_nan=False)
+    document["sha256"] = hashlib.sha256(encoded.encode()).hexdigest()
+    path.write_text(json.dumps(document), encoding="utf-8")
+
+    with pytest.raises(PredictionArtifactError, match="package versions required"):
         predict_rul(
             [_row(1, 1)],
             dataset_partition="FD001/train",

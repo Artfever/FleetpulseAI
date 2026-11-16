@@ -17,12 +17,21 @@ The generated local bundle is in `artifacts/development/`:
   `xgboost-rul-v1`;
 - `xgboost_metrics.json`, using the shared metrics-record format.
 
-The manifest stores the XGBoost and scikit-learn versions, exact estimator
-parameters, feature order/configuration, fitting/validation table digests,
-source and semantic split hashes, fit runtime, all engine/cutoff identities,
-validation targets, raw predictions, and recomputed errors. The joblib file and
-metrics are ignored local artifacts; this document does not claim they were
-published to GitHub.
+The manifest stores a `model.runtime_versions` map for Python and every direct
+package needed to load the serialized estimator: XGBoost, scikit-learn, NumPy,
+SciPy, and joblib. The saver records installed distribution versions; both the
+artifact verifier and shared inference service reject missing metadata or a
+package mismatch before deserializing. Python is checked against the supported
+major/minor version because the project allows Python `>=3.12,<3.13`. The
+manifest also keeps the XGBoost and scikit-learn legacy version fields and
+checks that they agree with the new map.
+
+Observed when rebuilding this candidate on Python 3.12.10: `xgboost` 3.4.1,
+`scikit-learn` 1.9.1, `numpy` 2.5.4, `scipy` 1.18.1, and `joblib` 1.6.0. These
+are also the package pins in `pyproject.toml` (XGBoost is the optional
+`.[xgboost]` extra). Exact values are serialized in the local ignored manifest.
+The joblib file and metrics remain ignored local artifacts; this document does
+not claim they were published to GitHub.
 
 ## Verification observed
 

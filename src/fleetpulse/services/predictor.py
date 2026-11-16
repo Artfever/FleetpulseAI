@@ -14,7 +14,7 @@ import math
 from collections.abc import Iterable, Mapping
 from dataclasses import asdict, dataclass
 from functools import lru_cache
-from importlib.metadata import PackageNotFoundError, version
+from importlib.metadata import PackageNotFoundError
 from numbers import Integral, Real
 from pathlib import Path
 from typing import Any
@@ -128,19 +128,43 @@ def _load_model(
         )
         if spec.name == "xgboost-rul":
             try:
-                runtime_xgboost_version = version("xgboost")
+                from fleetpulse.models.xgboost_artifact import (
+                    RELOAD_DISTRIBUTIONS,
+                    runtime_software_versions,
+                )
+
+                runtime_versions = runtime_software_versions()
             except PackageNotFoundError as error:
                 raise PredictionArtifactError(
                     "Loading this candidate requires the optional XGBoost extra."
                 ) from error
+            saved_versions = info.get("runtime_versions")
             _require_artifact(
-                info["xgboost_version"] == runtime_xgboost_version,
-                "Saved XGBoost version does not match the runtime.",
+                isinstance(saved_versions, dict),
+                "Saved XGBoost candidate has no complete runtime version metadata.",
             )
-        _require_artifact(
-            info["scikit_learn_version"] == sklearn.__version__,
-            "Saved scikit-learn version does not match the runtime.",
-        )
+            _require_artifact(
+                all(saved_versions.get(name) == runtime_versions[name] for name in RELOAD_DISTRIBUTIONS),
+                "Saved package versions required for XGBoost reload do not match the runtime.",
+            )
+            _require_artifact(
+                saved_versions.get("python", "").split(".")[:2]
+                == runtime_versions["python"].split(".")[:2],
+                "Saved Python major/minor version does not match the project runtime.",
+            )
+            _require_artifact(
+                info.get("xgboost_version") == saved_versions["xgboost"],
+                "Saved XGBoost version differs from runtime metadata.",
+            )
+            _require_artifact(
+                info.get("scikit_learn_version") == saved_versions["scikit-learn"],
+                "Saved scikit-learn version differs from runtime metadata.",
+            )
+        else:
+            _require_artifact(
+                info["scikit_learn_version"] == sklearn.__version__,
+                "Saved scikit-learn version does not match the runtime.",
+            )
         _require_artifact(
             info["filename"] == spec.filename, f"Expected the sibling model file {spec.filename}."
         )

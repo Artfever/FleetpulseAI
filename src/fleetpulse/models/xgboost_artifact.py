@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import platform
 from dataclasses import asdict
 from importlib.metadata import version
 from math import isclose
@@ -28,6 +29,15 @@ XGBOOST_ARTIFACT_SCHEMA = "xgboost-validation-v1"
 MODEL_FILENAME = "xgboost_model.joblib"
 MANIFEST_FILENAME = "xgboost_validation.json"
 METRICS_FILENAME = "xgboost_metrics.json"
+RELOAD_DISTRIBUTIONS = ("xgboost", "scikit-learn", "numpy", "scipy", "joblib")
+
+
+def runtime_software_versions() -> dict[str, str]:
+    """Return runtime and installed package versions recorded in candidate manifests."""
+    return {
+        "python": platform.python_version(),
+        **{name: version(name) for name in RELOAD_DISTRIBUTIONS},
+    }
 
 
 def _canonical(value: Any) -> bytes:
@@ -79,6 +89,7 @@ def save_xgboost_artifact(
             "version": MODEL_VERSION,
             "xgboost_version": version("xgboost"),
             "scikit_learn_version": sklearn.__version__,
+            "runtime_versions": runtime_software_versions(),
             "filename": MODEL_FILENAME,
             "sha256": model_sha256,
         },
@@ -159,10 +170,18 @@ def verify_xgboost_artifact(
         or info.get("filename") != MODEL_FILENAME
     ):
         raise ValueError("Unsupported XGBoost model identity/version/filename.")
-    if info.get("xgboost_version") != version("xgboost"):
-        raise ValueError("Saved XGBoost version does not match the runtime.")
-    if info.get("scikit_learn_version") != sklearn.__version__:
-        raise ValueError("Saved scikit-learn version does not match the runtime.")
+    saved_versions = info.get("runtime_versions")
+    if not isinstance(saved_versions, dict):
+        raise TypeError("Saved candidate has no complete runtime version metadata.")
+    actual_versions = runtime_software_versions()
+    if any(saved_versions.get(name) != actual_versions[name] for name in RELOAD_DISTRIBUTIONS):
+        raise ValueError("Saved package versions required for reload do not match the runtime.")
+    if saved_versions.get("python", "").split(".")[:2] != actual_versions["python"].split(".")[:2]:
+        raise ValueError("Saved Python major/minor version does not match the project runtime.")
+    if info.get("xgboost_version") != saved_versions["xgboost"]:
+        raise ValueError("Saved XGBoost version differs from runtime metadata.")
+    if info.get("scikit_learn_version") != saved_versions["scikit-learn"]:
+        raise ValueError("Saved scikit-learn version differs from runtime metadata.")
     model_path = Path(manifest_path).parent / MODEL_FILENAME
     if sha256_file(model_path) != info.get("sha256"):
         raise ValueError("Saved XGBoost model file hash mismatch.")
