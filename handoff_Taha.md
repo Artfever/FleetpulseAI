@@ -1,5 +1,15 @@
 # Taha handoff
 
+## Owner-directed takeover update: P09-T2 (2026-11-16)
+
+- Shaheer directed this session to take over the remaining P08-P16 tasks for all three teammates. This P09-T2 work was performed by the assistant for repository owner Shaheer, not by Taha; this note preserves Taha's task handoff without attributing the work or any review to him.
+- P09-T2 [#133](https://github.com/Artfever/FleetpulseAI/issues/133) is now the current task. Its native blocker list is clear; P07 gate #12 and P09-T1 #56 are CLOSED. P09 gate #14 remains OPEN.
+- `scripts/run_xgboost_experiment.py` validates the FD001/train source, split and saved feature tables, then performs one fixed CPU fit. The actual run used Python 3.12.10, XGBoost 3.4.1, seed 42, 100 estimators, depth 4, one worker; fit and validation prediction took 1.592586 seconds. On 20 held-out FD001/train engines, MAE was 15.108697 cycles and RMSE 21.092113 cycles. The tracked complete prediction table and limitations are in `docs/p09_xgboost_bounded_experiment.md`; exact JSON is local/ignored at `reports/P09_T2_xgboost_run.json`.
+- Input audit PASS: 16,738 fitting rows / 80 engines and all 20 validation identities, targets, and raw prefixes were verified. Source SHA `963b5e22825b34d8b21c69e1aeb4af3e647050eb672ee8834ba4b5d91d2de0f8`; semantic split SHA `6fd1d32f7570f70f5a9513d900fbb9d26b182359aced425e2276700c84f08d92`. No official test histories or answers were used.
+- Checks: `.venv/Scripts/python.exe scripts/audit_xgboost_inputs.py` PASS; `.venv/Scripts/ruff.exe check .` PASS; `.venv/Scripts/python.exe -m pytest -q` PASS (378); `git diff --check` PASS. Shaheer's implementation commit `48e04b807228b81187b5cfbb7a67568fd3e482dd` is on [PR #379](https://github.com/Artfever/FleetpulseAI/pull/379), OPEN to `dev` with `Refs #133`; CI run [43910331749](https://github.com/Artfever/FleetpulseAI/actions/runs/43910331749) was in progress when this was written. This run does not save/register the candidate; #200 remains separate. Next: verify CI and conversations on the updated PR head, merge, record the merge in that PR, then complete the task inspection record before closing #133.
+
+---
+
 ## P07-T3 user-reported hosted check - 13 November 2026
 
 - Taha confirmed in chat that he selected **Packaged FD001/train parity subset** on `https://fleetpulseai.streamlit.app/` and that the hosted display matched the local references: engine 4/cycle 164 = 34.20 cycles; engine 5/cycle 58 = 158.16 cycles; engine 12/cycle 7 = 184.36 cycles with the short-window warning. He reported model `decision-tree-rul` / `decision-tree-rul-v1`. These are his reported UI observations, not an independently observed browser check or official-test results.
