@@ -14,13 +14,13 @@ import math
 from collections.abc import Iterable, Mapping
 from dataclasses import asdict, dataclass
 from functools import lru_cache
+from importlib.metadata import PackageNotFoundError, version
 from numbers import Integral, Real
 from pathlib import Path
+from typing import Any
 
 import joblib
 import sklearn
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.tree import DecisionTreeRegressor
 
 from fleetpulse.data.quality import validate_engine_history
 from fleetpulse.features import EngineFeatureVector, FeatureConfig, engineer_features
@@ -76,20 +76,31 @@ def _require_artifact(condition: bool, message: str) -> None:
 @lru_cache(maxsize=2)
 def _deserialize_model(
     model_bytes: bytes, model_name: str
-) -> DecisionTreeRegressor | RandomForestRegressor:
+) -> Any:
     """Reuse an estimator only for exactly the same verified model bytes."""
     spec = MODEL_REGISTRY[model_name]
+    estimator_type = spec.estimator_type
+    if estimator_type is None and model_name == "xgboost-rul":
+        try:
+            from xgboost import XGBRegressor
+        except ImportError as error:
+            raise PredictionArtifactError(
+                "Loading this candidate requires the optional XGBoost extra; install with "
+                "`python -m pip install -e '.[xgboost]'`."
+            ) from error
+        estimator_type = XGBRegressor
+    _require_artifact(estimator_type is not None, "Registered estimator type is unavailable.")
     model = joblib.load(io.BytesIO(model_bytes))
     _require_artifact(
-        type(model) is spec.estimator_type,
-        f"Saved model is not a {spec.estimator_type.__name__}.",
+        type(model) is estimator_type,
+        f"Saved model is not a {estimator_type.__name__}.",
     )
     return model
 
 
 def _load_model(
     manifest_path: str | Path,
-) -> tuple[FeatureConfig, DecisionTreeRegressor | RandomForestRegressor, str, str]:
+) -> tuple[FeatureConfig, Any, str, str]:
     """Read a registered saved bundle without requiring any evaluation dataset.
 
     Only trusted project artifacts should be passed to joblib. Evaluation
@@ -115,6 +126,17 @@ def _load_model(
             payload["schema_version"] == spec.artifact_schema,
             f"Unsupported {title} artifact schema.",
         )
+        if spec.name == "xgboost-rul":
+            try:
+                runtime_xgboost_version = version("xgboost")
+            except PackageNotFoundError as error:
+                raise PredictionArtifactError(
+                    "Loading this candidate requires the optional XGBoost extra."
+                ) from error
+            _require_artifact(
+                info["xgboost_version"] == runtime_xgboost_version,
+                "Saved XGBoost version does not match the runtime.",
+            )
         _require_artifact(
             info["scikit_learn_version"] == sklearn.__version__,
             "Saved scikit-learn version does not match the runtime.",
@@ -156,7 +178,8 @@ def _load_model(
         # Integrity is checked on every call; only deserialization is cached by exact bytes.
         model = _deserialize_model(model_bytes, spec.name)
         _require_artifact(
-            model.n_features_in_ == len(config.output_schema) and model.n_outputs_ == 1,
+            model.n_features_in_ == len(config.output_schema)
+            and getattr(model, "n_outputs_", 1) == 1,
             "Saved estimator dimensions do not match the feature schema.",
         )
         if hasattr(model, "feature_names_in_"):

@@ -16,6 +16,12 @@ from fleetpulse.models.forest_artifact import (
     MODEL_FILENAME as FOREST_MODEL_FILENAME,
 )
 from fleetpulse.models.usage_scope import classify_training_engine
+from fleetpulse.models.xgboost_artifact import (
+    MANIFEST_FILENAME as XGBOOST_MANIFEST_FILENAME,
+)
+from fleetpulse.models.xgboost_artifact import (
+    MODEL_FILENAME as XGBOOST_MODEL_FILENAME,
+)
 from fleetpulse.services import (
     PredictionArtifactError,
     PredictionInputError,
@@ -41,12 +47,21 @@ artifact_dir = ui.PROJECT_ROOT / "artifacts" / "development"
 tree_manifest = artifact_dir / "decision_tree_validation.json"
 forest_manifest = artifact_dir / FOREST_MANIFEST_FILENAME
 forest_model = artifact_dir / FOREST_MODEL_FILENAME
+xgboost_manifest = artifact_dir / XGBOOST_MANIFEST_FILENAME
+xgboost_model = artifact_dir / XGBOOST_MODEL_FILENAME
 model_options = ["Decision Tree"]
 if forest_manifest.is_file() and forest_model.is_file():
     model_options.append("Random Forest")
 else:
     st.info(
         "Random Forest is unavailable in this workspace until its verified model bundle "
+        "is present in `artifacts/development/`."
+    )
+if xgboost_manifest.is_file() and xgboost_model.is_file():
+    model_options.append("XGBoost")
+else:
+    st.info(
+        "XGBoost is unavailable in this workspace until its verified model bundle "
         "is present in `artifacts/development/`."
     )
 selected_model = st.selectbox("RUL model", model_options)
@@ -116,7 +131,11 @@ if records is not None:
     )
     if st.button("Predict remaining cycles"):
         prefix = [row for row in history if row["cycle"] <= cycle]
-        manifest = forest_manifest if selected_model == "Random Forest" else tree_manifest
+        manifest = {
+            "Decision Tree": tree_manifest,
+            "Random Forest": forest_manifest,
+            "XGBoost": xgboost_manifest,
+        }[selected_model]
         try:
             supplied = None
             if selected_model == "Decision Tree" and not manifest.exists():
