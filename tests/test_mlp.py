@@ -19,6 +19,8 @@ from fleetpulse.models.mlp import (
     train_mlp,
 )
 from fleetpulse.models.mlp_artifact import save_mlp_artifact, verify_mlp_artifact
+from fleetpulse.models.registry import MODEL_REGISTRY
+from fleetpulse.services import predict_rul
 
 
 @pytest.fixture
@@ -216,3 +218,69 @@ def test_mlp_bundle_rejects_changed_weights_or_dataset_hash(mlp_tables, tmp_path
             fitting_dataset_sha256="b" * 64,
             validation_dataset_sha256="c" * 64,
         )
+
+
+def test_registered_mlp_service_applies_saved_scaler_and_reloads_cpu_weights(mlp_tables, tmp_path):
+    fitting, validation = mlp_tables
+    result = train_mlp(
+        fitting, validation, hidden_dims=(8, 4), max_epochs=2, patience=2, batch_size=8
+    )
+    saved = save_mlp_artifact(
+        result,
+        fitting,
+        validation,
+        tmp_path,
+        fitting_dataset_sha256="b" * 64,
+        validation_dataset_sha256="c" * 64,
+    )
+    row = validation.rows[0]
+    engine = row.vector.unit_id
+    cutoff = row.vector.selected_cycle
+    history = [
+        {"unit_id": engine, "cycle": cycle, **dict.fromkeys(READING_COLUMNS, cycle + engine)}
+        for cycle in range(1, cutoff + 1)
+    ]
+
+    prediction = predict_rul(
+        history,
+        dataset_partition="FD001/train",
+        unit_id=engine,
+        manifest_path=saved["manifest_path"],
+    )
+
+    assert prediction.raw_rul_cycles == pytest.approx(result.validation_predictions[0], abs=1e-6)
+    assert MODEL_REGISTRY["dense-rul-mlp"].version == "dense-rul-mlp-v1"
+    from fleetpulse.services import predictor
+
+    loaded = predictor._load_model(saved["manifest_path"])[1]
+    assert loaded.model.training is False
+    assert all(parameter.device.type == "cpu" for parameter in loaded.model.parameters())
+    np.testing.assert_array_equal(loaded.scaler.mean_, result.scaler.mean_)
+
+
+def test_registered_mlp_rejects_scaler_architecture_mismatch(mlp_tables, tmp_path):
+    import hashlib
+    import json
+
+    from fleetpulse.services import PredictionArtifactError, predictor
+
+    fitting, validation = mlp_tables
+    result = train_mlp(fitting, validation, max_epochs=1, patience=1, batch_size=8)
+    saved = save_mlp_artifact(
+        result,
+        fitting,
+        validation,
+        tmp_path,
+        fitting_dataset_sha256="b" * 64,
+        validation_dataset_sha256="c" * 64,
+    )
+    document = json.loads(saved["manifest_path"].read_text(encoding="utf-8"))
+    document["payload"]["training"]["scaler"]["feature_count"] += 1
+    payload = json.dumps(
+        document["payload"], sort_keys=True, separators=(",", ":"), allow_nan=False
+    ).encode()
+    document["sha256"] = hashlib.sha256(payload).hexdigest()
+    saved["manifest_path"].write_text(json.dumps(document), encoding="utf-8")
+
+    with pytest.raises(PredictionArtifactError, match="scaler width"):
+        predictor._load_model(saved["manifest_path"])

@@ -18,6 +18,7 @@ from fleetpulse.models import (
     tree_artifact,
     xgboost_artifact,
 )
+from fleetpulse.models.mlp_contract import MLP_ARTIFACT_SCHEMA, MODEL_NAME, MODEL_VERSION
 
 
 @dataclass(frozen=True)
@@ -55,6 +56,14 @@ MODEL_REGISTRY = MappingProxyType(
             xgboost_artifact.MODEL_FILENAME,
             None,
             "XGBoost",
+        ),
+        MODEL_NAME: ModelSpec(
+            MODEL_NAME,
+            MODEL_VERSION,
+            MLP_ARTIFACT_SCHEMA,
+            "mlp_best_state.pt",
+            None,
+            "Dense RUL MLP",
         ),
     }
 )

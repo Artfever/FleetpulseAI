@@ -20,6 +20,7 @@ from pathlib import Path
 from typing import Any
 
 import joblib
+import numpy as np
 import sklearn
 
 from fleetpulse.data.quality import validate_engine_history
@@ -73,6 +74,30 @@ def _require_artifact(condition: bool, message: str) -> None:
         raise PredictionArtifactError(message)
 
 
+class _MLPInferenceAdapter:
+    """Apply the saved fitting scaler before CPU-only MLP inference."""
+
+    def __init__(self, model: Any, scaler: Any, input_dim: int):
+        self.model = model
+        self.scaler = scaler
+        self.n_features_in_ = input_dim
+        self.n_outputs_ = 1
+
+    def predict(self, rows: Iterable[Iterable[float]]) -> tuple[float, ...]:
+        import torch
+
+        raw = np.asarray(tuple(tuple(row) for row in rows), dtype=np.float64)
+        if raw.ndim != 2 or raw.shape[1] != self.n_features_in_ or not np.isfinite(raw).all():
+            raise ValueError("MLP features must be a finite matrix matching the saved scaler.")
+        scaled = self.scaler.transform(raw)
+        tensor = torch.tensor(scaled, dtype=torch.float32, device="cpu")
+        if not torch.isfinite(tensor).all().item():
+            raise ValueError("Scaled MLP features are not finite in the CPU runtime.")
+        self.model.eval()
+        with torch.no_grad():
+            return tuple(float(value) for value in self.model(tensor).tolist())
+
+
 @lru_cache(maxsize=2)
 def _deserialize_model(
     model_bytes: bytes, model_name: str
@@ -96,6 +121,69 @@ def _deserialize_model(
         f"Saved model is not a {estimator_type.__name__}.",
     )
     return model
+
+
+@lru_cache(maxsize=2)
+def _deserialize_mlp(
+    model_bytes: bytes,
+    input_dim: int,
+    hidden_dims: tuple[int, ...],
+    scaler_json: str,
+) -> _MLPInferenceAdapter:
+    """Safely restore one registered MLP checkpoint and its saved scaler."""
+    try:
+        import torch
+        from sklearn.preprocessing import StandardScaler
+
+        from fleetpulse.models.mlp import DenseRULRegressor
+    except ImportError as error:
+        raise PredictionArtifactError(
+            "Loading this model requires the optional MLP extra; install with "
+            "`python -m pip install -e '.[mlp]'`."
+        ) from error
+    try:
+        scaler_data = json.loads(scaler_json)
+        _require_artifact(
+            scaler_data.get("type") == "StandardScaler"
+            and scaler_data.get("with_mean") is True
+            and scaler_data.get("with_std") is True
+            and scaler_data.get("feature_count") == input_dim,
+            "Saved MLP scaler contract is unsupported or dimensionally inconsistent.",
+        )
+        arrays = [
+            np.asarray(scaler_data[name], dtype=np.float64)
+            for name in ("mean", "scale", "variance")
+        ]
+        _require_artifact(
+            all(array.shape == (input_dim,) and np.isfinite(array).all() for array in arrays)
+            and np.all(arrays[1] > 0)
+            and np.all(arrays[2] >= 0),
+            "Saved MLP scaler statistics are invalid.",
+        )
+        fitting_rows = scaler_data.get("fitting_row_count")
+        _require_artifact(
+            type(fitting_rows) is int and fitting_rows > 0,
+            "Saved MLP scaler fitting row count must be positive.",
+        )
+        scaler = StandardScaler()
+        scaler.mean_, scaler.scale_, scaler.var_ = arrays
+        scaler.n_features_in_ = input_dim
+        scaler.n_samples_seen_ = fitting_rows
+
+        model = DenseRULRegressor(input_dim, hidden_dims).to("cpu")
+        state = torch.load(io.BytesIO(model_bytes), map_location="cpu", weights_only=True)
+        _require_artifact(isinstance(state, dict), "Saved MLP weights are not a state dictionary.")
+        model.load_state_dict(state, strict=True)
+        model.eval()
+        _require_artifact(
+            not model.training and all(parameter.device.type == "cpu" for parameter in model.parameters()),
+            "Reloaded MLP must be in evaluation mode on CPU.",
+        )
+        return _MLPInferenceAdapter(model, scaler, input_dim)
+    except PredictionArtifactError:
+        raise
+    except Exception as error:
+        raise PredictionArtifactError(f"Cannot restore a compatible saved MLP: {error}") from error
 
 
 def _load_model(
@@ -160,7 +248,53 @@ def _load_model(
                 info.get("scikit_learn_version") == saved_versions["scikit-learn"],
                 "Saved scikit-learn version differs from runtime metadata.",
             )
-        else:
+        elif spec.name == "dense-rul-mlp":
+            try:
+                import torch
+            except ImportError as error:
+                raise PredictionArtifactError(
+                    "Loading this model requires the optional MLP extra; install with "
+                    "`python -m pip install -e '.[mlp]'`."
+                ) from error
+            _require_artifact(
+                info.get("torch_version") == torch.__version__,
+                "Saved PyTorch version does not match the runtime.",
+            )
+            _require_artifact(
+                info.get("device") == "cpu",
+                "Only CPU MLP artifacts are supported by this inference service.",
+            )
+            _require_artifact(
+                training["scikit_learn_version"] == sklearn.__version__,
+                "Saved scikit-learn version does not match the runtime.",
+            )
+            architecture = info["architecture"]
+            _require_artifact(
+                architecture.get("class") == "DenseRULRegressor"
+                and architecture.get("hidden_activation") == "ReLU"
+                and type(architecture.get("input_dim")) is int
+                and architecture["input_dim"] == len(training["feature_names"])
+                and type(architecture.get("output_dim")) is int
+                and architecture["output_dim"] == 1
+                and isinstance(architecture.get("hidden_dims"), list)
+                and bool(architecture["hidden_dims"])
+                and all(type(width) is int and width > 0 for width in architecture["hidden_dims"]),
+                "Saved MLP architecture is unsupported or dimensionally inconsistent.",
+            )
+            scaler = training["scaler"]
+            _require_artifact(
+                scaler.get("feature_count") == architecture["input_dim"],
+                "Saved MLP scaler width does not match the architecture.",
+            )
+            parameters = training["parameters"]
+            _require_artifact(
+                parameters.get("hidden_dims") == architecture["hidden_dims"]
+                and parameters.get("activation") == architecture["hidden_activation"]
+                and parameters.get("scaler") == scaler.get("type")
+                and training["fitting_row_count"] == scaler.get("fitting_row_count"),
+                "Saved MLP training metadata disagrees with architecture or scaler contract.",
+            )
+        elif spec.name != "dense-rul-mlp":
             _require_artifact(
                 info["scikit_learn_version"] == sklearn.__version__,
                 "Saved scikit-learn version does not match the runtime.",
@@ -200,7 +334,15 @@ def _load_model(
 
     try:
         # Integrity is checked on every call; only deserialization is cached by exact bytes.
-        model = _deserialize_model(model_bytes, spec.name)
+        if spec.name == "dense-rul-mlp":
+            model = _deserialize_mlp(
+                model_bytes,
+                architecture["input_dim"],
+                tuple(architecture["hidden_dims"]),
+                json.dumps(training["scaler"], sort_keys=True, separators=(",", ":")),
+            )
+        else:
+            model = _deserialize_model(model_bytes, spec.name)
         _require_artifact(
             model.n_features_in_ == len(config.output_schema)
             and getattr(model, "n_outputs_", 1) == 1,
@@ -211,11 +353,12 @@ def _load_model(
                 tuple(model.feature_names_in_) == config.output_schema,
                 "Saved estimator feature order differs from the manifest.",
             )
-        expected_parameters = {**training["parameters"], "random_state": training["random_seed"]}
-        _require_artifact(
-            all(model.get_params().get(key) == value for key, value in expected_parameters.items()),
-            "Saved estimator parameters differ from the manifest.",
-        )
+        if spec.name != "dense-rul-mlp":
+            expected_parameters = {**training["parameters"], "random_state": training["random_seed"]}
+            _require_artifact(
+                all(model.get_params().get(key) == value for key, value in expected_parameters.items()),
+                "Saved estimator parameters differ from the manifest.",
+            )
     except PredictionArtifactError:
         raise
     except Exception as error:

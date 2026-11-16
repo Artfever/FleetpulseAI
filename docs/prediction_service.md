@@ -60,6 +60,25 @@ it never substitutes the default channels/window. Supported feature version is
 the current `past-only-v1`. Default P06 bundles contain 24 channels/96 features,
 but a valid saved subset/order/window is honored exactly.
 
+## P10 MLP registry entry
+
+The `dense-rul-mlp` registry entry supports the P10 validation-checkpoint
+manifest while keeping PyTorch optional for users of the other estimators. Its
+loader checks the recorded PyTorch and scikit-learn versions, CPU device, model
+schema/version, `DenseRULRegressor` architecture, feature width, scaler width,
+and weights hash. It restores a CPU state dictionary with `weights_only=True`,
+loads strictly, and sets evaluation mode. At prediction time, the exact saved
+StandardScaler statistics are applied to the existing engineered feature
+vector before the model call. Feature generation itself is unchanged. Install
+the optional dependency with `python -m pip install -e '.[mlp]'` to use this
+entry; missing PyTorch produces an actionable artifact error.
+
+The checkpoint scaler was fitted on 16,738 FD001/train fitting rows; its
+validation-selected 64/32 ReLU network consumes 96 `past-only-v1` features.
+The saved development-validation replay is selection evidence, not an
+untouched performance estimate. These files are local development artifacts
+and are not committed or fetched by the service.
+
 ## Artifact and error requirements
 
 Use a trusted P06 Decision Tree bundle produced by `save_decision_tree_artifact`:

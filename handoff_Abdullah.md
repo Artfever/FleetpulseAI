@@ -1,3 +1,15 @@
+## P10-A1 PR update (2026-11-16)
+
+- Implementation commit `50ddf852b64344ae3d979f47ff0506bab0622fbe` is published in [PR #386](https://github.com/Artfever/FleetpulseAI/pull/386), targeting `dev` and referencing #57. This handoff follow-up is in the same PR; required CI and conversations are pending. No teammate approval or inspection is claimed.
+## Current takeover task: P10-A1 registry loader (2026-11-16)
+
+- Owner Shaheer directed the session to take over all tasks through P16, including Abdullah's and Taha's assigned work. This is takeover implementation work; it is not attributed to Abdullah and no teammate review is claimed.
+- Issue [#57](https://github.com/Artfever/FleetpulseAI/issues/57) is open, assigned to Abdullah, and has no native blockers; P07 gate #12 is closed. P10-S1 #58 and P10-S3 #201 are closed. Branch `feat/P10-A1-mlp-registry-loader` starts from `dev` `0d38ae9`.
+- Inspected the actual ignored saved bundle: Torch 2.15.0+cpu; scikit-learn 1.9.1; `dense-rul-mlp-v1`, schema `mlp-validation-checkpoint-v1`; CPU `DenseRULRegressor`, 96 inputs, 64/32 ReLU hidden layers, one output; exact `past-only-v1` 30-cycle feature schema; StandardScaler fitted on 16,738 fit rows; weights SHA-256 `a5dcf637a1178f44c837688646295250971dca5862cd934e3935293be53e6273`. Seed 42, selected epoch 12; validation MSE 526.1515625 cycles² is checkpoint-selection evidence, not untouched performance.
+- Added lazy registry and shared service loading for this bundle, with CPU `weights_only=True` state restore, exact schema/runtime/hash/architecture/scaler validation and scaler transformation at inference. No feature-generation changes; PyTorch remains optional for non-MLP models.
+- Fresh-process artifact verifier PASS: 20/20 saved predictions exact, max difference 0.0 cycles. Shared service versus saved validation replay: all 20 identities aligned, max absolute difference 0.0000152588 cycles; 7 raw outputs bit-exact (single-row versus batch floating-point path). No official test histories/answers used.
+- Changed `src/fleetpulse/models/mlp_contract.py`, `src/fleetpulse/models/mlp_artifact.py`, `src/fleetpulse/models/registry.py`, `src/fleetpulse/services/predictor.py`, `tests/test_mlp.py`, and `docs/prediction_service.md`. `.venv\Scripts\ruff.exe check .` PASS; `.venv\Scripts\python.exe -m pytest -q` PASS (388); `git diff --check` PASS. The task PR/CI are not yet available; this handoff accompanies the implementation commit, whose hash will be added in the next substantive update.
+- Next: open PR to `dev` with `Refs #57`; verify required CI and conversations, merge, and follow the requested wait before recording issue inspection/closure. A teammate's manual inspection is not independently verified and must not be claimed. Then check #59 and other P10 tasks' current blockers and continue the owner-directed takeover.
 # Abdullah handoff
 
 ## Owner-directed takeover update: P09-A2/A3 complete; P09-S1 active (2026-11-16)
