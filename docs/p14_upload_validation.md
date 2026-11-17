@@ -25,6 +25,15 @@ CSV made from the packaged engine 4 history matches the built-in service result
 exactly. This service-level check does not claim the Streamlit upload screen is
 implemented; that UI is covered by P14-T2.
 
+Short valid histories keep the saved `FeatureConfig` schema unchanged (96
+ordered columns by default). Feature windows use the observations available
+within the configured cycle interval; they are not padded or extended. For a
+single observation, population standard deviation and slope are zero. Latest,
+mean and standard deviation retain the raw channel units; slope is channel
+units per operating cycle. The published example is synthetic and does not
+represent NASA measurements. A short-window prediction is software evidence,
+not model-quality or maintenance evidence.
+
 The upload limit is 1 MiB. CSV syntax, UTF-8 decoding, header, row width and
 numeric parsing errors use `UploadValidationError`, with stable finding codes
 and row/field details where available. Parsed values are checked by the shared

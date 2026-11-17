@@ -36,8 +36,10 @@ def test_valid_csv_maps_by_header_and_preserves_row_order():
 
     records = parse_fd001_csv_upload(_csv_bytes(headers, [first, second]))
 
-    assert [record["cycle"] for record in records] == [1.0, 2.0]
-    assert [record["unit_id"] for record in records] == [910001.0, 910001.0]
+    assert [record["cycle"] for record in records] == [1, 2]
+    assert [record["unit_id"] for record in records] == [910001, 910001]
+    assert all(type(record["cycle"]) is int for record in records)
+    assert all(type(record["unit_id"]) is int for record in records)
     assert tuple(records[0]) == headers
     assert "rul" not in records[0]
 

@@ -135,4 +135,9 @@ def parse_fd001_csv_upload(
     findings = (*parse_findings, *report.errors)
     if findings:
         raise UploadValidationError(findings)
+    for record in records:
+        # Keep normalized identity fields compatible with the raw-history
+        # loader and feature engine after integral-value validation.
+        record["unit_id"] = int(record["unit_id"])
+        record["cycle"] = int(record["cycle"])
     return records
