@@ -60,3 +60,16 @@ batch oracle by 0.0000019073 cycles because CPU floating-point execution varies
 slightly with batch shape. These remain development-validation results; the
 checkpoint was selected using these validation targets, and no official test
 partition or answers were used.
+
+## Saved learning curves
+
+The Model Laboratory plots the training and validation MSE arrays stored in the
+verified manifest; it does not recompute or smooth them. Both curves report mean
+squared error in cycles² per epoch. The training curve aggregates 16,738
+cycle-level fitting rows, while the validation curve aggregates 20 held-out
+engine prefixes (one saved cutoff per engine). The shared loss units do not make
+the sample units interchangeable, so their absolute levels should be read with
+that distinction in mind. The lowest saved validation MSE is 526.1515625
+cycles² at epoch 12; that curve selected the checkpoint, so it is selection
+evidence rather than an untouched final estimate. The plot labels the split,
+sample unit/count, epoch, and loss units and repeats this caveat below the chart.
