@@ -26,3 +26,35 @@ engine's result while valid peers retain their predictions. Batch-level rows
 without an identifiable unit ID still fail the request because no safe result
 identity can be preserved. Sorting and filtering belong to later UI tasks and
 must retain these result identities.
+
+## Interpreting planning priority
+
+A lower predicted remaining useful life (RUL) can place an engine earlier in a
+planning review. It is a model estimate from the observed history prefix, in
+operating cycles. It is not a confirmed physical fault, a fault probability, a
+sensor alarm, or a guarantee that an engine will last the estimated number of
+cycles. A prediction alone does not diagnose a cause or authorize maintenance.
+
+Treat the ordering as a decision-support cue for further review. Check the
+underlying readings and their quality, relevant maintenance records, and the
+operating context; have a qualified person decide what action is appropriate.
+An invalid history or failed prediction has no RUL estimate and must not be
+silently ranked as though it had a valid value. Equal estimates remain separate
+engines, identified by their dataset partition and unit ID. These limits are
+especially important for this development model: the available parity examples
+use short prefixes of FD001 training histories and do not establish official
+test performance or maintenance readiness.
+
+For example, the local `decision-tree-rul-v1` parity run on packaged
+`FD001/train` prefixes observed:
+
+| Engine | Observed cycle | Predicted RUL (cycles) | Input rows | Note |
+| ---: | ---: | ---: | ---: | --- |
+| 4 | 164 | 34.19607843137255 | 30 | No short-window warning |
+| 5 | 58 | 158.16 | 30 | No short-window warning |
+| 12 | 7 | 184.35714285714286 | 7 | `short_window` warning |
+
+These values are example model outputs on training-history prefixes, not
+official-test answers or observed failure times. Their differences illustrate
+that predicted RUL is not itself a diagnosis; even a valid number may come from
+a short input window and still needs context before anyone acts on it.

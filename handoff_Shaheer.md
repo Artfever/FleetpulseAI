@@ -490,3 +490,11 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 
 - Commit `14d8abcc87014c48ec293d77a5e935acae0b4fac` is in [PR #404](https://github.com/Artfever/FleetpulseAI/pull/404), targeting `dev` with `Refs #150`.
 - Local checks passed before PR creation: focused 12 tests, full suite 445 tests, Ruff, and diff check. Required GitHub checks and conversation resolution are pending; #150 remains open. P15 gate #17 stays open.
+
+## P15-S2 merged; P15-S3 priority note active (2026-11-17)
+
+- P15-S2 #150 merged through [PR #404](https://github.com/Artfever/FleetpulseAI/pull/404) into `dev` at `281c9111052a2ce5cec1db662f7a588dca235c42`; all five required checks passed and review threads were 0. Same-PR merge record: [comment](https://github.com/Artfever/FleetpulseAI/pull/404#issuecomment-6957726968). #150 closed with test evidence [here](https://github.com/Artfever/FleetpulseAI/issues/150#issuecomment-6957762947); inspection is recorded as owner-directed/reported, not independently observed.
+- Current task: P15-S3 #211 on `feat/P15-S3-priority-explanation`, based on dev commit `281c9111052a2ce5cec1db662f7a588dca235c42`. P07 gate #12 and P15-S2 #150 are closed; P15 gate #17 remains open.
+- Updated `docs/p15_fleet_predictions.md` with an operator note distinguishing model-estimated RUL from a confirmed fault, explaining the decision-support limit, invalid-result handling, equal-ID preservation, and the need for context before action. Included three already verified `decision-tree-rul-v1` training-prefix outputs (engines 4, 5, 12) with their cycle, row-window, and short-window warning; these are not official-test or maintenance evidence.
+- Changed files: `docs/p15_fleet_predictions.md`, `handoff_Shaheer.md`. Documentation-focused verification: `git diff --check` pending. Next: commit and open a `Refs #211` PR to `dev`; verify all five checks and no unresolved conversations, record the merge in the same PR, close #211 after the directed inspection interval, and continue P15. Do not close gate #17 until all nine tasks and shared evidence are complete.
+- Verification correction: `.git diff --check` completed successfully before this commit; the preceding `pending` wording was stale.
