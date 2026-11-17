@@ -376,3 +376,8 @@ Starter record created by repository governance on 9 November 2026. Taha should 
 - P14-S1 #70 merged through PR #393 as `d7a1013c9fe71c64d0a22ff535890898ad056dac`; all five checks passed and no review threads remained. Same-PR merge record: [comment](https://github.com/Artfever/FleetpulseAI/pull/393#issuecomment-6954791554). #70 closed with fixture evidence: [issue comment](https://github.com/Artfever/FleetpulseAI/issues/70#issuecomment-6954813814). Abdullah inspection was reported by Shaheer after the requested wait, not independently observed.
 - Published `docs/examples/p14_synthetic_history_upload.csv` with exactly the 26 raw-history columns in contract order, three valid synthetic rows, and no target/RUL. `docs/examples/README.md` records that it is invented and is not NASA observation or model-quality evidence; `docs/p14_upload_validation.md` links it. The new test parses the published artifact and checks exact headers, ordered cycles and no RUL. Focused tests 15 PASS; full suite 415 PASS; Ruff PASS; `git diff --check` PASS.
 - Changed files: published CSV/README, validation docs, `tests/test_upload_examples.py`, and both Shaheer/Taha handoffs. No PR yet. Next: commit, create a `Refs #71` PR to `dev`, wait for CI and zero unresolved conversations, then merge and close #71 after the requested inspection interval. The example is synthetic only.
+
+## P14-T1 PR opened (2026-11-17)
+
+- Commit `9f9ccd643e89a6e6990083aefbfe43224909b8ca` is in [PR #394](https://github.com/Artfever/FleetpulseAI/pull/394), targeting `dev` with `Refs #71`.
+- Local focused/full tests (15/415), Ruff, and `git diff --check` passed. Required CI and review-thread checks are pending; #71 is open until merge and evidence are complete.

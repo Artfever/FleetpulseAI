@@ -380,3 +380,9 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Published `docs/examples/p14_synthetic_history_upload.csv` with exactly `HISTORY_COLUMNS`, three ordered synthetic rows for one invented engine, and no target columns. Added provenance/use limits in `docs/examples/README.md` and linked it from `docs/p14_upload_validation.md`; added a parser-backed regression test that asserts exact header order, row/cycle validity, and absence of RUL.
 - Changed files: those three documentation/example files, `tests/test_upload_examples.py`, `handoff_Shaheer.md`, and `handoff_Taha.md`. Focused `.venv/Scripts/python.exe -m pytest tests/test_upload_examples.py -q`: 15 passed. `.venv/Scripts/python.exe -m ruff check .`: passed. Full `.venv/Scripts/python.exe -m pytest -q`: 415 passed. `git diff --check`: passed. Sample is synthetic only; no NASA data or failure/RUL labels.
 - Next: commit and open a task PR to `dev` with `Refs #71`, then verify all five CI checks and no unresolved conversations before merge. #71 remains open; the shared P14 gate still awaits its other tasks and gate evidence. Keep P10 gate #15 open until its three-person explanation criterion is verified.
+
+## P14-T1 PR opened (2026-11-17)
+
+- Implementation commit `9f9ccd643e89a6e6990083aefbfe43224909b8ca` is in [PR #394](https://github.com/Artfever/FleetpulseAI/pull/394), targeting `dev` with `Refs #71`.
+- The sample and documentation are parser-tested; local verification is 15 focused tests and 415 total tests, Ruff PASS, diff check PASS. CI and review-thread resolution are pending. #71 remains open.
+- After all five checks pass and review threads are clear, squash merge to `dev`, record merge hash in the next substantive handoff update, then close #71 with evidence after the requested interval. P14 gate #16 remains open until all nine tasks and shared acceptance evidence are complete.
