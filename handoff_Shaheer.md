@@ -882,3 +882,18 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Implementation and pre-commit handoff commit `2e3526a73867fa4917079f3388c9f3c5e5f93350` is in [PR #429](https://github.com/Artfever/FleetpulseAI/pull/429), targeting `dev` with `Refs #205`.
 - Local bundle output and checks are recorded above. GitHub checks and review-thread status are pending on PR #429; #205 remains open.
 - Next: check the latest PR head's five required CI jobs and review threads, then merge and record the merge in PR #429.
+
+## P12-S3 #205 merged and closed (2026-11-18)
+
+- PR #429 was squash-merged into `dev` as `68df2d289fa62bc4c1bd78ce82543988112c5403`; all five required checks passed on head `dbec8ebde9c54da27bb976585ac2925687203fc6`, with zero review threads. Same-PR merge record: https://github.com/Artfever/FleetpulseAI/pull/429#issuecomment-6963413595.
+- #205 was closed with Shaheer's owner-directed inspection record: https://github.com/Artfever/FleetpulseAI/issues/205#issuecomment-6963428128. It does not claim teammate review. The versioned final MLP bundle is locally available to P12-T2 #142.
+
+## P12-A1 #63 final tree refit (2026-11-18)
+
+- Active task: Abdullah-assigned P12-A1 #63 under Shaheer's authorized phase takeover, branch `feat/P12-A1-final-tree-refit`, based on current dev. P11 gate #20 is closed. P12-A2 #140 and P12-A3 #204 consume these outputs.
+- Refit exact P11 Decision Tree, Random Forest, and selected depth-4 XGBoost configs on all 20,631 cycle rows from 100 original FD001/train engines, using 96 ordered past-only features and full-history uncapped RUL targets. Refit the frozen mean constant baseline on those same 20,631 labels; observed mean 107.80786196 cycles. No official test data/labels were opened and no hyperparameter tuning was performed.
+- Ignored local outputs under `artifacts/final/tree/refit/`: Decision Tree `c33021cb9cf5931aba545b6a327d0547f14be1363cbd0c24d57f0ad923dd7bb3`; Random Forest `712a8313271565091fb3a7c9b4fce5e5d8bf2caf64b77e8da9c942a477605d81`; XGBoost `719a5553ba938fb40dd4196d081d7d07f6c7490be0dbbd4d0cf653e776a4816e`; constant mean artifact `b03747a1dcdf4ddf5d16ddee8bd87f130f78881cfb837ec3ea29db4a8faa97c9`; refit manifest payload `28f0693746892c879c92001de6d07f60daef6715269b35061bcfc55be173e89e`.
+- Save/reload sanity predictions for FD001/train engine 4 cycle 164 matched exactly for each tree model: Decision Tree 29.79411765, Random Forest 28.02408951, XGBoost 26.14615822 cycles. These are training-row serialization checks, not evaluation metrics. The mean baseline reloaded exactly.
+- Changed files: `scripts/refit_p12_tree_models.py`, `docs/p12_a1_final_tree_refit.md`, and this handoff.
+- Verification: refit script completed with 100 engines/20,631 rows/96 features and saved/reloaded all four artifacts; full `.venv/Scripts/python.exe -m pytest -q` 478 passed in 27.74s; `.venv/Scripts/python.exe -m ruff check .` passed; `git diff --check` passed.
+- Next: commit and open a `Refs #63` PR to dev, pass the five CI checks, record and merge it, wait 35 seconds, post the authorized owner-directed inspection, close #63, then proceed to #140.
