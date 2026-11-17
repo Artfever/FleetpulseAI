@@ -960,3 +960,25 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Implementation commit `0a178df` is in [PR #433](https://github.com/Artfever/FleetpulseAI/pull/433), targeting `dev` with `Refs #65`. The branch also carries handoff merge record commit `ad44e89` for prior task #204.
 - PR evidence: stage-separated registries list 4 development and 5 final entries; the selected 30-cycle/96-feature config is explicit; dropdown options and captions show the active development version and separate final version. Local final artifacts were verified, but are not deployed by this metadata. Targeted registry/UI/upload tests 17 passed; full suite 484 passed; Ruff, diff check, and local Streamlit health check passed.
 - Required GitHub CI and review-thread status are pending on PR #433. Teammate/hosted visual checks are not claimed. Next: verify required checks and threads, merge to dev when gates pass, record merge in PR #433, and then proceed to P12-T2 #142.
+
+## P12-T1 #65 merged and closed (2026-11-18)
+
+- PR #433 merged into `dev` at `b71341d369321c4bc12290e16df5de5c1e9c95b8`; final head `cf488c380c3b56f1f9ed4419a667b6b680a873ff`. All five required CI checks passed on the final run and there were zero unresolved review threads. One earlier run was canceled by the workflow concurrency rule when the subsequent synchronize run arrived; the final run passed. Merge record: https://github.com/Artfever/FleetpulseAI/pull/433#issuecomment-6964237470.
+- Issue #65 closed with owner-directed registry/selector inspection evidence: https://github.com/Artfever/FleetpulseAI/issues/65#issuecomment-6964259918. The record explicitly does not claim teammate review or hosted-page visual confirmation; browser surface was unavailable. Local AppTest and Streamlit smoke passed.
+- Next unblocked: Taha-assigned P12-T2 #142, taken over under Shaheer's authorization. Native issue dependencies are satisfied: P11 gate #20, P12-T1 #65, and P12-A3 #204 are closed. P12-T3 #253 still depends on #142 (and already-closed #204/#205).
+
+## P12-T2 #142 clean-process final bundle smoke (2026-11-18)
+
+- Active task: Taha-assigned P12-T2 #142, taken over under Shaheer's phase-wide authorization; branch `feat/P12-T2-clean-process`, based on `origin/dev` after #65 merged. Native blockers #20 and #65 are closed.
+- Added `scripts/smoke_p12_final_bundles_clean_process.py` and `docs/p12_t2_clean_process_smoke.md`. The parent process writes one byte-identical engine 4 history request (cycles 1–164) and starts five independent Python child processes for Decision Tree, Random Forest, XGBoost, constant mean, and final MLP. Each loads and checksum-validates its own final bundle, extracts the same 30-cycle/96-feature past-only vector, predicts, and exits without fitting. Local machine-readable report is ignored at `artifacts/final/p12_clean_process_smoke.json`.
+- Observed shared input SHA-256: `b8febe5807d0095ae9828f6c8731622113923312df98271e46a361853cff1e97`; source SHA-256 `963b5e22825b34d8b21c69e1aeb4af3e647050eb672ee8834ba4b5d91d2de0f8`. Separate child PIDs and predictions: Decision Tree `9080` / 29.79411765; Random Forest `22000` / 28.02408951; XGBoost `6776` / 26.14615822; mean `9044` / 107.80786196; MLP `9136` / 17.24176598 cycles. All report the same input hash and `training_or_fit_performed=false`. Report SHA-256 `b22860316c2558bcf6fe084de1c850685623e180fe12a40bddf5b8b97f421bf3`.
+- These are training-history smoke/serialization outputs, not held-out performance measures. No official test data or labels were opened. Teammate inspection/approval is not claimed.
+- Changed files: `scripts/smoke_p12_final_bundles_clean_process.py`, `docs/p12_t2_clean_process_smoke.md`, and this handoff.
+- Verification: script completed all five subprocess predictions; full `.venv/Scripts/python.exe -m pytest -q` 484 passed in 28.01s; `.venv/Scripts/ruff.exe check .` passed; `git diff --check` passed.
+- Next: commit the implementation and handoff, open a `Refs #142` PR to `dev`, pass all required CI and resolve conversations. After merge, record it in that PR and then proceed to P12-T3 #253, whose other listed prerequisites #204/#205 are closed.
+
+## P12-T2 #142 PR opened (2026-11-18)
+
+- Implementation commit `3b214f3` is in [PR #434](https://github.com/Artfever/FleetpulseAI/pull/434), targeting `dev` with `Refs #142`. The branch also carries handoff commit `c94f8a1` recording the prior #65 merge.
+- Fresh-process run passed for five final bundles using the identical engine 4/cycle 164 history (shared SHA-256 `b8febe5807d0095ae9828f6c8731622113923312df98271e46a361853cff1e97`); actual model versions and predictions are in the task doc above. Full suite 484 passed; Ruff and diff check passed. Official test data/labels were not opened.
+- Required GitHub CI and review-thread status are pending on PR #434. Teammate inspection/approval is not claimed. Next: verify required checks and conversations, merge to dev when gates pass, record the merge in PR #434, then continue to #253.
