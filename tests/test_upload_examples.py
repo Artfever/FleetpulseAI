@@ -69,8 +69,8 @@ def test_valid_csv_example_uses_the_p14_schema_without_target_columns():
     records = parse_fd001_csv_upload(contents)
 
     assert len(records) == 3
-    assert [row["cycle"] for row in records] == [1.0, 2.0, 3.0]
-    assert {row["unit_id"] for row in records} == {910001.0}
+    assert [row["cycle"] for row in records] == [1, 2, 3]
+    assert {row["unit_id"] for row in records} == {910001}
     assert "rul" not in records[0]
     assert validate_engine_history(records).is_valid
 
@@ -82,8 +82,8 @@ def test_published_example_csv_uses_the_p14_schema_without_target_columns():
 
     assert tuple(headers) == HISTORY_COLUMNS
     assert len(records) == 3
-    assert [row["cycle"] for row in records] == [1.0, 2.0, 3.0]
-    assert {row["unit_id"] for row in records} == {910001.0}
+    assert [row["cycle"] for row in records] == [1, 2, 3]
+    assert {row["unit_id"] for row in records} == {910001}
     assert validate_engine_history(records).is_valid
     assert "rul" not in records[0]
 
