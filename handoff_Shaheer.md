@@ -903,3 +903,23 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Refit implementation and pre-commit handoff commit `aebd36ff90cf51d72ea99034984f53ae6e58b437` is in [PR #430](https://github.com/Artfever/FleetpulseAI/pull/430), targeting `dev` with `Refs #63`.
 - Local results: 20,631 rows, 100 engines, exact save/reload prediction parity for Decision Tree, Random Forest, XGBoost, and mean baseline. Full suite 478 passed; Ruff and diff check passed. GitHub CI and thread status are pending; #63 remains open.
 - Next: verify the current PR head's five checks and threads, merge and record it in PR #430, wait 35 seconds, post the authorized owner-directed inspection record, close #63, then proceed to #140.
+
+## P12-A1 #63 merged and closed (2026-11-18)
+
+- PR #430 was squash-merged into `dev` as `c10a8db59dc317080196b110128e046c1553f908`; all five required checks passed on final head `ba18f79b5c859f2bca44c4cc93568f77ba78751b`, with zero review threads. Same-PR merge record: https://github.com/Artfever/FleetpulseAI/pull/430#issuecomment-6963594687.
+- #63 closed with Shaheer's owner-directed inspection record: https://github.com/Artfever/FleetpulseAI/issues/63#issuecomment-6963611223. No teammate review is claimed.
+- The four ignored final refit outputs (three tree estimators plus selected mean baseline) are available to #140/#204 with their hashes and exact load/reload evidence recorded above.
+
+## P12-A2 #140 preprocessing audit (2026-11-18)
+
+- Active task: Abdullah-assigned P12-A2 #140 under Shaheer's authorized phase takeover, branch `feat/P12-A2-preprocessing-audit`, based on current dev. Dependency #63 is merged/closed.
+- Audit result: the Decision Tree, Random Forest, XGBoost and constant baseline require no learned preprocessing; their features are deterministic 30-cycle/96-column past-only statistics. The MLP's learned preprocessing is its P12-S1 StandardScaler, already fit on all 20,631 rows across 100 original training engines and packaged with the final MLP.
+- Reproduction `.venv/Scripts/python.exe scripts/audit_p12_preprocessing.py` passed. It verified the tree refit manifest/hash and all three frozen candidate configs against P11; the selected mean baseline uses 20,631 training labels; the MLP scaler source/selection hashes and 100-engine/20,631-row fit counts match. Official test data was not opened.
+- Changed files: `scripts/audit_p12_preprocessing.py`, `docs/p12_a2_preprocessing_audit.md`, and this handoff. Ruff and `git diff --check` passed.
+- Next: commit and open a `Refs #140` PR to dev; pass five CI checks, record and merge it, wait 35 seconds, add the owner-directed inspection record, close #140, then proceed to P12-A3 #204.
+
+## P12-A2 #140 PR opened (2026-11-18)
+
+- Audit implementation and pre-commit handoff commit `d9bfb80d85d9551f12311177911506fc72855d12` is in [PR #431](https://github.com/Artfever/FleetpulseAI/pull/431), targeting `dev` with `Refs #140`.
+- Local audit script, Ruff, and diff check passed. CI and review-thread status are pending on the PR; #140 remains open.
+- Next: verify the current PR head's five checks and threads, merge and record in PR #431, wait 35 seconds, add the owner-directed inspection record, close #140, then proceed to #204.
