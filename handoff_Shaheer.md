@@ -666,3 +666,7 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Added `scripts/run_p11_a1_tree_search.py` and `docs/p11_a1_tree_search.md`. Per-engine JSON and serialized models are in new ignored folders at `artifacts/experiments/P11_A1_tree_search/`; existing P08/P09 development artifacts remain untouched. All six fresh-process reload checks matched 20/20 predictions.
 - Checks: `.venv/Scripts/python.exe -m pytest -q` — 468 passed in 31.92s; `.venv/Scripts/python.exe -m ruff check .` — passed; `git diff --check` ? passed before commit. Existing local model and table loading, all six trainers, and exact reload replay passed. Streamlit smoke not run locally; no app changes.
 - #60 remains open pending PR checks and the owner-directed inspection step after merge. Next: finish diff check, commit/open `Refs #60` PR to dev, pass required CI, resolve all conversations, record merge on that PR, wait 35 seconds per Shaheer's instruction, post the accurately labeled inspection record, and close #60 with evidence.
+## P11-A1 PR opened (2026-11-18)
+
+- Experiment implementation commit `04ecfd6` is in [PR #418](https://github.com/Artfever/FleetpulseAI/pull/418), targeting `dev` with `Refs #60`.
+- The PR contains the fixed six-run search, reproduced per-engine outputs, report, and handoff. Local suite (468), Ruff, diff check, and six 20/20 reload replays passed. Required GitHub checks and conversation resolution are pending; #60 remains open.
