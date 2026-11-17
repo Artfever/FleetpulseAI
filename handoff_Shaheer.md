@@ -572,3 +572,15 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 
 - Implementation commit `e30e1f9634ecb52c39e6d4b691afc78e5f034391` is in [PR #410](https://github.com/Artfever/FleetpulseAI/pull/410), targeting `dev` with `Refs #75`.
 - Local verification passed: focused replay tests 8, full suite 461, Ruff, diff check, and six real saved-model training-prefix replay points. Required GitHub checks and conversation resolution are pending; #75 remains open and P16 gate #18 remains open.
+
+## P16-A1 merged; P16-A2 independent-prefix verification active (2026-11-18)
+
+- P16-A1 #75 merged through [PR #410](https://github.com/Artfever/FleetpulseAI/pull/410) into `dev` at `55735dcce9cb76c74d8522cd26f96ddcad6e6c5f`; all five required checks passed and review threads were 0. Same-PR merge record: [comment](https://github.com/Artfever/FleetpulseAI/pull/410#issuecomment-6959112114). #75 closed with replay evidence [here](https://github.com/Artfever/FleetpulseAI/issues/75#issuecomment-6959133456); teammate inspection is owner-directed/reported, not independently observed.
+- Current task: Abdullah-assigned P16-A2 #152, included in Shaheer's authorized takeover. Branch `feat/P16-A2-independent-prefix-copies` starts from dev `55735dcce9cb76c74d8522cd26f96ddcad6e6c5f`; P16-A1 #75 and P07 #12 are closed. P16 gate #18 remains open.
+- The service added for #75 already cuts separately at each cutoff. Added an explicit #152 regression in `tests/test_history_service.py`: a mock predictor mutates the first cutoff input; the next cutoff still receives its own original sensor rows, and caller-owned source records remain unchanged. This confirms copied prefix boundaries without adding duplicate production logic.
+- Verification: focused history tests 9 passed; full suite 462 passed; Ruff and `git diff --check` passed. Changed files: `tests/test_history_service.py` and this handoff. Next: commit and open `Refs #152` PR to `dev`, verify required CI and resolved conversations, record merge on that PR, close #152 after evidence and directed inspection interval, then continue the remaining P16 tasks.
+
+## P16-A2 PR opened (2026-11-18)
+
+- Commit `d115f7dc86768f3ec4aee2818f765dd4d7cb3ca2` is in [PR #411](https://github.com/Artfever/FleetpulseAI/pull/411), targeting `dev` with `Refs #152`.
+- Local checks passed: focused history tests 9, full suite 462, Ruff, and diff check. Required GitHub checks and conversation resolution are pending; #152 remains open and P16 gate #18 remains open.

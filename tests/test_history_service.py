@@ -66,6 +66,32 @@ def test_replay_predicts_each_sorted_cutoff_from_only_its_engine_prefix(monkeypa
     assert all(call[1]["manifest_path"] == "test-manifest.json" for call in calls)
 
 
+def test_each_cutoff_gets_an_independent_prefix_copy(monkeypatch):
+    records = [_row(4, cycle, sensor_1=float(cycle)) for cycle in range(1, 5)]
+    seen_sensor_values = []
+
+    def mutating_predictor(prefix, **kwargs):
+        seen_sensor_values.append([row["sensor_1"] for row in prefix])
+        if len(seen_sensor_values) == 1:
+            prefix[0]["sensor_1"] = -999.0
+        cutoff = int(prefix[-1]["cycle"])
+        return RULPrediction(float(cutoff), float(cutoff), "test-model", "test-v1", cutoff, len(prefix), ())
+
+    monkeypatch.setattr(history_service, "predict_rul_with_context", mutating_predictor)
+
+    history_service.replay_engine_history(
+        records,
+        dataset_partition="FD001/train",
+        unit_id=4,
+        selected_cycle=4,
+        replay_cutoffs=[2, 4],
+        manifest_path="test-manifest.json",
+    )
+
+    assert seen_sensor_values == [[1.0, 2.0], [1.0, 2.0, 3.0, 4.0]]
+    assert [row["sensor_1"] for row in records] == [1.0, 2.0, 3.0, 4.0]
+
+
 @pytest.mark.parametrize(
     ("selected_cycle", "cutoffs", "message"),
     [
