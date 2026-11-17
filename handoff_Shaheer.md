@@ -897,3 +897,9 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Changed files: `scripts/refit_p12_tree_models.py`, `docs/p12_a1_final_tree_refit.md`, and this handoff.
 - Verification: refit script completed with 100 engines/20,631 rows/96 features and saved/reloaded all four artifacts; full `.venv/Scripts/python.exe -m pytest -q` 478 passed in 27.74s; `.venv/Scripts/python.exe -m ruff check .` passed; `git diff --check` passed.
 - Next: commit and open a `Refs #63` PR to dev, pass the five CI checks, record and merge it, wait 35 seconds, post the authorized owner-directed inspection, close #63, then proceed to #140.
+
+## P12-A1 #63 PR opened (2026-11-18)
+
+- Refit implementation and pre-commit handoff commit `aebd36ff90cf51d72ea99034984f53ae6e58b437` is in [PR #430](https://github.com/Artfever/FleetpulseAI/pull/430), targeting `dev` with `Refs #63`.
+- Local results: 20,631 rows, 100 engines, exact save/reload prediction parity for Decision Tree, Random Forest, XGBoost, and mean baseline. Full suite 478 passed; Ruff and diff check passed. GitHub CI and thread status are pending; #63 remains open.
+- Next: verify the current PR head's five checks and threads, merge and record it in PR #430, wait 35 seconds, post the authorized owner-directed inspection record, close #63, then proceed to #140.
