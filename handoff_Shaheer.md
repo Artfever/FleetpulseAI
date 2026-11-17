@@ -688,3 +688,15 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 
 - Implementation commit `bc78e70` is in [PR #419](https://github.com/Artfever/FleetpulseAI/pull/419), targeting `dev` with `Refs #137`.
 - The PR includes the three rebuilt channel ablations, exact 20-row replay checks, independent engine-4 feature check, protocol/results, and handoff. Local full suite (468), Ruff, and diff check passed. Required GitHub checks and conversation resolution are pending; #137 remains open.
+## P11-A2 #137 merged and closed (2026-11-18)
+
+- PR #419 was squash-merged into `dev` at `1cb5af737e04ec02692287e99e7fcfb5641deb3e`; all five required CI checks passed and review threads were 0. Same-PR merge record: https://github.com/Artfever/FleetpulseAI/pull/419#issuecomment-6961308271.
+- Issue #137 closed with three feature-set metrics and the owner-directed inspection record: https://github.com/Artfever/FleetpulseAI/issues/137#issuecomment-6961327336. This is not an independently observed teammate review.
+- Next active task: Abdullah-assigned P11-A3 #202 under Shaheer's takeover. Native predecessor #137 and P08/P09/P10 gates are closed. Start from dev `1cb5af737e04ec02692287e99e7fcfb5641deb3e`. Consolidate/audit the saved P11-A1 six runs and P11-A2 three runs, including weaker results and actual timings; preserve their per-run outputs and do not exceed the already declared experiment budgets.
+## P11-A3 #202 experiment archive and timing audit (2026-11-18)
+
+- Active task: Abdullah-assigned P11-A3 #202 under Shaheer's takeover, on `feat/P11-A3-experiment-run-index` from dev `1cb5af737e04ec02692287e99e7fcfb5641deb3e`. Native P11-A2 #137 and P08/P09/P10 gate dependencies are closed.
+- Audited all 12 P11-S1/A1/A2 experiments: three Decision Tree windows, six predeclared forest/boosting runs, and three feature ablations. Each retains a model and individual `results.json`, including weaker runs and actual fit/predict timing. All 12 completed; no run failed. All 240 saved validation predictions reloaded exactly (20/20 for each). Weaker A1 depth candidates and A2 sensor/settings ablations remain in their separate artifact paths.
+- Added `scripts/audit_p11_experiment_runs.py` and `docs/p11_a3_experiment_archive.md`. The script checks expected counts, source hash, model hashes, unchanged 20 engine/cutoff identities, finite timings, and exact prediction replay; generated local ignored index `artifacts/experiments/P11_A3_run_index.json` SHA-256 `097f30488ec10b10a0cd3782fb571683fb5cacdbc0ffd70f44e173abad76c29f`.
+- Checks: `.venv/Scripts/python.exe scripts/audit_p11_experiment_runs.py` — audited 12, 0 failed runs, exact reload for all; `.venv/Scripts/python.exe -m pytest -q` — 468 passed in 27.61s; `.venv/Scripts/python.exe -m ruff check .` — passed; `git diff --check` — passed. App smoke not run; no app changes.
+- #202 remains open pending PR checks and owner-directed inspection after merge. Next: commit and open `Refs #202` PR to dev, pass all five CI checks, resolve conversations, record the merge on that PR, wait 35 seconds as directed, then post the accurately labeled inspection and close with evidence.
