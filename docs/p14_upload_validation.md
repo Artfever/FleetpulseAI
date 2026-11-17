@@ -17,6 +17,14 @@ meanings. Each engine's cycles must be in ascending row order. Out-of-order
 input is rejected with a sorting instruction, and the parser does not reorder
 rows automatically.
 
+`fleetpulse.services.predict_uploaded_csv` is the prediction boundary for CSV
+histories: it completes parsing and quality validation before calling the
+shared saved-model predictor, and requires the caller to provide the selected
+engine ID. Tests verify an invalid CSV never reaches that predictor and a clean
+CSV made from the packaged engine 4 history matches the built-in service result
+exactly. This service-level check does not claim the Streamlit upload screen is
+implemented; that UI is covered by P14-T2.
+
 The upload limit is 1 MiB. CSV syntax, UTF-8 decoding, header, row width and
 numeric parsing errors use `UploadValidationError`, with stable finding codes
 and row/field details where available. Parsed values are checked by the shared
