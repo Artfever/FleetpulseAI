@@ -704,3 +704,20 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 
 - Archive audit commit `c6b0713` is in [PR #420](https://github.com/Artfever/FleetpulseAI/pull/420), targeting `dev` with `Refs #202`.
 - The PR includes the reproducible 12-run archive audit, timing/results summary, and handoff. Local audit passed (12/12 saved models, 240/240 exact prediction replays); full suite (468), Ruff, and diff check passed. Required GitHub CI and conversation resolution are pending; #202 remains open.
+## P11-A3 #202 archive audit merged and closed (2026-11-18)
+
+- PR #420 was squash-merged into `dev` at `e5b229746493b9c69f69b29d1af7cddad2cb3eca`; all five required CI checks passed and review threads were 0. Same-PR merge record: https://github.com/Artfever/FleetpulseAI/pull/420#issuecomment-6961474603.
+- Issue #202 closed with the 12-run audit result, timing comparison, weaker-run retention, and owner-directed inspection record: https://github.com/Artfever/FleetpulseAI/issues/202#issuecomment-6961491520. This is not an independently observed teammate review.
+- Next active task: Shaheer P11-S2 #138. Native predecessor #61 and P08/P09/P10 gates are closed; inspect the P10 MLP bundle, task blockers, and current trainer protocol before selecting at most three configs. Start from dev `e5b229746493b9c69f69b29d1af7cddad2cb3eca`, preserve the P10 artifact and experiment folders, and keep the MLP fit-epoch rule explicit for the P11 gate.
+## P11-S2 #138 MLP settings comparison implementation (2026-11-18)
+
+- Active task: Shaheer P11-S2 #138 on `feat/P11-S2-mlp-settings`, based on dev `e5b229746493b9c69f69b29d1af7cddad2cb3eca`. Native predecessor #61 and P08/P09/P10 gates are closed.
+- Predeclared three architectures `(32,16)`, P10 baseline `(64,32)`, `(128,64)`; all used the same 30-cycle 96-feature tables, seed 42, batch128, Adam 0.001, MSE, max20 epochs, patience3, min_delta0, CPU, saved 80/20 engine split. Best epoch was selected on validation MSE.
+- Results: `(32,16)` best epoch17/20, MSE532.509961 cycles^2, MAE15.269108, RMSE23.076177, runtime3.505s; `(64,32)` epoch12/15, MSE526.151562, MAE15.511258, RMSE22.937993, runtime2.748s; `(128,64)` epoch8/11, MSE486.915088, MAE15.080604, RMSE22.066152, runtime2.083s. Larger architecture led these three settings; scores use the same repeatedly inspected validation split and are selection evidence, not independent performance estimates.
+- Added `scripts/run_p11_s2_mlp_settings.py` and `docs/p11_s2_mlp_settings.md`. Three separate bundles and result records are under ignored `artifacts/experiments/P11_S2_mlp_settings/`. All fresh-process verifications returned 20 predictions, CPU eval mode, and max difference 0.0. Baseline run reproduced P10 best epoch12 and MSE526.1515625. Original P10 weights SHA-256 remains `a5dcf637a1178f44c837688646295250971dca5862cd934e3935293be53e6273`.
+- Checks: `.venv/Scripts/python.exe -m pytest -q` — 468 passed in 27.56s; `.venv/Scripts/python.exe -m ruff check .` — passed; `git diff --check` — passed; fresh-process MLP artifact verification — passed for all three configurations. App smoke not run; no app changes.
+- #138 remains open pending PR checks and the owner-directed inspection after merge. Next: commit, open `Refs #138` PR to dev, pass all five required CI checks, resolve threads, record merge on the PR, wait 35 seconds as directed, post the labeled inspection record, and close #138 with its evidence.
+## P11-S2 PR opened (2026-11-18)
+
+- Implementation commit `d02125a` is in [PR #421](https://github.com/Artfever/FleetpulseAI/pull/421), targeting `dev` with `Refs #138`.
+- The PR contains all three bounded MLP settings, separate CPU bundles, fresh-process exact replay evidence, the P10 baseline preservation check, report, and handoff. Local tests (468), Ruff, and diff check passed. Required GitHub CI and conversation resolution are pending; #138 remains open.
