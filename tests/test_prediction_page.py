@@ -83,7 +83,9 @@ def test_training_replay_is_labeled_by_saved_model_fit_membership(monkeypatch, t
 def test_missing_bundle_shows_error_without_fabricating_prediction(monkeypatch, tmp_path):
     page = _page(monkeypatch, tmp_path).run()
     assert "XGBoost" not in page.selectbox[1].options
+    assert "Dense MLP (CPU)" not in page.selectbox[1].options
     assert any("XGBoost is unavailable" in item.value for item in page.info)
+    assert any("Dense MLP is unavailable" in item.value for item in page.info)
     page.button[0].click().run()
     assert not page.exception
     assert not page.metric
@@ -246,3 +248,32 @@ def test_xgboost_is_available_only_with_bundle_and_uses_registered_manifest(
     assert {row["unit_id"] for row in calls[0][0]} == {2}
     assert page.metric[0].value == "28.69"
     assert any("xgboost-rul-v1" in item.value for item in page.markdown)
+
+
+def test_mlp_is_selectable_only_with_bundle_and_uses_its_saved_manifest(monkeypatch, tmp_path):
+    page = _page(monkeypatch, tmp_path)
+    artifact_dir = tmp_path / "artifacts/development/mlp"
+    artifact_dir.mkdir(parents=True)
+    manifest = artifact_dir / "mlp_training_manifest.json"
+    weights = artifact_dir / "mlp_best_state.pt"
+    manifest.write_text("test manifest", encoding="utf-8")
+    weights.write_bytes(b"test weights")
+    calls = []
+
+    def predict(history, **kwargs):
+        calls.append((history, kwargs))
+        return RULPrediction(9.25, 9.25, "dense-rul-mlp", "dense-rul-mlp-v1", 2, 2, ())
+
+    monkeypatch.setattr(services, "predict_rul_with_context", predict)
+    page.run()
+    assert "Dense MLP (CPU)" in page.selectbox[1].options
+    page.selectbox[2].select(2).run()
+    page.selectbox[3].select(2).run()
+    page.selectbox[1].select("Dense MLP (CPU)").run()
+    page.button[0].click().run()
+
+    assert not page.exception
+    assert calls[0][1]["manifest_path"] == manifest
+    assert [row["cycle"] for row in calls[0][0]] == [1, 2]
+    assert page.metric[0].value == "9.25"
+    assert any("dense-rul-mlp-v1" in item.value for item in page.markdown)

@@ -6,10 +6,10 @@ from types import SimpleNamespace
 from streamlit.testing.v1 import AppTest
 
 from fleetpulse import PROJECT_ROOT, ui
-from fleetpulse.evaluation.model_comparison import ForestValidationScores
+from fleetpulse.evaluation.model_comparison import ForestValidationScores, MLPValidationScores
 
 
-def _prepare_model_laboratory(monkeypatch, tmp_path, *, forest_scores):
+def _prepare_model_laboratory(monkeypatch, tmp_path, *, forest_scores, mlp_scores=None):
     monkeypatch.setattr(ui, "PROJECT_ROOT", tmp_path)
     fitting_rows = [{"dataset_partition": "FD001/train", "unit_id": 1}]
     validation_rows = [
@@ -63,6 +63,9 @@ def _prepare_model_laboratory(monkeypatch, tmp_path, *, forest_scores):
     monkeypatch.setattr(
         comparison_module, "load_verified_forest_scores", lambda *_a, **_k: forest_scores
     )
+    monkeypatch.setattr(
+        comparison_module, "load_verified_mlp_scores", lambda *_a, **_k: mlp_scores
+    )
 
     artifact_dir = tmp_path / "artifacts/development"
     artifact_dir.mkdir(parents=True)
@@ -114,3 +117,44 @@ def test_model_laboratory_says_forest_scores_are_unavailable_when_bundle_missing
     assert any(
         "Constant baseline and Decision Tree" == item.value for item in page.subheader
     )
+
+
+def test_model_laboratory_displays_verified_mlp_results_and_checkpoint_selection(
+    monkeypatch, tmp_path
+):
+    scores = MLPValidationScores(
+        "dense-rul-mlp",
+        "dense-rul-mlp-v1",
+        1,
+        22.5,
+        28.0,
+        12,
+        526.15,
+        (
+            {
+                "Model": "Dense MLP (dense-rul-mlp-v1)",
+                "Engine": 2,
+                "Cutoff cycle": 3,
+                "Actual RUL (cycles)": 7.0,
+                "Predicted RUL (cycles)": 10.0,
+            },
+        ),
+    )
+    _prepare_model_laboratory(monkeypatch, tmp_path, forest_scores=None, mlp_scores=scores)
+
+    page = AppTest.from_file(
+        str(PROJECT_ROOT / "app/pages/5_Model_Laboratory.py"), default_timeout=30
+    ).run()
+
+    assert not page.exception
+    assert any("selected at epoch 12" in item.value for item in page.markdown)
+    assert any("not an untouched performance estimate" in item.value for item in page.markdown)
+    tables = [
+        item.value
+        for item in page.dataframe
+        if hasattr(item.value, "columns") and "MAE (cycles)" in item.value.columns
+    ]
+    assert len(tables) == 1
+    mlp_row = tables[0].loc[tables[0]["Model"].str.startswith("Dense MLP")]
+    assert mlp_row.iloc[0]["MAE (cycles)"] == 22.5
+    assert mlp_row.iloc[0]["RMSE (cycles)"] == 28.0

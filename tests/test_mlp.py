@@ -284,3 +284,35 @@ def test_registered_mlp_rejects_scaler_architecture_mismatch(mlp_tables, tmp_pat
 
     with pytest.raises(PredictionArtifactError, match="scaler width"):
         predictor._load_model(saved["manifest_path"])
+
+
+def test_model_comparison_loads_only_verified_mlp_scores(mlp_tables, tmp_path):
+    from fleetpulse.evaluation.model_comparison import load_verified_mlp_scores
+
+    fitting, validation = mlp_tables
+    result = train_mlp(fitting, validation, max_epochs=2, patience=2, batch_size=8)
+    artifact_dir = tmp_path / "mlp"
+    artifact_dir.mkdir()
+    save_mlp_artifact(
+        result,
+        fitting,
+        validation,
+        artifact_dir,
+        fitting_dataset_sha256="b" * 64,
+        validation_dataset_sha256="c" * 64,
+    )
+
+    scores = load_verified_mlp_scores(
+        tmp_path,
+        fitting,
+        validation,
+        fitting_dataset_sha256="b" * 64,
+        validation_dataset_sha256="c" * 64,
+    )
+
+    assert scores is not None
+    assert scores.model_version == "dense-rul-mlp-v1"
+    assert scores.sample_count == len(validation.rows)
+    assert scores.best_epoch == result.best_epoch
+    assert scores.selected_validation_mse_cycles_squared == min(result.validation_losses)
+    assert len(scores.predictions) == len(validation.rows)

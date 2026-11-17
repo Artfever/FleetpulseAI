@@ -11,9 +11,11 @@ from typing import Any
 
 from fleetpulse.evaluation import (
     ValidationMetrics,
+    calculate_validation_metrics,
     score_constant_baseline,
     validate_metrics_record,
 )
+from fleetpulse.evaluation.validation import ValidationPrediction
 from fleetpulse.features.build_dataset import FeatureDataset
 from fleetpulse.models.constant_baseline import ConstantRULBaseline
 from fleetpulse.models.forest_artifact import (
@@ -22,6 +24,7 @@ from fleetpulse.models.forest_artifact import (
 from fleetpulse.models.forest_artifact import (
     verify_random_forest_artifact,
 )
+from fleetpulse.models.mlp_contract import MANIFEST_FILENAME as MLP_MANIFEST_FILENAME
 from fleetpulse.models.tree_artifact import (
     MANIFEST_FILENAME,
     METRICS_FILENAME,
@@ -54,6 +57,137 @@ class ForestValidationScores:
     sample_count: int
     mae_cycles: float
     rmse_cycles: float
+
+
+@dataclass(frozen=True)
+class MLPValidationScores:
+    """Verified saved MLP results aligned to the checked development split."""
+
+    model_name: str
+    model_version: str
+    sample_count: int
+    mae_cycles: float
+    rmse_cycles: float
+    best_epoch: int
+    selected_validation_mse_cycles_squared: float
+    predictions: tuple[dict[str, Any], ...]
+
+
+def load_verified_mlp_scores(
+    artifact_dir: str | Path,
+    fitting: FeatureDataset,
+    validation: FeatureDataset,
+    *,
+    fitting_dataset_sha256: str,
+    validation_dataset_sha256: str,
+) -> MLPValidationScores | None:
+    """Verify the optional MLP bundle and return its saved held-out results."""
+    manifest_path = Path(artifact_dir) / "mlp" / MLP_MANIFEST_FILENAME
+    if not manifest_path.exists():
+        return None
+    payload = _read_hashed_payload(manifest_path)
+    training = payload["training"]
+    _require(
+        training["fitting_dataset_sha256"] == fitting_dataset_sha256,
+        "MLP fitting table hash mismatch",
+    )
+    _require(
+        training["validation_dataset_sha256"] == validation_dataset_sha256,
+        "MLP validation table hash mismatch",
+    )
+    _require(training["source_sha256"] == fitting.source_sha256 == validation.source_sha256,
+             "MLP source hash mismatch")
+    _require(
+        training["split_manifest_sha256"]
+        == fitting.split_manifest_sha256
+        == validation.split_manifest_sha256,
+        "MLP split hash mismatch",
+    )
+
+    # Import only when an MLP bundle is present so PyTorch remains optional.
+    import sklearn
+    import torch
+
+    from fleetpulse.models.mlp_artifact import verify_mlp_artifact
+
+    _require(
+        payload["model"]["torch_version"] == torch.__version__,
+        "MLP PyTorch version does not match the runtime",
+    )
+    _require(
+        training["scikit_learn_version"] == sklearn.__version__,
+        "MLP scikit-learn version does not match the runtime",
+    )
+
+    result = verify_mlp_artifact(
+        manifest_path,
+        fitting,
+        validation,
+        fitting_dataset_sha256=fitting_dataset_sha256,
+        validation_dataset_sha256=validation_dataset_sha256,
+    )
+    evaluation = payload["evaluation"]
+    saved_rows = evaluation["predictions"]
+    _require(evaluation["partition"] == "FD001/train", "MLP partition mismatch")
+    _require(evaluation["sample_unit"] == "engine-prefix", "MLP sample unit mismatch")
+    _require(
+        evaluation["sample_count"] == len(validation.rows) == result["prediction_count"],
+        "MLP validation sample count mismatch",
+    )
+    predictions = []
+    values = []
+    for saved, row in zip(saved_rows, validation.rows, strict=True):
+        identity = (
+            row.vector.dataset_partition,
+            row.vector.unit_id,
+            row.vector.selected_cycle,
+            row.true_rul,
+        )
+        saved_identity = (
+            saved["dataset_partition"],
+            saved["unit_id"],
+            saved["cutoff_cycle"],
+            saved["true_rul_cycles"],
+        )
+        _require(saved_identity == identity, "MLP saved outputs do not align to the validation split")
+        prediction = saved["prediction_cycles"]
+        values.append(
+            ValidationPrediction(
+                dataset_partition=identity[0],
+                unit_id=identity[1],
+                cutoff_cycle=identity[2],
+                prediction=prediction,
+                true_rul=identity[3],
+            )
+        )
+        predictions.append(
+            {
+                "Model": f"Dense MLP ({payload['model']['version']})",
+                "Engine": identity[1],
+                "Cutoff cycle": identity[2],
+                "Actual RUL (cycles)": identity[3],
+                "Predicted RUL (cycles)": prediction,
+            }
+        )
+    metrics = calculate_validation_metrics(values)
+    best_epoch = training["best_epoch"]
+    validation_curve = training["validation_mse_cycles_squared"]
+    _require(
+        type(best_epoch) is int
+        and 1 <= best_epoch <= len(validation_curve)
+        and validation_curve[best_epoch - 1] == min(validation_curve),
+        "MLP selected epoch does not match its saved validation curve",
+    )
+    return MLPValidationScores(
+        model_name=payload["model"]["name"],
+        model_version=payload["model"]["version"],
+        sample_count=metrics.engine_count,
+        mae_cycles=metrics.mae,
+        rmse_cycles=metrics.rmse,
+        best_epoch=best_epoch,
+        selected_validation_mse_cycles_squared=validation_curve[best_epoch - 1],
+        predictions=tuple(predictions),
+    )
 
 
 def load_verified_forest_scores(
