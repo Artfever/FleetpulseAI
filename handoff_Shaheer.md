@@ -917,3 +917,9 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Reproduction `.venv/Scripts/python.exe scripts/audit_p12_preprocessing.py` passed. It verified the tree refit manifest/hash and all three frozen candidate configs against P11; the selected mean baseline uses 20,631 training labels; the MLP scaler source/selection hashes and 100-engine/20,631-row fit counts match. Official test data was not opened.
 - Changed files: `scripts/audit_p12_preprocessing.py`, `docs/p12_a2_preprocessing_audit.md`, and this handoff. Ruff and `git diff --check` passed.
 - Next: commit and open a `Refs #140` PR to dev; pass five CI checks, record and merge it, wait 35 seconds, add the owner-directed inspection record, close #140, then proceed to P12-A3 #204.
+
+## P12-A2 #140 PR opened (2026-11-18)
+
+- Audit implementation and pre-commit handoff commit `d9bfb80d85d9551f12311177911506fc72855d12` is in [PR #431](https://github.com/Artfever/FleetpulseAI/pull/431), targeting `dev` with `Refs #140`.
+- Local audit script, Ruff, and diff check passed. CI and review-thread status are pending on the PR; #140 remains open.
+- Next: verify the current PR head's five checks and threads, merge and record in PR #431, wait 35 seconds, add the owner-directed inspection record, close #140, then proceed to #204.
