@@ -59,6 +59,30 @@ def test_invalid_csv_headers_and_encodings_are_rejected(contents, code):
     assert error.value.code == code
 
 
+@pytest.mark.parametrize("extra_field", ["rul", "sensor1"])
+def test_target_or_guessed_column_is_rejected_with_no_guessing_instruction(extra_field):
+    headers = (*HISTORY_COLUMNS, extra_field)
+
+    with pytest.raises(UploadValidationError) as error:
+        parse_fd001_csv_upload(_csv_bytes(headers))
+
+    assert error.value.code == "invalid_header"
+    assert extra_field in str(error.value)
+    assert "Column meanings are never guessed" in str(error.value)
+    assert "remove unexpected or target fields" in str(error.value)
+
+
+def test_out_of_order_cycles_are_rejected_with_sorting_instruction():
+    contents = _csv_bytes(rows=[_record(cycle=1), _record(cycle=3), _record(cycle=2)])
+
+    with pytest.raises(UploadValidationError) as error:
+        parse_fd001_csv_upload(contents)
+
+    assert "cycle_order" in {finding.code for finding in error.value.findings}
+    assert "Sort rows in ascending cycle order for each engine" in str(error.value)
+    assert "the upload will not reorder rows" in str(error.value)
+
+
 def test_upload_byte_limit_is_enforced_before_csv_parsing():
     with pytest.raises(UploadValidationError, match="upload limit") as error:
         parse_fd001_csv_upload(b"x" * (MAX_UPLOAD_BYTES + 1))
