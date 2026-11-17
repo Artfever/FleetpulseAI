@@ -859,3 +859,26 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Implementation and pre-commit handoff commit `bf35d5c1b6b0424e539518937aff44f342b176c7` is in [PR #428](https://github.com/Artfever/FleetpulseAI/pull/428), targeting `dev` with `Refs #141`.
 - Local evidence on the PR content: fixed eight-epoch training over 20,631 complete-history rows, exact checkpoint reload; full suite 476 passed, Ruff and diff check passed. Required GitHub CI and review-thread status are pending on this PR head; #141 remains open.
 - Next: verify the latest PR head passes branch-policy, quality, unit-and-contract-tests, streamlit-smoke, and ci-gate, confirm no unresolved threads, then merge and record the merge in PR #428.
+
+## P12-S2 #141 merged and closed (2026-11-18)
+
+- PR #428 was squash-merged into `dev` as `1cadf835bdec7f5e4c9c70169e3a9d43a1bd0112`; all five required CI checks passed on final head `f5b2f514fc720d24b07ca43830ec74649fc3f6e5`, and there were zero review threads. Same-PR merge record: https://github.com/Artfever/FleetpulseAI/pull/428#issuecomment-6963155116.
+- #141 was closed with the authorized owner-directed inspection record: https://github.com/Artfever/FleetpulseAI/issues/141#issuecomment-6963170323. It does not claim teammate review.
+- Actual ignored checkpoint and manifest are locally available for P12-S3 #205. The checkpoint contains the fixed eight-epoch MLP; no validation or official test data/labels were used.
+
+## P12-S3 #205 final MLP bundle (2026-11-18)
+
+- Active task: Shaheer-assigned #205 on `feat/P12-S3-final-mlp-package`, branched from current `dev` after #141 merged/closed. The next consumer is P12-T2 #142, which will verify final bundles in a fresh process.
+- P12-S1 scaler and P12-S2 weights are local ignored artifacts; packaging must preserve their exact hashes and keep the final bundle under `artifacts/final/mlp/`, separate from all development candidates.
+- P12-S3 implementation is complete locally: `src/fleetpulse/models/final_mlp_bundle.py`, `scripts/package_p12_final_mlp.py`, `tests/test_final_mlp_bundle.py`, `docs/p12_s3_final_mlp_bundle.md`, and this handoff.
+- Actual ignored final bundle: `artifacts/final/mlp/bundle/final_mlp_state.pt` SHA-256 `fcbd5a67ca8bf307f049c7131fee08ee484f8f35e6cb4e8966aa3c45839b4650`; manifest `final_mlp_manifest.json` SHA-256 `7a3e56ff80df0ba194067956842dab1e9d4148f85f5dc1ad9378bca0b234549c`. Version `dense-rul-mlp-final-v1`; `(128,64)` ReLU, 96 ordered features, seed 42, eight epochs, 20,631 rows across 100 engines. Bundle location is separate from development artifacts.
+- The bundle loader checked hashes/schema and reloaded the CPU model. Packaged scaler mean/scale/variance exactly match P12-S1. Sanity output on FD001/train engine 4 cycle 164: 17.24176598 cycles; this is a training-row serialization/inference check, not an evaluation metric.
+- Verification: focused bundle tests 2 passed in 3.55s; full `.venv/Scripts/python.exe -m pytest -q` 478 passed in 27.71s; `.venv/Scripts/python.exe -m ruff check .` passed; `git diff --check` passed; `scripts/package_p12_final_mlp.py` completed and reloaded the bundle. No official test data or labels were opened.
+- Next: commit this implementation and handoff, open a `Refs #205` PR to `dev`, pass all five checks with no unresolved threads, record the merge in the PR, wait 35 seconds, post the authorized owner-directed inspection record, close #205, and then proceed only to remaining unblocked P12 tasks and its shared gate.
+
+
+## P12-S3 #205 PR opened (2026-11-18)
+
+- Implementation and pre-commit handoff commit `2e3526a73867fa4917079f3388c9f3c5e5f93350` is in [PR #429](https://github.com/Artfever/FleetpulseAI/pull/429), targeting `dev` with `Refs #205`.
+- Local bundle output and checks are recorded above. GitHub checks and review-thread status are pending on PR #429; #205 remains open.
+- Next: check the latest PR head's five required CI jobs and review threads, then merge and record the merge in PR #429.
