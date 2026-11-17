@@ -584,3 +584,16 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 
 - Commit `d115f7dc86768f3ec4aee2818f765dd4d7cb3ca2` is in [PR #411](https://github.com/Artfever/FleetpulseAI/pull/411), targeting `dev` with `Refs #152`.
 - Local checks passed: focused history tests 9, full suite 462, Ruff, and diff check. Required GitHub checks and conversation resolution are pending; #152 remains open and P16 gate #18 remains open.
+
+## P16-A2 merged; P16-A3 versioned replay cache active (2026-11-18)
+
+- P16-A2 #152 merged via [PR #411](https://github.com/Artfever/FleetpulseAI/pull/411) to `dev` at `cad29cec5d00890f1b350eb88f8467f17df22075`; five required checks passed and no review threads remained. Same-PR merge record: [comment](https://github.com/Artfever/FleetpulseAI/pull/411#issuecomment-6959241270). #152 was closed after the owner-directed inspection interval; P16 gate #18 remains open.
+- Current task: Abdullah-assigned P16-A3 #212, included in Shaheer's authorized takeover. Branch `feat/P16-A3-versioned-replay-cache` starts from that merged dev commit. Its blockers #152 and P07 gate #12 are closed.
+- Added bounded (128-entry LRU) prediction caching to `src/fleetpulse/services/history.py`. Each key includes dataset partition and engine identity, cutoff, canonical history-prefix hash, saved model version, feature-config hash, and fingerprints of manifest plus model bytes. Unreadable/unrecognized bundles keep the existing uncached inference/error path. Added cache-clear helper and public exports.
+- Added tests for identical-input cache hits, invalidation after history/model bytes/model version/feature config changes, and LRU eviction. Focused history tests: 15 passed. Full suite: 468 passed. Ruff and `git diff --check` passed.
+- Actual saved-model replay on packaged FD001/train engine 4 at cycles 50/100/164 returned 154.478528/135.722467/34.196078 cycles using `decision-tree-rul-v1`; an identical second replay matched all outputs and made no extra predictor calls (3 total, all on first run). These are development training-prefix examples, not official-test metrics or maintenance evidence.
+- Changed files: `src/fleetpulse/services/history.py`, `src/fleetpulse/services/__init__.py`, `tests/test_history_service.py`, and this handoff. Next: commit and open `Refs #212` PR to `dev`, verify all required CI and no unresolved conversations, record merge on that same PR, close #212 after its evidence and the owner-directed inspection interval, then continue remaining P16 tasks. Do not close gate #18 until all nine tasks and shared acceptance evidence are verified.
+## P16-A3 PR opened (2026-11-18)
+
+- Implementation commit `72aff3c` is in [PR #412](https://github.com/Artfever/FleetpulseAI/pull/412), targeting `dev` with `Refs #212`.
+- Local verification: focused history tests 15, full suite 468, Ruff, diff check, and saved-model cache replay verified. Required GitHub checks and conversation resolution are pending; #212 remains open and P16 gate #18 stays open.
