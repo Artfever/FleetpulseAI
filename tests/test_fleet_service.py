@@ -142,6 +142,46 @@ def test_fleet_prediction_retains_invalid_history_error_and_valid_peer(monkeypat
     assert predicted_ids == [4]
 
 
+def test_fleet_predictions_keep_invalid_peer_ties_and_repeated_ids_distinct(monkeypatch):
+    rows = [
+        _row(8, 1),
+        _row(4, 1),
+        _row(5, 1, sensor_1=math.nan),
+        _row(8, 2),
+        _row(4, 2),
+    ]
+    predicted_ids = []
+
+    def tied_prediction(history, **kwargs):
+        unit_id = kwargs["unit_id"]
+        predicted_ids.append(unit_id)
+        return RULPrediction(12.5, 12.5, "test-model", "test-v1", history[-1]["cycle"], len(history), ())
+
+    monkeypatch.setattr(fleet_service, "predict_rul_with_context", tied_prediction)
+
+    results = predict_fleet(
+        rows,
+        dataset_partition="FD001/train",
+        manifest_path="test-manifest.json",
+    )
+
+    # Repeated rows for one engine form one trajectory/result; equal estimates
+    # for different engines remain attached to their own dataset-qualified IDs.
+    assert [result.identity for result in results] == [
+        fleet_service.EngineIdentity("FD001/train", 4),
+        fleet_service.EngineIdentity("FD001/train", 5),
+        fleet_service.EngineIdentity("FD001/train", 8),
+    ]
+    assert len({result.identity for result in results}) == len(results)
+    assert [result.identity.unit_id for result in results if result.error is None] == [4, 8]
+    assert results[0].raw_rul_cycles == results[2].raw_rul_cycles == 12.5
+    assert results[0].observed_cycle == results[2].observed_cycle == 2
+    assert results[0].input_window_rows == results[2].input_window_rows == 2
+    assert results[1].error_codes == ("non_finite_reading",)
+    assert results[1].raw_rul_cycles is None
+    assert predicted_ids == [4, 8]
+
+
 @pytest.mark.parametrize(
     ("exception", "expected_code"),
     [
