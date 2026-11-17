@@ -733,3 +733,7 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Added `scripts/summarize_p11_complexity.py` and `docs/p11_s3_complexity_summary.md`. The script verified the same 20 unique validation keys and labels across all six candidates and recomputed all six recorded MAE/RMSE pairs. Engine 4/cycle 164 example and units/provenance are documented. No new training was run; declared P11 budgets were reached. No official test histories/answers used.
 - Checks: `.venv/Scripts/python.exe scripts/summarize_p11_complexity.py` — 6 candidates, 20/20 identities and labels matched, 6/6 metric pairs matched; `.venv/Scripts/python.exe -m pytest -q` — 468 passed in 27.35s; `.venv/Scripts/python.exe -m ruff check .` — passed; `git diff --check` — passed. App smoke not run; no app changes.
 - #203 remains open pending PR checks and owner-directed inspection after merge. Next: commit, open `Refs #203` PR to dev, pass required CI, resolve all threads, record merge on the same PR, wait 35 seconds as directed, post the labeled issue inspection record, and close with evidence.
+## P11-S3 PR opened (2026-11-18)
+
+- Complexity summary commit `e1ef097` is in [PR #422](https://github.com/Artfever/FleetpulseAI/pull/422), targeting `dev` with `Refs #203`.
+- The PR includes the six-candidate same-validation metric audit, complexity interpretation, example/provenance limits, and handoff. Local audit, full suite (468), Ruff, and diff check passed. Required GitHub CI and conversation resolution are pending; #203 remains open.
