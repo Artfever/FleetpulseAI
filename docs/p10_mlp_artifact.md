@@ -73,3 +73,20 @@ that distinction in mind. The lowest saved validation MSE is 526.1515625
 cycles² at epoch 12; that curve selected the checkpoint, so it is selection
 evidence rather than an untouched final estimate. The plot labels the split,
 sample unit/count, epoch, and loss units and repeats this caveat below the chart.
+
+## App inference does not train
+
+The app selects an available saved bundle and the prediction service loads its
+CPU weights for inference. Training remains an explicit offline operation via
+`python scripts/train_mlp.py`; app startup and prediction do not invoke
+`train_mlp`. A regression test creates a small synthetic saved checkpoint,
+replaces the trainer with a function that fails if called, opens the prediction
+page, and verifies a finite Dense MLP result without any trainer calls.
+
+The local saved development bundle was also exercised through the prediction
+page with training disabled. On the packaged FD001/train prefix for engine 4 at
+cycle 164, the page displayed 15.85 cycles and model `dense-rul-mlp-v1`; the
+service raw output is 15.8526315689 cycles using the saved 30-cycle feature
+window. The local verification observed zero training calls and no Streamlit
+page exceptions. This uses the validation-selected development bundle and is
+not official-test performance or a maintenance guarantee.
