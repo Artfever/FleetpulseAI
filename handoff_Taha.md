@@ -354,3 +354,12 @@ Starter record created by repository governance on 9 November 2026. Taha should 
 ## P10-A3 PR opened (2026-11-17)
 
 - Implementation commit `4858a8638bc83d35b95614b6004e6ab5add445f7` is pushed in [PR #391](https://github.com/Artfever/FleetpulseAI/pull/391) to `dev` with `Refs #250`. This status update is part of the same PR. CI/review-thread checks remain pending; #250 is open.
+## Owner-directed takeover: P14-A1 active (2026-11-17)
+
+- Current task is Abdullah-assigned #69, open with no native blockers; Shaheer authorized the all-teammate takeover through P16. Branch `feat/P14-A1-csv-validation` starts from dev `8fdf929904da7310125957848c605e6eb7bbb2be`.
+- P10-A3 #250 merged via PR #391 at `8fdf929904da7310125957848c605e6eb7bbb2be`, all five checks passed, zero threads, issue closed with evidence [comment](https://github.com/Artfever/FleetpulseAI/issues/250#issuecomment-6954194758). The nine P10 child issues are closed; shared gate #15 stays open for the all-three explanation criterion, which has not been independently verified.
+- #69 aligns its upload format with Taha's #71 requirement: exactly the 26 raw history column names and no RUL target. It also follows #70's synthetic fixture scope. Parser enforces UTF-8, 1 MiB cap, field set, numeric values, positive integral identifiers, finite readings and duplicate pairs without sorting rows. Focused tests 14 PASS; Ruff PASS; full suite 407 PASS; diff check PASS. PR/CI pending.
+- Next: finish full verification and open `Refs #69` PR to dev. P14 tasks #70/#71 are also open and unblocked, but remain separate issues.
+## P14-A1 PR opened (2026-11-17)
+
+- Implementation commit `a0886f5e8b8cc6764947f84c4d85bac4847863c7` is in [PR #392](https://github.com/Artfever/FleetpulseAI/pull/392) to `dev`, `Refs #69`. This status update is part of the same PR. CI/review-thread checks are pending; #69 remains open.
