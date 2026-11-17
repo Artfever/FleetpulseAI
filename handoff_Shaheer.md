@@ -737,3 +737,19 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 
 - Complexity summary commit `e1ef097` is in [PR #422](https://github.com/Artfever/FleetpulseAI/pull/422), targeting `dev` with `Refs #203`.
 - The PR includes the six-candidate same-validation metric audit, complexity interpretation, example/provenance limits, and handoff. Local audit, full suite (468), Ruff, and diff check passed. Required GitHub CI and conversation resolution are pending; #203 remains open.
+## P11-S3 #203 summary merged and closed (2026-11-18)
+
+- PR #422 was squash-merged into `dev` at `026d2eef23ddb62343d0531b83441ce0ca804f88`; all five required CI checks passed and review threads were 0. Same-PR merge record: https://github.com/Artfever/FleetpulseAI/pull/422#issuecomment-6961813484.
+- Issue #203 closed with the same-split metric audit, example/provenance and owner-directed inspection record: https://github.com/Artfever/FleetpulseAI/issues/203#issuecomment-6961831160. This is not an independently observed teammate review.
+- Next active task under Shaheer's P08–P16 takeover: Taha-assigned P11-T1 #62. Inspect its native blockers and current P08/P09/P10/P11 outputs, then verify comparable validation identities, cutoffs, targets, and metric calculations. Start from dev `026d2eef23ddb62343d0531b83441ce0ca804f88`; do not make the final model choice, which belongs to P11-T2/T3 and the gate.
+## P11-T1 #62 validation comparability audit implementation (2026-11-18)
+
+- Active task: Taha-assigned P11-T1 #62 under Shaheer's takeover, on `feat/P11-T1-score-protocol-audit`, based on dev `026d2eef23ddb62343d0531b83441ce0ca804f88`. P08/P09/P10 gates are closed; #62 has no task-level blocker.
+- Audited 20 candidate result artifacts: constant baseline, P06 tree, P08 forest, P09 XGBoost, P10 MLP, and all saved P11-S1/A1/A2/S2 candidates. Every artifact matched the same 20 dataset-qualified FD001/train validation engines, saved cutoffs, and target labels from semantic P04 split `6fd1d32f7570f70f5a9513d900fbb9d26b182359aced425e2276700c84f08d92`; all identify source `963b5e22825b34d8b21c69e1aeb4af3e647050eb672ee8834ba4b5d91d2de0f8`. Nineteen recorded MAE/RMSE pairs matched independent recomputation; P10 MLP stored per-engine predictions without aggregate metrics, so both were recomputed.
+- Added `scripts/audit_p11_validation_comparability.py` and `docs/p11_t1_validation_comparability.md`. Local ignored index SHA-256 `2ce34aa7525957026ffea8b49a6831b0eb360904f5dd9cdfc3f5e9daf33e9f0`. This verifies the shared scoring cohort only; feature sets differ by design and final model choice remains with P11-T2/T3 and the gate. No official test data/answers opened.
+- Checks: `.venv/Scripts/python.exe scripts/audit_p11_validation_comparability.py` — 20 candidates, same 20 keys/cutoffs/targets, 19/19 recorded metric pairs matched; `.venv/Scripts/python.exe -m pytest -q` — 468 passed in 27.16s; `.venv/Scripts/python.exe -m ruff check .` — passed; `git diff --check` — passed. App smoke not run; no app changes.
+- #62 remains open pending PR checks and owner-directed inspection after merge. Next: commit/open `Refs #62` PR to dev, pass required CI, resolve threads, record merge on that PR, wait 35 seconds per instruction, post the labeled inspection record, and close with evidence.
+## P11-T1 PR opened (2026-11-18)
+
+- Comparability audit commit `3d34f97` is in [PR #423](https://github.com/Artfever/FleetpulseAI/pull/423), targeting `dev` with `Refs #62`.
+- The PR contains the 20-artifact shared-validation audit, independent metric recomputation, documentation, and handoff. Local audit, full suite (468), Ruff, and diff check passed. Required GitHub checks and conversation resolution are pending; #62 remains open.
