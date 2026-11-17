@@ -410,4 +410,5 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 ## P14-S2 PR opened (2026-11-17)
 
 - Implementation commit `c571951027dab3bc33b4c64168ff4672386110a1` is in [PR #396](https://github.com/Artfever/FleetpulseAI/pull/396), targeting `dev` with `Refs #147`.
-- Local focused tests 2 PASS, full suite 420 PASS, Ruff PASS, diff check PASS. Four checks are reported by GitHub so far; unit-and-contract-tests is still running. #147 remains open pending all five checks and evidence closeout.
+- Local focused tests 2 PASS, full suite 420 PASS, Ruff PASS, diff check PASS. The first complete GitHub run failed because its parity test depended on the ignored local model bundle, absent from CI (`44134754835`). The test is now corrected to use a controlled predictor and assert identical normalized history/kwargs at the built-in and uploaded boundaries; invalid input still asserts zero predictor calls. The test does not claim a real model execution.
+- Separately reran the actual local saved Decision Tree bundle (`decision-tree-rul-v1`) against packaged FD001/train engine 4 through cycle 164: built-in and CSV paths both returned 34.19607843137255 cycles, absolute difference 0.0, 30-row feature window. This local artifact is ignored and not available in GitHub Actions. A new PR revision is pending CI.

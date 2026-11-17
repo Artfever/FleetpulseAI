@@ -8,7 +8,7 @@ import pytest
 from fleetpulse import PROJECT_ROOT
 from fleetpulse.data.input_validation import UploadValidationError
 from fleetpulse.data.loader import HISTORY_COLUMNS, load_engine_history
-from fleetpulse.services import predict_rul, predict_uploaded_csv
+from fleetpulse.services import RULPrediction, predict_uploaded_csv
 
 
 def _to_csv_bytes(records):
@@ -42,28 +42,39 @@ def test_invalid_upload_is_rejected_before_prediction_service(monkeypatch, tmp_p
     assert calls == []
 
 
-def test_clean_csv_matches_builtin_history_prediction():
-    manifest = PROJECT_ROOT / "artifacts/development/decision_tree_validation.json"
+def test_clean_csv_matches_builtin_history_prediction(monkeypatch):
+    from fleetpulse.services import uploaded_history
+
     records = load_engine_history(PROJECT_ROOT / "data/demo/fd001_training_prefixes.txt")
     engine_history = [row for row in records if row["unit_id"] == 4]
     uploaded_csv = _to_csv_bytes(engine_history)
+    calls = []
 
-    built_in = predict_rul(
+    def controlled_predictor(history, **kwargs):
+        calls.append((tuple(history), kwargs))
+        final_cycle = int(history[-1]["cycle"])
+        controlled_value = float(history[-1]["sensor_1"])
+        return RULPrediction(controlled_value, controlled_value, "test-model", "test-v1", final_cycle, 30, ())
+
+    monkeypatch.setattr(uploaded_history, "predict_rul_with_context", controlled_predictor)
+
+    built_in = controlled_predictor(
         engine_history,
         dataset_partition="FD001/train",
         unit_id=4,
-        manifest_path=manifest,
+        manifest_path="test-only",
     )
     uploaded = predict_uploaded_csv(
         uploaded_csv,
         dataset_partition="FD001/train",
         unit_id=4,
-        manifest_path=manifest,
+        manifest_path="test-only",
     )
 
-    assert uploaded.raw_rul_cycles == built_in.raw_rul_cycles
-    assert uploaded.displayed_rul_cycles == built_in.raw_rul_cycles
-    assert uploaded.model_name == "decision-tree-rul"
-    assert uploaded.model_version == "decision-tree-rul-v1"
-    assert uploaded.observed_cycle == 164
+    assert uploaded == built_in
+    assert calls[1] == calls[0]
+    assert uploaded.raw_rul_cycles == float(engine_history[-1]["sensor_1"])
+    assert uploaded.model_name == "test-model"
+    assert uploaded.model_version == "test-v1"
+    assert uploaded.observed_cycle == engine_history[-1]["cycle"]
     assert uploaded.input_window_rows == 30
