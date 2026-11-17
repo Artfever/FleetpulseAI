@@ -1,5 +1,11 @@
 # P14 CSV history validation
 
+Download the [synthetic upload example](examples/p14_synthetic_history_upload.csv)
+to see the exact accepted header and row shape. It has one invented engine
+with three ordered cycles, all 26 required fields, and no target/RUL column.
+The readings are artificial and are only for understanding the format and
+testing validation; they are not NASA observations or a model-quality example.
+
 `fleetpulse.data.input_validation.parse_fd001_csv_upload` accepts UTF-8 CSV
 bytes with a header and maps fields by name to the normalized raw FD001 history
 schema (`unit_id`, `cycle`, three operating settings and 21 sensors). All 26

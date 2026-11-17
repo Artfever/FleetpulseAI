@@ -1,14 +1,16 @@
 """Synthetic P14 uploads demonstrate valid and rejected FD001 histories."""
 
+import csv
 from pathlib import Path
 
 import pytest
 
 from fleetpulse.data.input_validation import UploadValidationError, parse_fd001_csv_upload
-from fleetpulse.data.loader import FD001LoadError, load_engine_history
+from fleetpulse.data.loader import HISTORY_COLUMNS, FD001LoadError, load_engine_history
 from fleetpulse.data.quality import validate_engine_history
 
 FIXTURES = Path(__file__).parent / "fixtures" / "p14_uploads"
+PUBLISHED_EXAMPLE = Path(__file__).parents[1] / "docs" / "examples" / "p14_synthetic_history_upload.csv"
 
 
 def _load(name: str):
@@ -71,6 +73,19 @@ def test_valid_csv_example_uses_the_p14_schema_without_target_columns():
     assert {row["unit_id"] for row in records} == {910001.0}
     assert "rul" not in records[0]
     assert validate_engine_history(records).is_valid
+
+
+def test_published_example_csv_uses_the_p14_schema_without_target_columns():
+    contents = PUBLISHED_EXAMPLE.read_bytes()
+    records = parse_fd001_csv_upload(contents)
+    headers = next(csv.reader(contents.decode("utf-8").splitlines()))
+
+    assert tuple(headers) == HISTORY_COLUMNS
+    assert len(records) == 3
+    assert [row["cycle"] for row in records] == [1.0, 2.0, 3.0]
+    assert {row["unit_id"] for row in records} == {910001.0}
+    assert validate_engine_history(records).is_valid
+    assert "rul" not in records[0]
 
 
 @pytest.mark.parametrize(
