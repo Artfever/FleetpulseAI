@@ -609,3 +609,8 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 
 - Implementation commit `3166edb` is in [PR #413](https://github.com/Artfever/FleetpulseAI/pull/413), targeting `dev` with `Refs #77`.
 - Local verification: focused prediction-page tests 10, full suite 468, Ruff, diff check, Streamlit health `200 ok`, and actual saved-model cycle-100 UI output/chart check. Required GitHub CI and conversation resolution are pending; #77 remains open and P16 gate #18 remains open.
+## P16-T1 merged; P16-T2 timeline active (2026-11-18)
+
+- P16-T1 #77 merged through [PR #413](https://github.com/Artfever/FleetpulseAI/pull/413) into `dev` at `e2a0618057d88858b802881882fc0b6e236745df`; all five checks passed and review threads were 0. Merge record: [comment on the same PR](https://github.com/Artfever/FleetpulseAI/pull/413#issuecomment-6959917614). #77 was closed with slider/chart/prefix evidence [here](https://github.com/Artfever/FleetpulseAI/issues/77#issuecomment-6959940966); inspection is Shaheer-directed/reported, not independently observed.
+- Current task: Taha-assigned P16-T2 #154, included in Shaheer's authorized takeover. P16-T1 #77 and P07 #12 are closed, and native blocked-by #77 is now satisfied. #257 depends on #154 and remains open.
+- Next implementation will add a visible timeline of earlier-cycle replay predictions, bounded by the P16 replay service and past-only cutoff contract. Tests, changed paths, and outputs will be recorded after verification.
