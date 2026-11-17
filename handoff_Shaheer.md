@@ -700,3 +700,7 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Added `scripts/audit_p11_experiment_runs.py` and `docs/p11_a3_experiment_archive.md`. The script checks expected counts, source hash, model hashes, unchanged 20 engine/cutoff identities, finite timings, and exact prediction replay; generated local ignored index `artifacts/experiments/P11_A3_run_index.json` SHA-256 `097f30488ec10b10a0cd3782fb571683fb5cacdbc0ffd70f44e173abad76c29f`.
 - Checks: `.venv/Scripts/python.exe scripts/audit_p11_experiment_runs.py` — audited 12, 0 failed runs, exact reload for all; `.venv/Scripts/python.exe -m pytest -q` — 468 passed in 27.61s; `.venv/Scripts/python.exe -m ruff check .` — passed; `git diff --check` — passed. App smoke not run; no app changes.
 - #202 remains open pending PR checks and owner-directed inspection after merge. Next: commit and open `Refs #202` PR to dev, pass all five CI checks, resolve conversations, record the merge on that PR, wait 35 seconds as directed, then post the accurately labeled inspection and close with evidence.
+## P11-A3 PR opened (2026-11-18)
+
+- Archive audit commit `c6b0713` is in [PR #420](https://github.com/Artfever/FleetpulseAI/pull/420), targeting `dev` with `Refs #202`.
+- The PR includes the reproducible 12-run archive audit, timing/results summary, and handoff. Local audit passed (12/12 saved models, 240/240 exact prediction replays); full suite (468), Ruff, and diff check passed. Required GitHub CI and conversation resolution are pending; #202 remains open.
