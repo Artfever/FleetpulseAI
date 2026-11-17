@@ -982,3 +982,25 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Implementation commit `3b214f3` is in [PR #434](https://github.com/Artfever/FleetpulseAI/pull/434), targeting `dev` with `Refs #142`. The branch also carries handoff commit `c94f8a1` recording the prior #65 merge.
 - Fresh-process run passed for five final bundles using the identical engine 4/cycle 164 history (shared SHA-256 `b8febe5807d0095ae9828f6c8731622113923312df98271e46a361853cff1e97`); actual model versions and predictions are in the task doc above. Full suite 484 passed; Ruff and diff check passed. Official test data/labels were not opened.
 - Required GitHub CI and review-thread status are pending on PR #434. Teammate inspection/approval is not claimed. Next: verify required checks and conversations, merge to dev when gates pass, record the merge in PR #434, then continue to #253.
+
+## P12-T2 #142 merged and closed (2026-11-18)
+
+- PR #434 merged into `dev` at `fee864aa23120b6b6bf8943a14fa1ab6ad4314ab`; final head `05e02e6683dd67271b5e5edd3973c8e00eddf926`. All five required checks passed and there were zero unresolved threads. Same-PR merge record: https://github.com/Artfever/FleetpulseAI/pull/434#issuecomment-6964415715.
+- Issue #142 closed with clean-process output inspection and limitations: https://github.com/Artfever/FleetpulseAI/issues/142#issuecomment-6964430912. No teammate approval is claimed. Five separate child processes used the same 164-row FD001/train engine 4 history through cycle 164 and completed without fitting.
+- Next active task: Taha-assigned P12-T3 #253, taken over under Shaheer's phase-wide authorization. Native listed prerequisites #20, #142, #204, and #205 are now closed. P12 phase gate #22 stays open until all nine task outcomes and shared evidence are complete.
+
+## P12-T3 #253 cache and artifact inventory (2026-11-18)
+
+- Active task: Taha-assigned P12-T3 #253, taken over under Shaheer's phase-wide authorization; branch `feat/P12-T3-inventory-cache`, based on `origin/dev` after #142 merged. Native dependencies #20, #142, #204, and #205 are closed.
+- Cache inspection: `src/fleetpulse/services/history.py` already keys replay results by partition, engine, cutoff, canonical history hash, model version, canonical feature-config hash, and manifest/model artifact fingerprint. Existing invalidation tests prove cache misses when history, model version, feature config, or model bytes change. The dedicated P12 final bundle loaders are not routed through this development replay cache; no cache implementation change was needed.
+- Added `docs/artifact_inventory.md` with the four local development candidates, five final bundle paths/versions and payload/weight hashes, actual ignored-file status, cache-key contract/tests, and evidence boundaries. Updated `docs/model_card.md` to distinguish P06 development validation metrics from the separate P12 full-training Decision Tree refit, while recording its actual bundle identity/config/hash and training-row smoke output.
+- Actual artifact inventory was inspected locally: all four `artifacts/development` candidate bundles and all five P12 final bundles exist in this clone. Their binary outputs are ignored and are not published or provisioned by documentation.
+- Verification: `.venv/Scripts/python.exe -m pytest tests/test_history_service.py -q` — 15 passed in 1.97s; `.venv/Scripts/ruff.exe check .` passed; `git diff --check` passed. Prior P12-T2 clean-process report independently verified all five final bundles and output hashes.
+- Human review limitation: model inventories were checked from local files and task reports; no teammate was contacted, no teammate review is claimed, and the hosted app was not visually checked in this environment. P12-T1's selector was verified locally by AppTest/Streamlit smoke.
+- Next: commit the inventory/model-card/handoff changes, open a `Refs #253` PR to `dev`, pass required CI and resolve conversations. After merge, update the same PR with its merge record and verify the P12 shared gate before closing #22.
+
+## P12-T3 #253 PR opened (2026-11-18)
+
+- Documentation commit `2b02537` is in [PR #435](https://github.com/Artfever/FleetpulseAI/pull/435), targeting `dev` with `Refs #253`. The branch also carries merge-record handoff commit `a777f80` for #142.
+- The PR updates the model card and adds a tracked inventory of four development candidates plus five local final bundles, with actual versions, paths, hashes, artifact availability boundaries, and cache behavior. Existing development cache tests passed (15 tests); Ruff and diff check passed. No cache code change was needed because version/config/model/history invalidation is already implemented and tested.
+- Required GitHub CI and review-thread status are pending on PR #435. Hosted-page visual confirmation and teammate review are not claimed. Next: verify required checks/threads, merge to dev, record the merge in PR #435, then reverify and close the shared P12 gate only if all nine tasks and its evidence are complete.
