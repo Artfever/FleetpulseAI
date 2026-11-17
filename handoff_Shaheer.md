@@ -545,3 +545,16 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 
 - Implementation commit `6a78179853ed2788ef7b46b25e62001c051122cf` is in [PR #408](https://github.com/Artfever/FleetpulseAI/pull/408), targeting `dev` with `Refs #151`.
 - Local checks passed: focused UI/page-shell tests 8, full suite 451, Ruff, diff check, and Streamlit health `200 ok`. Required GitHub checks and conversation resolution are pending; #151 remains open and P15 gate #17 stays open.
+
+## P15-T2 merged; P15-T3 planner handoff active (2026-11-18)
+
+- P15-T2 #151 merged through [PR #408](https://github.com/Artfever/FleetpulseAI/pull/408) into `dev` at `711ee506e204537720810e03fe57041cd91355cb`; all five required checks passed and review threads were 0. Same-PR merge record: [comment](https://github.com/Artfever/FleetpulseAI/pull/408#issuecomment-6958684892). #151 closed with evidence [here](https://github.com/Artfever/FleetpulseAI/issues/151#issuecomment-6958706032); inspection was owner-directed/reported, not independently observed.
+- Current task: P15-T3 #256, originally assigned to Taha and included in Shaheer's authorized takeover. Branch `feat/P15-T3-selected-fleet-state` starts from dev `711ee506e204537720810e03fe57041cd91355cb`. P07 #12, #151, and P15-A3 #210 are closed; P15 gate #17 remains open.
+- Added `ui.P15_SELECTED_FLEET_STATE_KEY`. Fleet Overview's save button stores selected dataset/engine identities, observed cycles, raw/display predictions, model/version, feature rows, warnings, and error details in Streamlit session state. Maintenance Planner reads and displays that snapshot, and states that no schedule or health percentage is produced. The state is current-session only, not durable storage.
+- Added a cross-page AppTest that selects engine 5, saves, navigates to Maintenance Planner, and verifies dataset/ID/cycle/RUL/version/warning are preserved with no health field; added an empty-selection planner test and updated page-shell expectations. Focused planner/Fleet Overview/page-shell tests: 10 passed. Full suite: 453 passed. Ruff and `git diff --check`: passed. Streamlit started and health returned HTTP 200 `ok`.
+- Changed files: `src/fleetpulse/ui.py`, `app/pages/1_Fleet_Overview.py`, `app/pages/4_Maintenance_Planner.py`, `docs/p15_fleet_predictions.md`, `tests/test_planner_selection.py`, `tests/test_page_shells.py`, and this handoff. Next: commit and open `Refs #256` PR to `dev`, verify all required CI and conversation resolution, record merge on the same PR, close #256 after evidence and the directed inspection interval, then recheck P15 gate #17. Keep the gate open until its nine tasks and shared acceptance evidence are verified.
+
+## P15-T3 PR opened (2026-11-18)
+
+- Implementation commit `0a9754100f7cbb76d82ac2d800d920e90142fe68` is in [PR #409](https://github.com/Artfever/FleetpulseAI/pull/409), targeting `dev` with `Refs #256`.
+- Local checks passed: focused planner/Fleet Overview/page-shell tests 10, full suite 453, Ruff, diff check, and Streamlit health `200 ok`. Required GitHub checks and conversation resolution are pending; #256 remains open and gate #17 stays open.

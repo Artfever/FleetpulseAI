@@ -65,3 +65,10 @@ The threshold is only a table filter/status cue. It does not define a fault,
 recommended maintenance interval, or acceptable operating limit. Rows without
 a valid estimate are marked `No estimate`; threshold-only filtering keeps them
 visible so a failed prediction is not mistaken for a low-priority engine.
+
+The Fleet Overview can save the selected engine records and their observed
+cycles, estimates, model/version, warnings, and errors in Streamlit session
+state for the Maintenance Planner page. This selection is scoped to the current
+app session; it is not stored as a durable user preference. The planner displays
+the saved snapshot as context and does not create a schedule or health
+percentage.

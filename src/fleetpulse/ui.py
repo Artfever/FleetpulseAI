@@ -6,6 +6,8 @@ from fleetpulse import PROJECT_ROOT
 from fleetpulse.data.loader import FD001LoadError, load_engine_history
 from fleetpulse.data.quality import validate_engine_history
 
+P15_SELECTED_FLEET_STATE_KEY = "fleetpulse_p15_selected_fleet"
+
 
 def render_page(title: str, description: str, missing: str, next_step: str) -> None:
     """Show a consistent page introduction and an honest empty state."""

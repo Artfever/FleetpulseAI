@@ -12,7 +12,7 @@ from fleetpulse import PROJECT_ROOT
         ("1_Fleet_Overview.py", "Fleet Overview", "Packaged FD001/train subset is not available"),
         ("2_Engine_Explorer.py", "Engine Explorer", "history data"),
         ("3_RUL_Prediction.py", "RUL Prediction", "history data"),
-        ("4_Maintenance_Planner.py", "Maintenance Planner", "schedules"),
+        ("4_Maintenance_Planner.py", "Maintenance Planner", "No fleet is selected yet"),
         ("5_Model_Laboratory.py", "Model Laboratory", "Development split audit is unavailable"),
     ],
 )
@@ -31,12 +31,15 @@ def test_page_shell_loads_without_data(filename, title, missing, tmp_path, monke
     elif title == "Fleet Overview":
         assert any(missing in message.value for message in page.warning)
         assert not page.dataframe
+    elif title == "Maintenance Planner":
+        assert any(missing in message.value for message in page.info)
+        assert not page.dataframe
     else:
         messages = page.warning if title in ("Engine Explorer", "RUL Prediction") else page.info
         assert any(missing in message.value and "not available" in message.value for message in messages)
     assert not page.metric
     assert page.caption
-    if title != "Fleet Overview":
+    if title not in ("Fleet Overview", "Maintenance Planner"):
         assert page.markdown
 
     home = app.switch_page("Home.py").run()
