@@ -90,3 +90,23 @@ service raw output is 15.8526315689 cycles using the saved 30-cycle feature
 window. The local verification observed zero training calls and no Streamlit
 page exceptions. This uses the validation-selected development bundle and is
 not official-test performance or a maintenance guarantee.
+
+## P10-A2 inference contract verification
+
+The saved bundle declares `dense-rul-mlp-v1`, schema
+`mlp-validation-checkpoint-v1`, and ordered `past-only-v1` 30-cycle features
+(96 columns). Its CPU `DenseRULRegressor` has 64/32 ReLU hidden layers and one
+output; the saved `StandardScaler` was fitted on 16,738 fitting rows. Runtime
+versions for this bundle are Python 3.12.10, PyTorch 2.15.0+cpu, and
+scikit-learn 1.9.1. Automated tests check one output per input row, reject
+wrong input width and altered feature order, confirm CPU/eval loading, and
+require finite service predictions.
+
+`python scripts/verify_mlp_artifact.py` was run as a separate process against
+the local bundle. It reported `prediction_count: 20`, `device: cpu`,
+`eval_mode: true`, best epoch 12, and maximum replay difference 0.0 cycles.
+The saved predictions are aligned to 20 FD001/train engine prefixes. As a
+separate service check, engine 4 at observed cycle 164 returned
+15.8526315689 cycles (displayed 15.85). No official test histories or answers
+were used; the checkpoint was selected using the validation split, so these
+results are development evidence rather than an untouched final estimate.
