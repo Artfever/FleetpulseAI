@@ -513,3 +513,8 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Implemented the parameterized regression in `tests/test_fleet_service.py`: three input engine orders are tested with engine 9 malformed. In every order, valid engines 3 and 4 retain controlled estimates 30.0 and 40.0, while engine 9 remains attached to `non_finite_reading` and is never predicted.
 - Verification: `.venv/Scripts/python.exe -m pytest tests/test_fleet_service.py -q` — 15 passed; `.venv/Scripts/python.exe -m pytest -q` — 448 passed; `.venv/Scripts/python.exe -m ruff check .` — passed; `git diff --check` — passed. These are controlled service fixtures, not model-quality outputs.
 - Changed files: `tests/test_fleet_service.py`, `handoff_Shaheer.md`. Next: commit and open a `Refs #210` PR to `dev`, wait for all required checks and confirm no unresolved conversations, record the merge in the same PR, close #210 with evidence, then continue remaining P15 tasks. Gate #17 stays open.
+
+## P15-A3 PR opened (2026-11-18)
+
+- Commit `8334eaec1c797b189244f0c9d17f5cb86f5443b3` is in [PR #406](https://github.com/Artfever/FleetpulseAI/pull/406), targeting `dev` with `Refs #210`.
+- Local checks passed: focused fleet tests 15, full suite 448, Ruff, and diff check. Required GitHub checks and conversation resolution are pending; #210 remains open and P15 gate #17 stays open.
