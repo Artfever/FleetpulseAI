@@ -6,6 +6,7 @@ import streamlit as st
 from streamlit.errors import StreamlitSecretNotFoundError
 
 from fleetpulse import ui
+from fleetpulse.data.input_validation import UploadValidationError, parse_fd001_csv_upload
 from fleetpulse.data.loader import FD001LoadError, load_engine_history
 from fleetpulse.data.quality import validate_engine_history
 from fleetpulse.deployment import prediction_manifest
@@ -46,6 +47,7 @@ source = st.selectbox(
         "Local FD001 training data",
         "Packaged FD001/train parity subset",
         "Illustrative synthetic example",
+        "Upload CSV",
     ],
 )
 
@@ -87,6 +89,38 @@ if source == "Local FD001 training data":
     records = ui.render_training_data()
 elif source == "Packaged FD001/train parity subset":
     records = ui.render_packaged_training_subset()
+elif source == "Upload CSV":
+    records = None
+    st.caption(
+        "Upload a headered CSV with the 26 raw-history fields. Target/RUL columns are not accepted; "
+        "files are limited to 1 MiB."
+    )
+    uploaded_file = st.file_uploader("Engine history CSV", type=["csv"])
+    if uploaded_file is not None:
+        try:
+            uploaded_records = parse_fd001_csv_upload(uploaded_file.getvalue())
+        except UploadValidationError as error:
+            st.error(f"CSV upload rejected ({error.code}): {error}")
+        else:
+            engine_ids = sorted({int(row["unit_id"]) for row in uploaded_records})
+            selected_engine = st.selectbox("Uploaded engine ID", engine_ids)
+            selected_history = [
+                row for row in uploaded_records if int(row["unit_id"]) == selected_engine
+            ]
+            st.success(
+                f"CSV passed validation. Showing engine {selected_engine} "
+                f"({len(selected_history)} of {len(uploaded_records)} rows)."
+            )
+            upload_report = validate_engine_history(selected_history)
+            for finding in upload_report.warnings:
+                st.warning(finding.message)
+            preview_rows = selected_history[:10]
+            st.caption(
+                f"Preview: first {len(preview_rows)} rows for engine {selected_engine}; "
+                "the file remains unchanged."
+            )
+            st.dataframe(preview_rows, hide_index=True, width="stretch")
+            st.info("CSV prediction is not available yet. This view validates and previews the upload.")
 else:
     partition = "illustrative/synthetic"
     st.warning(
