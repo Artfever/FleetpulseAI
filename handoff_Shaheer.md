@@ -394,3 +394,8 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - P14-T1 #71 implementation commit `9f9ccd643e89a6e6990083aefbfe43224909b8ca` merged through PR #394 to `dev` as `2e615d1c8a51f1b63be068f5b83995b9223e49f1`; all five required checks passed, review threads 0. Same-PR merge record: [comment](https://github.com/Artfever/FleetpulseAI/pull/394#issuecomment-6954972092). #71 closed with evidence [here](https://github.com/Artfever/FleetpulseAI/issues/71#issuecomment-6954993963); Abdullah inspection is Shaheer-reported, not independently observed.
 - #146 now gives actionable errors for unexpected/target columns (remove them; no column meanings are guessed) and out-of-order cycles (sort ascending per engine; upload does not reorder rows). Added parameterized parser tests and validation documentation. Focused #146/P14 upload tests: 32 passed; `.venv/Scripts/python.exe -m ruff check .`: PASS; full suite: 418 passed; `git diff --check`: PASS.
 - Changed `src/fleetpulse/data/input_validation.py`, `src/fleetpulse/data/quality.py`, `tests/test_input_validation.py`, `docs/p14_upload_validation.md`, and the two relevant handoffs. No PR yet. Next: commit and open `Refs #146` PR to `dev`; P14 parent #16 remains open pending all task and gate evidence. P10 gate #15 remains open for the unverified all-three explanation.
+
+## P14-A2 PR opened (2026-11-17)
+
+- Implementation commit `f0f37d5d82d03a7a39ee55f04cd1b3b602bdc2aa` is in [PR #395](https://github.com/Artfever/FleetpulseAI/pull/395), targeting `dev` with `Refs #146`.
+- Local focused tests (32), full suite (418), Ruff, and diff check passed. CI and review-thread checks are pending. #146 remains open until merge and evidence closeout.
