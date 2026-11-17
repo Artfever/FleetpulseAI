@@ -34,7 +34,7 @@ from fleetpulse.services import (
     PredictionInputError,
     predict_uploaded_csv,
 )
-from fleetpulse.services.history import replay_engine_history
+from fleetpulse.services.history import MAX_REPLAY_POINTS, replay_engine_history
 
 st.title("RUL Prediction")
 st.caption(
@@ -247,6 +247,15 @@ if records is not None:
     st.caption(
         "Only readings through the selected cycle are used; this is not a maintenance guarantee."
     )
+    replay_point_count = min(len(visible_history), MAX_REPLAY_POINTS)
+    if replay_point_count == 1:
+        replay_cutoffs = [cycle]
+    else:
+        last_index = len(visible_history) - 1
+        replay_cutoffs = [
+            int(visible_history[(point * last_index) // (replay_point_count - 1)]["cycle"])
+            for point in range(replay_point_count)
+        ]
     manifest = {
         "Decision Tree": tree_manifest,
         "Random Forest": forest_manifest,
@@ -266,14 +275,41 @@ if records is not None:
                 dataset_partition=partition,
                 unit_id=engine,
                 selected_cycle=cycle,
-                replay_cutoffs=[cycle],
+                replay_cutoffs=replay_cutoffs,
                 manifest_path=active_manifest,
             )
-            result = replay.points[0].prediction
+            result = replay.points[-1].prediction
     except (PredictionArtifactError, PredictionInputError) as error:
         st.warning(f"Prediction is unavailable: {error}")
         st.write("Check the saved development model bundle and the selected training history.")
     else:
+        timeline_rows = [
+            {
+                "Observed cycle": point.cutoff_cycle,
+                "Estimated remaining cycles": point.prediction.displayed_rul_cycles,
+                "Raw estimate (cycles)": point.prediction.raw_rul_cycles,
+                "Warnings": ", ".join(point.prediction.warnings),
+            }
+            for point in replay.points
+        ]
+        st.subheader("Earlier-cycle prediction timeline")
+        st.line_chart(
+            {
+                "Observed cycle": [row["Observed cycle"] for row in timeline_rows],
+                "Estimated remaining cycles": [
+                    row["Estimated remaining cycles"] for row in timeline_rows
+                ],
+            },
+            x="Observed cycle",
+            y="Estimated remaining cycles",
+            x_label="Observed cycle",
+            y_label="Estimated remaining cycles",
+        )
+        st.dataframe(timeline_rows, hide_index=True, width="stretch")
+        st.caption(
+            f"Timeline contains {len(timeline_rows)} observed cutoffs through cycle {cycle}; "
+            "later readings are excluded at every cutoff."
+        )
         st.metric("Estimated remaining cycles", f"{result.displayed_rul_cycles:.2f}")
         st.write(f"Model: {result.model_name} ({result.model_version})")
         st.caption(

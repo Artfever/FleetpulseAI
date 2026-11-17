@@ -609,3 +609,15 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 
 - Implementation commit `3166edb` is in [PR #413](https://github.com/Artfever/FleetpulseAI/pull/413), targeting `dev` with `Refs #77`.
 - Local verification: focused prediction-page tests 10, full suite 468, Ruff, diff check, Streamlit health `200 ok`, and actual saved-model cycle-100 UI output/chart check. Required GitHub CI and conversation resolution are pending; #77 remains open and P16 gate #18 remains open.
+## P16-T1 merged; P16-T2 implementation verified (2026-11-18)
+
+- P16-T1 #77 merged via [PR #413](https://github.com/Artfever/FleetpulseAI/pull/413) to `dev` at `e2a0618057d88858b802881882fc0b6e236745df`; all five checks passed and review threads were 0. Same-PR merge record: [comment](https://github.com/Artfever/FleetpulseAI/pull/413#issuecomment-6959917614). #77 closed with evidence [here](https://github.com/Artfever/FleetpulseAI/issues/77#issuecomment-6959940966); inspection is Shaheer-directed/reported, not independently observed.
+- P16-T2 #154 is active on `feat/P16-T2-replay-timeline`, based on merged dev `e2a0618057d88858b802881882fc0b6e236745df`. Native predecessor #77 and P07 #12 are closed. #257 waits on #154.
+- Updated `app/pages/3_RUL_Prediction.py` to replay a grid of up to 10 evenly spaced observed cutoffs from engine start through the selected cycle. It displays estimated-RUL-by-cycle chart and a table with displayed/raw values and warnings. Every prediction uses the replay service's independent past-only prefix; later sensor cycles stay hidden in the selected-cycle chart.
+- Updated `tests/test_prediction_page.py` to verify current and earlier cutoffs, timeline/chart synchronization, selected engine/prefix, and the 10-point bound. Focused page tests: 10 passed. Full suite: 468 passed. Ruff and `git diff --check` passed; Streamlit health: HTTP 200 `ok`.
+- Actual AppTest on packaged FD001/train engine 4 at selected cycle 100 returned `decision-tree-rul-v1`, displayed 135.72 cycles (raw 135.722467), with 10 timeline cutoffs `[1,12,23,34,45,56,67,78,89,100]`; the sensor chart ended at cycle 100. Earlier estimates varied and were not monotonic. These are development training-prefix predictions, not official-test metrics or maintenance evidence.
+- Changed files: `app/pages/3_RUL_Prediction.py`, `tests/test_prediction_page.py`, and this handoff. Next: commit and open `Refs #154` PR to `dev`, verify all five checks and resolved conversations, record the actual merge on the PR, close #154 only after evidence and the owner-directed inspection interval, then continue P16-T3 #257. Keep gate #18 open until all nine tasks and shared acceptance evidence pass.
+## P16-T2 PR opened (2026-11-18)
+
+- Implementation commit `94d9e99` is in [PR #414](https://github.com/Artfever/FleetpulseAI/pull/414), targeting `dev` with `Refs #154`.
+- Local verification passed: focused page tests 10, full suite 468, Ruff, diff check, Streamlit health `200 ok`, and actual saved-model timeline output. Required GitHub CI and conversation resolution are pending; #154 remains open and P16 gate #18 remains open.
