@@ -189,6 +189,7 @@ if records is not None:
     history = sorted(
         (row for row in records if row["unit_id"] == engine), key=lambda row: row["cycle"]
     )
+    training_usage = "unknown"
     if partition == "FD001/train":
         split_path = ui.PROJECT_ROOT / "artifacts" / "split_manifest.json"
         try:
@@ -202,6 +203,7 @@ if records is not None:
                 f"development split ({error}). Do not treat this replay as held-out evidence."
             )
         else:
+            training_usage = usage
             if usage == "fitting":
                 st.warning(
                     "In-sample illustration: according to the saved development split, this engine "
@@ -312,6 +314,15 @@ if records is not None:
         )
         st.metric("Estimated remaining cycles", f"{result.displayed_rul_cycles:.2f}")
         st.write(f"Model: {result.model_name} ({result.model_version})")
+        if partition == "FD001/train":
+            membership = {
+                "fitting": "Seen during fitting",
+                "validation": "Not seen during fitting (development validation engine)",
+                "unknown": "Unknown (not listed or split unavailable)",
+            }[training_usage]
+            st.write(f"Engine fit membership: {membership}")
+        else:
+            st.write("Engine fit membership: Not applicable to this non-FD001/train example.")
         st.caption(
             f"{partition} engine {engine}, observed cycle {result.observed_cycle}; "
             f"{result.input_window_rows} observed rows in the feature window. "

@@ -92,13 +92,33 @@ def test_training_replay_is_labeled_by_saved_model_fit_membership(monkeypatch, t
         ),
         encoding="utf-8",
     )
+    monkeypatch.setattr(
+        history_service,
+        "predict_rul_with_context",
+        lambda history, **kwargs: RULPrediction(
+            20.0,
+            20.0,
+            "decision-tree-rul",
+            "decision-tree-rul-v1",
+            int(history[-1]["cycle"]),
+            len(history),
+            (),
+        ),
+    )
 
     page.run()
     assert any("In-sample illustration" in item.value for item in page.warning)
+    assert any("Model: decision-tree-rul (decision-tree-rul-v1)" in item.value for item in page.markdown)
+    assert any("Engine fit membership: Seen during fitting" in item.value for item in page.markdown)
 
     page.selectbox[2].select(2).run()
     assert any("Held-out development engine" in item.value for item in page.info)
     assert any("does not load a final refitted model" in item.value for item in page.caption)
+    assert any(
+        "Engine fit membership: Not seen during fitting (development validation engine)"
+        in item.value
+        for item in page.markdown
+    )
 
 
 def test_missing_bundle_shows_error_without_fabricating_prediction(monkeypatch, tmp_path):
