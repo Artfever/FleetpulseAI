@@ -33,6 +33,7 @@ from fleetpulse.services import (
     PredictionArtifactError,
     PredictionInputError,
     predict_rul_with_context,
+    predict_uploaded_csv,
 )
 
 st.title("RUL Prediction")
@@ -120,7 +121,54 @@ elif source == "Upload CSV":
                 "the file remains unchanged."
             )
             st.dataframe(preview_rows, hide_index=True, width="stretch")
-            st.info("CSV prediction is not available yet. This view validates and previews the upload.")
+            st.info(
+                "Prediction uses the latest observed cycle for the selected engine and the saved "
+                "development model. The upload must follow the FD001 sensor contract; other fleets, "
+                "sensor definitions or operating conditions may be outside the model's domain. "
+                "This is a software estimate, not maintenance advice."
+            )
+            if st.button("Predict remaining cycles", key="predict_uploaded_csv"):
+                manifest = {
+                    "Decision Tree": tree_manifest,
+                    "Random Forest": forest_manifest,
+                    "XGBoost": xgboost_manifest,
+                    "Dense MLP (CPU)": mlp_manifest,
+                }[selected_model]
+                try:
+                    supplied = None
+                    if selected_model == "Decision Tree" and not manifest.exists():
+                        try:
+                            supplied = st.secrets.get("deployment_model")
+                        except StreamlitSecretNotFoundError:
+                            pass
+                    with prediction_manifest(manifest, supplied) as active_manifest:
+                        result = predict_uploaded_csv(
+                            uploaded_file.getvalue(),
+                            dataset_partition="user/upload",
+                            unit_id=selected_engine,
+                            manifest_path=active_manifest,
+                        )
+                except (PredictionArtifactError, PredictionInputError) as error:
+                    st.warning(f"Prediction is unavailable: {error}")
+                    st.write("Check the saved development model bundle and selected upload.")
+                else:
+                    st.metric("Estimated remaining cycles", f"{result.displayed_rul_cycles:.2f}")
+                    st.write(f"Model: {result.model_name} ({result.model_version})")
+                    st.caption(
+                        f"Uploaded engine {selected_engine}, observed cycle {result.observed_cycle}; "
+                        f"{result.input_window_rows} observed rows in the feature window. "
+                        f"Raw estimate: {result.raw_rul_cycles:.2f} cycles."
+                    )
+                    if "short_window" in result.warnings:
+                        st.warning(
+                            "The available feature window is short; the estimate uses fewer observations."
+                        )
+                    if "cycle_gaps" in result.warnings:
+                        st.warning("The observed history contains gaps between cycles.")
+                    if "display_clipped_at_zero" in result.warnings:
+                        st.warning(
+                            "The displayed estimate is clipped to zero; the raw estimate is shown above."
+                        )
 else:
     partition = "illustrative/synthetic"
     st.warning(
