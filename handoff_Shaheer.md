@@ -721,3 +721,19 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 
 - Implementation commit `d02125a` is in [PR #421](https://github.com/Artfever/FleetpulseAI/pull/421), targeting `dev` with `Refs #138`.
 - The PR contains all three bounded MLP settings, separate CPU bundles, fresh-process exact replay evidence, the P10 baseline preservation check, report, and handoff. Local tests (468), Ruff, and diff check passed. Required GitHub CI and conversation resolution are pending; #138 remains open.
+## P11-S2 #138 MLP comparison merged and closed (2026-11-18)
+
+- PR #421 was squash-merged into `dev` at `881e0f13e76dab327ab91ca76a38cfd79f201582`; all five required CI checks passed and review threads were 0. Same-PR merge record: https://github.com/Artfever/FleetpulseAI/pull/421#issuecomment-6961647401.
+- Issue #138 closed with best epochs, seed, MSE and fresh-process replay evidence plus the owner-directed inspection record: https://github.com/Artfever/FleetpulseAI/issues/138#issuecomment-6961665092. This is not an independently observed teammate review.
+- Next active task: Shaheer P11-S3 #203. Native predecessor #138 and P08/P09/P10 gates are closed. No additional model tuning is planned; summarize existing fixed-split results and declared experiment budgets, clearly separating observed validation selection scores from independent final evaluation. Start from dev `881e0f13e76dab327ab91ca76a38cfd79f201582`.
+## P11-S3 #203 complexity summary implementation (2026-11-18)
+
+- Active task: Shaheer P11-S3 #203 on `feat/P11-S3-complexity-summary`, based on dev `881e0f13e76dab327ab91ca76a38cfd79f201582`. Native predecessor #138 and P08/P09/P10 gates are closed.
+- Compared the mean constant baseline, P11 Decision Tree 30-cycle, best observed RF depth16, XGBoost depth4, baseline MLP (64,32), and wider MLP (128,64) on the same 20 saved FD001/train validation identities/targets. Metrics MAE/RMSE cycles: constant 65.728002/74.258987; DT 22.494270/29.449574; RF 18.360242/24.563262; XGB 15.108697/21.092113; MLP baseline 15.511258/22.937993; wide MLP 15.080604/22.066152. Added model complexity improves this observed validation split over the constant baseline; wide MLP wins MAE while XGB wins RMSE. Final production choice remains with P11 selection tasks/shared gate.
+- Added `scripts/summarize_p11_complexity.py` and `docs/p11_s3_complexity_summary.md`. The script verified the same 20 unique validation keys and labels across all six candidates and recomputed all six recorded MAE/RMSE pairs. Engine 4/cycle 164 example and units/provenance are documented. No new training was run; declared P11 budgets were reached. No official test histories/answers used.
+- Checks: `.venv/Scripts/python.exe scripts/summarize_p11_complexity.py` — 6 candidates, 20/20 identities and labels matched, 6/6 metric pairs matched; `.venv/Scripts/python.exe -m pytest -q` — 468 passed in 27.35s; `.venv/Scripts/python.exe -m ruff check .` — passed; `git diff --check` — passed. App smoke not run; no app changes.
+- #203 remains open pending PR checks and owner-directed inspection after merge. Next: commit, open `Refs #203` PR to dev, pass required CI, resolve all threads, record merge on the same PR, wait 35 seconds as directed, post the labeled issue inspection record, and close with evidence.
+## P11-S3 PR opened (2026-11-18)
+
+- Complexity summary commit `e1ef097` is in [PR #422](https://github.com/Artfever/FleetpulseAI/pull/422), targeting `dev` with `Refs #203`.
+- The PR includes the six-candidate same-validation metric audit, complexity interpretation, example/provenance limits, and handoff. Local audit, full suite (468), Ruff, and diff check passed. Required GitHub CI and conversation resolution are pending; #203 remains open.
