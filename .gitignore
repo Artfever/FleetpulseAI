@@ -31,6 +31,7 @@ data/demo/*
 artifacts/*
 !artifacts/data_quality.json
 !artifacts/split_manifest.json
+!artifacts/selection_manifest.json
 !artifacts/.gitkeep
 !artifacts/development/
 artifacts/development/*

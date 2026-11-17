@@ -13,6 +13,7 @@ from fleetpulse.evaluation.model_comparison import (
     load_verified_forest_scores,
     load_verified_mlp_scores,
 )
+from fleetpulse.evaluation.selection_manifest import load_selection_manifest
 from fleetpulse.features import FeatureConfig
 from fleetpulse.features.build_dataset import manifest_digest
 from fleetpulse.features.dataset_io import load_feature_dataset
@@ -24,6 +25,41 @@ render_page(
     "Compare saved development models using verified held-out development results.",
     "This page reports held-out development results only; it does not show official test performance.",
 )
+
+st.subheader("P11 candidate selection comparison")
+selection_path = ui.PROJECT_ROOT / "artifacts" / "selection_manifest.json"
+try:
+    selection = load_selection_manifest(selection_path)
+except (OSError, ValueError, KeyError, TypeError) as error:
+    st.info(f"Saved P11 selection comparison is unavailable: {error}")
+else:
+    st.caption(
+        "Six saved FD001/train candidate runs on the same 20 development-validation "
+        "engine prefixes. These scores were used during model selection and are not "
+        "an untouched final performance estimate."
+    )
+    selection_rows = [
+        {
+            "Selection candidate": candidate["name"],
+            "Selection MAE (cycles)": candidate["mae_cycles"],
+            "Selection RMSE (cycles)": candidate["rmse_cycles"],
+            "Configuration": candidate["configuration"],
+        }
+        for candidate in selection["candidates"]
+    ]
+    st.dataframe(selection_rows, hide_index=True, width="stretch")
+    decision = selection["decision"]
+    st.write(
+        f"Lowest MAE: {decision['lowest_mae_candidate']}; lowest RMSE: "
+        f"{decision['lowest_rmse_candidate']}. No single production model is selected "
+        "in this comparison; the team choice remains for P11-T3."
+    )
+    st.caption(
+        "The run files were independently checked against the same saved engine/cutoff "
+        "identities, targets, source, and split. The compact manifest records their "
+        "result-file hashes; the ignored run files are needed to reproduce the audit. "
+        "These results do not establish individual-engine accuracy or maintenance readiness."
+    )
 
 st.subheader("Development split audit")
 st.caption(

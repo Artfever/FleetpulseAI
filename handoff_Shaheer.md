@@ -753,3 +753,27 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 
 - Comparability audit commit `3d34f97` is in [PR #423](https://github.com/Artfever/FleetpulseAI/pull/423), targeting `dev` with `Refs #62`.
 - The PR contains the 20-artifact shared-validation audit, independent metric recomputation, documentation, and handoff. Local audit, full suite (468), Ruff, and diff check passed. Required GitHub checks and conversation resolution are pending; #62 remains open.
+
+## P11-T1 #62 merged; P11-T2 #139 implementation in progress (2026-11-18)
+
+- PR #423 was squash-merged into `dev` at `87fe480e188d627c949161cfe1dc8395be1368a5`; all five required checks passed and there were no unresolved review threads. Same-PR merge record: https://github.com/Artfever/FleetpulseAI/pull/423#issuecomment-6961985482.
+- #62 was closed after the authorized 35-second wait with the owner-directed inspection record: https://github.com/Artfever/FleetpulseAI/issues/62#issuecomment-6962003266. This is not an independently observed teammate review.
+- Active task: Taha-assigned P11-T2 #139 under Shaheer's authorized P08-P16 takeover, branch `feat/P11-T2-selection-manifest` from merged dev. Its P11-T1 dependency #62 and P08/P09/P10 gates are closed.
+- Re-ran the actual P11-T1 comparability audit (20 artifacts; all 20 identities/cutoffs/targets matched; 19 stored metric pairs matched, P10 recalculated) and P11-S3 summary (six candidates, same 20 validation prefixes, 6/6 metric pairs matched). Built `artifacts/selection_manifest.json` SHA-256 `e37a387be33205e15f884d44ab76c725059ffe12be2e9317f25a164cf9761b15` from the six selected result files after checking their artifact hashes against the P11-T1 audit.
+- Observed lowest MAE: MLP hidden `(128, 64)`, 15.080604 cycles; lowest RMSE: XGBoost depth 4, 21.092113 cycles. The manifest and Model Laboratory comparison leave the production-model choice to P11-T3 because MAE/RMSE favor different candidates and these are repeatedly used development-selection scores, not untouched final estimates.
+- Changed: `.gitignore`, `app/pages/5_Model_Laboratory.py`, `src/fleetpulse/evaluation/selection_manifest.py`, `scripts/build_p11_selection_manifest.py`, `tests/test_model_laboratory_page.py`, `tests/test_selection_manifest.py`, `docs/p11_t2_selection_manifest.md`, and the tracked compact selection manifest.
+- Focused tests: `.venv/Scripts/python.exe -m pytest tests/test_selection_manifest.py tests/test_model_laboratory_page.py -q` — 6 passed in 3.85s after fixing a missing test fixture decision field. Full suite, Ruff, diff check, and Streamlit smoke are still pending.
+- Next: run all required checks; inspect the rendered comparison and manifest; update this handoff with actual outcomes before committing; open a `Refs #139` PR to `dev`, pass all five CI checks, resolve any threads, record its merge in that same PR, wait 35 seconds, post the correctly labeled owner-directed inspection, and close #139 only after evidence is complete. Then inspect and proceed to P11-T3 #252.
+
+## P11-T2 #139 pre-commit verification (2026-11-18)
+
+- The P11-T1 comparability script reproduced 20 candidate audits with all identities/cutoffs/targets aligned; 19 stored metric pairs matched and the P10 pair was recalculated. P11-S3 reproduced its six-candidate table and all six metric pairs.
+- The selection builder matched the six referenced result-file SHA-256 values to the P11-T1 audit and wrote the tracked compact manifest at `artifacts/selection_manifest.json`, SHA-256 `e37a387be33205e15f884d44ab76c725059ffe12be2e9317f25a164cf9761b15`.
+- Tests: focused selection/Model Laboratory tests — 6 passed in 3.85s; full `.venv/Scripts/python.exe -m pytest -q` — 471 passed in 27.12s; `.venv/Scripts/python.exe -m ruff check .` — passed; `git diff --check` — passed. Streamlit smoke: `.venv/Scripts/python.exe -m streamlit run app/Home.py --server.headless true --server.port 8765`; `curl.exe -i http://127.0.0.1:8765/_stcore/health` returned HTTP 200 and `ok`, then the server was stopped.
+- Ready to commit the implementation and handoff together, then open/update the P11-T2 PR to `dev`.
+
+## P11-T2 #139 PR opened (2026-11-18)
+
+- Implementation commit `1390fb68fa72a9195af1639f688f2be96ab96a0f` is in [PR #424](https://github.com/Artfever/FleetpulseAI/pull/424), targeting `dev` with `Refs #139`.
+- The PR contains the generated six-candidate selection manifest, builder tied to the P11-T1 file-hash audit, Model Laboratory comparison, tests, report, and this handoff update. Local verification: focused tests 6 passed; full suite 471 passed; Ruff and diff check passed; Streamlit health endpoint HTTP 200.
+- Required GitHub CI checks and review-thread status are pending on the PR head. #139 remains open. After merge, record the merge in PR #424, wait 35 seconds, post the owner-directed inspection record, and close the issue only with evidence.
