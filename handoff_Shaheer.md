@@ -406,3 +406,8 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Current task P14-S2 #147 is Shaheer-owned, open, with #70 closed and no task blockers. This work is on `feat/P14-S2-upload-prediction-boundary` from updated dev.
 - Added `predict_uploaded_csv` as a validated upload-to-prediction boundary: parse/quality validation happens before the shared predictor, and one engine ID must be explicit. Invalid text-sensor fixture raised `UploadValidationError` with zero predictor calls. For packaged FD001/train engine 4 through cycle 164, actual decision-tree service output matched built-in history exactly: 34.19607843137255 cycles (difference 0.0), model `decision-tree-rul-v1`, 30-row feature window. This is a training-history software parity check, not held-out evidence.
 - Changed `src/fleetpulse/services/uploaded_history.py`, service exports, `tests/test_uploaded_history_service.py`, and P14 validation docs. Focused tests 2 passed; Ruff passed; full suite 420 passed; `git diff --check` passed. No PR yet. Next: commit, open `Refs #147` PR to `dev`, verify CI/conversations, merge, and close after the requested inspection interval. P14 parent #16 remains open.
+
+## P14-S2 PR opened (2026-11-17)
+
+- Implementation commit `c571951027dab3bc33b4c64168ff4672386110a1` is in [PR #396](https://github.com/Artfever/FleetpulseAI/pull/396), targeting `dev` with `Refs #147`.
+- Local focused tests 2 PASS, full suite 420 PASS, Ruff PASS, diff check PASS. Four checks are reported by GitHub so far; unit-and-contract-tests is still running. #147 remains open pending all five checks and evidence closeout.
