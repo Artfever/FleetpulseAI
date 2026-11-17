@@ -214,8 +214,18 @@
     "decision": {
       "lowest_mae_candidate": "MLP, hidden (128, 64)",
       "lowest_rmse_candidate": "XGBoost, depth 4",
-      "reason": "The lowest MAE and lowest RMSE belong to different candidates, and all scores come from the repeatedly used development-validation selection cohort. Keep the trade-off explicit for the team decision in P11-T3.",
-      "status": "team_choice_pending_p11_t3"
+      "reason": "XGBoost depth 4 has the lowest observed RMSE and supports the planned tree explanation work. The wider MLP has slightly lower MAE (by 0.028 cycles), so its typical absolute-error result remains explicitly retained. This is an owner-delegated choice based on the reused development-validation cohort, not a claim of teammate consensus or an untouched final comparison.",
+      "selected_artifact": {
+        "matched_p11_run_checkpoint_sha256": "20801e897816f879c0f93f56dc199c49735c3afc3a544b595247f5c62d419612",
+        "name": "xgboost-rul",
+        "path": "artifacts/development/xgboost_model.joblib",
+        "sha256": "20801e897816f879c0f93f56dc199c49735c3afc3a544b595247f5c62d419612",
+        "version": "xgboost-rul-v1"
+      },
+      "selected_candidate": "XGBoost, depth 4",
+      "selection_authority": "Shaheer explicitly delegated completion of the P08-P16 tasks on his behalf.",
+      "status": "owner_selected_candidate",
+      "tradeoff": "Choosing XGBoost favors the lowest observed RMSE and a tree model for planned SHAP work, while giving up the MLP (128, 64) candidate's 0.028-cycle MAE edge. XGBoost RMSE is 0.974 cycles lower than that MLP's RMSE. The 20-engine reused validation cohort does not establish a universally superior or maintenance-ready model."
     },
     "limitations": [
       "These are FD001/train development-validation selection results, not an untouched final estimate.",
@@ -391,5 +401,5 @@
     ],
     "validation_sample_unit": "engine-prefix"
   },
-  "sha256": "e37a387be33205e15f884d44ab76c725059ffe12be2e9317f25a164cf9761b15"
+  "sha256": "2cace1a0d781cf5fa32c054e8ba07c7f77667c032d877d5fd1ce2ccb9ed89725"
 }

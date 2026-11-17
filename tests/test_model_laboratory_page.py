@@ -95,9 +95,19 @@ def _prepare_model_laboratory(monkeypatch, tmp_path, *, forest_scores, mlp_score
         "official_test_data_opened": False,
         "candidates": selection_candidates,
         "decision": {
-            "status": "team_choice_pending_p11_t3",
+            "status": "owner_selected_candidate",
+            "selected_candidate": "Candidate 6",
+            "selection_authority": "Owner delegation",
             "lowest_mae_candidate": "Candidate 1",
             "lowest_rmse_candidate": "Candidate 6",
+            "reason": "Candidate 6 selected by RMSE.",
+            "tradeoff": "Candidate 1 has lower MAE.",
+            "selected_artifact": {
+                "name": "candidate",
+                "version": "candidate-v1",
+                "sha256": "d" * 64,
+                "matched_p11_run_checkpoint_sha256": "d" * 64,
+            },
         },
     }
     encoded = json.dumps(selection_payload, sort_keys=True, separators=(",", ":"))
@@ -136,7 +146,8 @@ def test_model_laboratory_displays_verified_forest_validation_scores(monkeypatch
     ]
     assert len(selection_tables) == 1
     assert len(selection_tables[0]) == 6
-    assert any("team choice remains for P11-T3" in item.value for item in page.markdown)
+    assert any("Owner-delegated P11-T3 selection" in item.value for item in page.markdown)
+    assert any("Candidate 6" in item.value for item in page.markdown)
     assert any(
         "Constant baseline, Decision Tree, and Random Forest" == item.value
         for item in page.subheader

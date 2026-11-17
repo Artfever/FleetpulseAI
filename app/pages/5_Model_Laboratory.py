@@ -49,10 +49,12 @@ else:
     ]
     st.dataframe(selection_rows, hide_index=True, width="stretch")
     decision = selection["decision"]
+    selected_artifact = decision["selected_artifact"]
     st.write(
+        f"Owner-delegated P11-T3 selection: **{decision['selected_candidate']}**. "
+        f"Saved model: `{selected_artifact['name']}` / `{selected_artifact['version']}`. "
         f"Lowest MAE: {decision['lowest_mae_candidate']}; lowest RMSE: "
-        f"{decision['lowest_rmse_candidate']}. No single production model is selected "
-        "in this comparison; the team choice remains for P11-T3."
+        f"{decision['lowest_rmse_candidate']}. {decision['reason']}"
     )
     st.caption(
         "The run files were independently checked against the same saved engine/cutoff "

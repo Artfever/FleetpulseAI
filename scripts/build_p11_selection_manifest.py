@@ -87,6 +87,26 @@ def build_manifest():
 
     min_mae = min(comparison, key=lambda row: row["mae_cycles"])
     min_rmse = min(comparison, key=lambda row: row["rmse_cycles"])
+    selected = next(row for row in comparison if row["name"] == "XGBoost, depth 4")
+    selected_run_model = PROJECT_ROOT / selected["result_artifact_path"].replace(
+        "results.json", "model.joblib"
+    )
+    service_model = PROJECT_ROOT / "artifacts/development/xgboost_model.joblib"
+    selected_run_model_sha256 = _sha256(selected_run_model)
+    service_model_sha256 = _sha256(service_model)
+    if selected_run_model_sha256 != service_model_sha256:
+        raise ValueError("selected P11 XGBoost checkpoint differs from the saved service candidate")
+    service_metrics = _read(PROJECT_ROOT / "artifacts/development/xgboost_metrics.json")
+    if service_metrics["model"]["version"] != "xgboost-rul-v1":
+        raise ValueError("unexpected XGBoost service model version")
+    if not math.isclose(
+        selected["mae_cycles"], service_metrics["evaluation"]["metrics"]["mae_cycles"],
+        rel_tol=0, abs_tol=1e-9,
+    ) or not math.isclose(
+        selected["rmse_cycles"], service_metrics["evaluation"]["metrics"]["rmse_cycles"],
+        rel_tol=0, abs_tol=1e-9,
+    ):
+        raise ValueError("selected P11 result metrics differ from the saved service candidate")
     return {
         "schema_version": SCHEMA_VERSION,
         "dataset_partition": "FD001/train",
@@ -98,14 +118,33 @@ def build_manifest():
         "candidate_count": len(comparison),
         "candidates": comparison,
         "decision": {
-            "status": "team_choice_pending_p11_t3",
+            "status": "owner_selected_candidate",
+            "selected_candidate": "XGBoost, depth 4",
+            "selection_authority": (
+                "Shaheer explicitly delegated completion of the P08-P16 tasks on his behalf."
+            ),
             "lowest_mae_candidate": min_mae["name"],
             "lowest_rmse_candidate": min_rmse["name"],
             "reason": (
-                "The lowest MAE and lowest RMSE belong to different candidates, and all scores "
-                "come from the repeatedly used development-validation selection cohort. Keep the "
-                "trade-off explicit for the team decision in P11-T3."
+                "XGBoost depth 4 has the lowest observed RMSE and supports the planned tree "
+                "explanation work. The wider MLP has slightly lower MAE (by 0.028 cycles), "
+                "so its typical absolute-error result remains explicitly retained. This is an "
+                "owner-delegated choice based on the reused development-validation cohort, not "
+                "a claim of teammate consensus or an untouched final comparison."
             ),
+            "tradeoff": (
+                "Choosing XGBoost favors the lowest observed RMSE and a tree model for planned "
+                "SHAP work, while giving up the MLP (128, 64) candidate's 0.028-cycle MAE edge. "
+                "XGBoost RMSE is 0.974 cycles lower than that MLP's RMSE. The 20-engine reused "
+                "validation cohort does not establish a universally superior or maintenance-ready model."
+            ),
+            "selected_artifact": {
+                "name": service_metrics["model"]["name"],
+                "version": service_metrics["model"]["version"],
+                "path": "artifacts/development/xgboost_model.joblib",
+                "sha256": service_model_sha256,
+                "matched_p11_run_checkpoint_sha256": selected_run_model_sha256,
+            },
         },
         "official_test_data_opened": False,
         "limitations": [
@@ -129,7 +168,7 @@ def main():
     print(f"common_validation_prefixes: {loaded['validation_engine_count']}/20")
     print(f"lowest_MAE: {loaded['decision']['lowest_mae_candidate']}")
     print(f"lowest_RMSE: {loaded['decision']['lowest_rmse_candidate']}")
-    print(f"production_model_choice: {loaded['decision']['status']}")
+    print(f"selected_candidate: {loaded['decision']['selected_candidate']}")
     print(f"manifest_sha256: {document['sha256']}")
     print(f"output: {OUTPUT.relative_to(PROJECT_ROOT)}")
 
