@@ -248,14 +248,49 @@ def test_registered_mlp_service_applies_saved_scaler_and_reloads_cpu_weights(mlp
         manifest_path=saved["manifest_path"],
     )
 
+    assert np.isfinite(prediction.raw_rul_cycles)
     assert prediction.raw_rul_cycles == pytest.approx(result.validation_predictions[0], abs=1e-6)
     assert MODEL_REGISTRY["dense-rul-mlp"].version == "dense-rul-mlp-v1"
     from fleetpulse.services import predictor
 
     loaded = predictor._load_model(saved["manifest_path"])[1]
+    assert loaded.n_features_in_ == len(fitting.feature_names)
+    assert saved["payload"]["training"]["feature_names"] == list(fitting.feature_names)
     assert loaded.model.training is False
     assert all(parameter.device.type == "cpu" for parameter in loaded.model.parameters())
     np.testing.assert_array_equal(loaded.scaler.mean_, result.scaler.mean_)
+
+
+def test_mlp_bundle_rejects_changed_feature_order(mlp_tables, tmp_path):
+    import hashlib
+    import json
+
+    fitting, validation = mlp_tables
+    result = train_mlp(fitting, validation, max_epochs=1, patience=1, batch_size=8)
+    saved = save_mlp_artifact(
+        result,
+        fitting,
+        validation,
+        tmp_path,
+        fitting_dataset_sha256="b" * 64,
+        validation_dataset_sha256="c" * 64,
+    )
+    document = json.loads(saved["manifest_path"].read_text(encoding="utf-8"))
+    document["payload"]["training"]["feature_names"].reverse()
+    canonical = json.dumps(
+        document["payload"], sort_keys=True, separators=(",", ":"), allow_nan=False
+    ).encode()
+    document["sha256"] = hashlib.sha256(canonical).hexdigest()
+    saved["manifest_path"].write_text(json.dumps(document), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="provenance"):
+        verify_mlp_artifact(
+            saved["manifest_path"],
+            fitting,
+            validation,
+            fitting_dataset_sha256="b" * 64,
+            validation_dataset_sha256="c" * 64,
+        )
 
 
 def test_registered_mlp_rejects_scaler_architecture_mismatch(mlp_tables, tmp_path):
