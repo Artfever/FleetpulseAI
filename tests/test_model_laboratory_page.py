@@ -1,5 +1,6 @@
 """The Model Laboratory shows only verified, split-matched forest scores."""
 
+import hashlib
 import json
 from types import SimpleNamespace
 
@@ -71,6 +72,46 @@ def _prepare_model_laboratory(monkeypatch, tmp_path, *, forest_scores, mlp_score
     artifact_dir.mkdir(parents=True)
     for name in ("fitting_features.json", "validation_features.json"):
         (artifact_dir / name).write_text(json.dumps({"sha256": "a" * 64}), encoding="utf-8")
+    selection_candidates = [
+        {
+            "name": f"Candidate {index}",
+            "configuration": {"depth": index},
+            "mae_cycles": float(index),
+            "rmse_cycles": float(10 - index),
+            "sample_count": 20,
+            "training_source_sha256": "b" * 64,
+            "split_manifest_sha256": "c" * 64,
+            "result_artifact_sha256": str(index) * 64,
+        }
+        for index in range(1, 7)
+    ]
+    selection_payload = {
+        "schema_version": "p11-selection-manifest-v1",
+        "dataset_partition": "FD001/train",
+        "validation_sample_unit": "engine-prefix",
+        "validation_engine_count": 20,
+        "training_source_sha256": "b" * 64,
+        "split_manifest_sha256": "c" * 64,
+        "official_test_data_opened": False,
+        "candidates": selection_candidates,
+        "decision": {
+            "status": "team_choice_pending_p11_t3",
+            "lowest_mae_candidate": "Candidate 1",
+            "lowest_rmse_candidate": "Candidate 6",
+        },
+    }
+    encoded = json.dumps(selection_payload, sort_keys=True, separators=(",", ":"))
+    selection_path = tmp_path / "artifacts/selection_manifest.json"
+    selection_path.parent.mkdir(parents=True, exist_ok=True)
+    selection_path.write_text(
+        json.dumps(
+            {
+                "payload": selection_payload,
+                "sha256": hashlib.sha256(encoded.encode("utf-8")).hexdigest(),
+            }
+        ),
+        encoding="utf-8",
+    )
 
 
 def test_model_laboratory_displays_verified_forest_validation_scores(monkeypatch, tmp_path):
@@ -87,6 +128,15 @@ def test_model_laboratory_displays_verified_forest_validation_scores(monkeypatch
     ).run()
 
     assert not page.exception
+    assert any(item.value == "P11 candidate selection comparison" for item in page.subheader)
+    selection_tables = [
+        item.value
+        for item in page.dataframe
+        if hasattr(item.value, "columns") and "Selection MAE (cycles)" in item.value.columns
+    ]
+    assert len(selection_tables) == 1
+    assert len(selection_tables[0]) == 6
+    assert any("team choice remains for P11-T3" in item.value for item in page.markdown)
     assert any(
         "Constant baseline, Decision Tree, and Random Forest" == item.value
         for item in page.subheader
