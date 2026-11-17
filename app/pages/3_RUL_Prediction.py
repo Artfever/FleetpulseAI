@@ -8,7 +8,7 @@ from streamlit.errors import StreamlitSecretNotFoundError
 from fleetpulse import ui
 from fleetpulse.data.input_validation import UploadValidationError, parse_fd001_csv_upload
 from fleetpulse.data.loader import FD001LoadError, load_engine_history
-from fleetpulse.data.quality import validate_engine_history
+from fleetpulse.data.quality import SENSOR_COLUMNS, validate_engine_history
 from fleetpulse.deployment import prediction_manifest
 from fleetpulse.models.forest_artifact import (
     MANIFEST_FILENAME as FOREST_MANIFEST_FILENAME,
@@ -32,9 +32,9 @@ from fleetpulse.models.xgboost_artifact import (
 from fleetpulse.services import (
     PredictionArtifactError,
     PredictionInputError,
-    predict_rul_with_context,
     predict_uploaded_csv,
 )
+from fleetpulse.services.history import replay_engine_history
 
 st.title("RUL Prediction")
 st.caption(
@@ -223,52 +223,73 @@ if records is not None:
             "Illustrative synthetic example: it is not a NASA engine, held-out evaluation, "
             "or maintenance result."
         )
-    cycle = st.selectbox("Observed cycle", [int(row["cycle"]) for row in history])
+    cycle_options = [int(row["cycle"]) for row in history]
+    cycle = st.select_slider(
+        "Observed cycle",
+        options=cycle_options,
+        value=cycle_options[-1],
+    )
+    sensor = st.selectbox("Sensor history", SENSOR_COLUMNS)
+    visible_history = [row for row in history if int(row["cycle"]) <= cycle]
+    st.line_chart(
+        {
+            "cycle": [int(row["cycle"]) for row in visible_history],
+            sensor: [float(row[sensor]) for row in visible_history],
+        },
+        x="cycle",
+        y=sensor,
+        y_label=sensor,
+        x_label="Cycle",
+    )
+    st.caption(
+        f"The {sensor} chart ends at cycle {cycle}; the prediction below uses that same observed prefix."
+    )
     st.caption(
         "Only readings through the selected cycle are used; this is not a maintenance guarantee."
     )
-    if st.button("Predict remaining cycles"):
-        prefix = [row for row in history if row["cycle"] <= cycle]
-        manifest = {
-            "Decision Tree": tree_manifest,
-            "Random Forest": forest_manifest,
-            "XGBoost": xgboost_manifest,
-            "Dense MLP (CPU)": mlp_manifest,
-        }[selected_model]
-        try:
-            supplied = None
-            if selected_model == "Decision Tree" and not manifest.exists():
-                try:
-                    supplied = st.secrets.get("deployment_model")
-                except StreamlitSecretNotFoundError:
-                    pass
-            with prediction_manifest(manifest, supplied) as active_manifest:
-                result = predict_rul_with_context(
-                    prefix,
-                    dataset_partition=partition,
-                    unit_id=engine,
-                    manifest_path=active_manifest,
-                )
-        except (PredictionArtifactError, PredictionInputError) as error:
-            st.warning(f"Prediction is unavailable: {error}")
-            st.write("Check the saved development model bundle and the selected training history.")
-        else:
-            st.metric("Estimated remaining cycles", f"{result.displayed_rul_cycles:.2f}")
-            st.write(f"Model: {result.model_name} ({result.model_version})")
-            st.caption(
-                f"{partition} engine {engine}, observed cycle {result.observed_cycle}; "
-                f"{result.input_window_rows} observed rows in the feature window. "
-                f"Raw estimate: {result.raw_rul_cycles:.2f} cycles."
+    manifest = {
+        "Decision Tree": tree_manifest,
+        "Random Forest": forest_manifest,
+        "XGBoost": xgboost_manifest,
+        "Dense MLP (CPU)": mlp_manifest,
+    }[selected_model]
+    try:
+        supplied = None
+        if selected_model == "Decision Tree" and not manifest.exists():
+            try:
+                supplied = st.secrets.get("deployment_model")
+            except StreamlitSecretNotFoundError:
+                pass
+        with prediction_manifest(manifest, supplied) as active_manifest:
+            replay = replay_engine_history(
+                records,
+                dataset_partition=partition,
+                unit_id=engine,
+                selected_cycle=cycle,
+                replay_cutoffs=[cycle],
+                manifest_path=active_manifest,
             )
-            if "short_window" in result.warnings:
-                st.warning(
-                    "The available feature window is short; the estimate uses fewer observations."
-                )
-            if "cycle_gaps" in result.warnings:
-                st.warning("The observed history contains gaps between cycles.")
-            if "display_clipped_at_zero" in result.warnings:
-                st.warning(
-                    "The displayed estimate is clipped to zero; the raw estimate is shown above."
-                )
+            result = replay.points[0].prediction
+    except (PredictionArtifactError, PredictionInputError) as error:
+        st.warning(f"Prediction is unavailable: {error}")
+        st.write("Check the saved development model bundle and the selected training history.")
+    else:
+        st.metric("Estimated remaining cycles", f"{result.displayed_rul_cycles:.2f}")
+        st.write(f"Model: {result.model_name} ({result.model_version})")
+        st.caption(
+            f"{partition} engine {engine}, observed cycle {result.observed_cycle}; "
+            f"{result.input_window_rows} observed rows in the feature window. "
+            f"Raw estimate: {result.raw_rul_cycles:.2f} cycles."
+        )
+        if "short_window" in result.warnings:
+            st.warning(
+                "The available feature window is short; the estimate uses fewer observations."
+            )
+        if "cycle_gaps" in result.warnings:
+            st.warning("The observed history contains gaps between cycles.")
+        if "display_clipped_at_zero" in result.warnings:
+            st.warning(
+                "The displayed estimate is clipped to zero; the raw estimate is shown above."
+            )
 else:
     st.write("Choose an engine once the selected history is available.")
