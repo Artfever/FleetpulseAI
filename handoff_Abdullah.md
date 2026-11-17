@@ -527,3 +527,8 @@ Publish via local gh authenticated as Abdullah-SE-bit. Do not send teammate mess
 - Local saved Decision Tree run on packaged FD001/train prefixes (`decision-tree-rul-v1`): engine 4/cycle 164 → 34.19607843137255 cycles, 30 rows; engine 5/cycle 58 → 158.16 cycles, 30 rows; engine 12/cycle 7 → 184.35714285714286 cycles, 7 rows, `short_window`. These are development outputs on training-history prefixes, not official-test metrics.
 - Next: open `Refs #149` PR to `dev`; P15-A3 #210 and P15-S1 #73 consume this output. Close after merge/evidence.
 - PR [#402](https://github.com/Artfever/FleetpulseAI/pull/402) is open to `dev` with `Refs #149`. Implementation commit `b9a67f0`; handoff commit `4fe07a6`. CI and review-thread checks are pending.
+
+## P15-A2 merged; downstream tasks active (2026-11-17)
+
+- P15-A2 #149 merged via [PR #402](https://github.com/Artfever/FleetpulseAI/pull/402) as `e9795a8bc9a6ee5e8eba4b9894cf482eb0246dcb`; all five checks passed, review threads 0, and issue evidence is [here](https://github.com/Artfever/FleetpulseAI/issues/149#issuecomment-6957248842).
+- P15-A3 #210 is now unblocked by #149. It remains open and assigned to Abdullah under Shaheer's all-task takeover. P15-S1 #73 parity checks are underway against the merged A2 output.
