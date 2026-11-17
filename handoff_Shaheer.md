@@ -498,3 +498,8 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Updated `docs/p15_fleet_predictions.md` with an operator note distinguishing model-estimated RUL from a confirmed fault, explaining the decision-support limit, invalid-result handling, equal-ID preservation, and the need for context before action. Included three already verified `decision-tree-rul-v1` training-prefix outputs (engines 4, 5, 12) with their cycle, row-window, and short-window warning; these are not official-test or maintenance evidence.
 - Changed files: `docs/p15_fleet_predictions.md`, `handoff_Shaheer.md`. Documentation-focused verification: `git diff --check` pending. Next: commit and open a `Refs #211` PR to `dev`; verify all five checks and no unresolved conversations, record the merge in the same PR, close #211 after the directed inspection interval, and continue P15. Do not close gate #17 until all nine tasks and shared evidence are complete.
 - Verification correction: `.git diff --check` completed successfully before this commit; the preceding `pending` wording was stale.
+
+## P15-S3 PR opened (2026-11-17)
+
+- Commit `ce9646f1c6cb4e23e53dd76768001e0b8ab281e1` is in [PR #405](https://github.com/Artfever/FleetpulseAI/pull/405), targeting `dev` with `Refs #211`.
+- The note documents decision-support limits and three observed training-prefix examples. `git diff --check` passed; no prose-mirroring test was added. Required CI and conversation resolution are pending; #211 remains open.
