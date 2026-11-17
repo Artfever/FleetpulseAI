@@ -670,3 +670,21 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 
 - Experiment implementation commit `04ecfd6` is in [PR #418](https://github.com/Artfever/FleetpulseAI/pull/418), targeting `dev` with `Refs #60`.
 - The PR contains the fixed six-run search, reproduced per-engine outputs, report, and handoff. Local suite (468), Ruff, diff check, and six 20/20 reload replays passed. Required GitHub checks and conversation resolution are pending; #60 remains open.
+## P11-A1 #60 merged and closed (2026-11-18)
+
+- PR #418 was squash-merged into `dev` at `a304093d5c75aedd6b7b5ba870a343a6f2434df6`; all five required CI checks passed and review threads were 0. Same-PR merge record: https://github.com/Artfever/FleetpulseAI/pull/418#issuecomment-6961122800.
+- Issue #60 closed with measured metrics and an owner-directed inspection record: https://github.com/Artfever/FleetpulseAI/issues/60#issuecomment-6961142201. This is not an independently observed teammate review.
+- Next active task: Abdullah-assigned P11-A2 #137 under Shaheer's takeover. Its native P11-A1 predecessor #60 and P08/P09/P10 gate dependencies are now closed. Start from dev `a304093d5c75aedd6b7b5ba870a343a6f2434df6`; select at most three predeclared feature configurations, keep the saved validation protocol unchanged, preserve current artifacts, and record the small example/data provenance.
+## P11-A2 #137 controlled feature ablation implementation (2026-11-18)
+
+- Active task: Abdullah-assigned P11-A2 #137 under Shaheer's takeover, branch `feat/P11-A2-feature-ablation` from dev `a304093d5c75aedd6b7b5ba870a343a6f2434df6`. Native predecessor #60 and P08/P09/P10 gates are closed.
+- Predeclared three channel sets with the same 30-cycle features and XGBoost v1, seed 42, depth 4 and all other hyperparameters fixed: 24-channel full (96 features), 21 sensors only (84), and 3 settings only (12). Rebuilt fitting and validation tables from original FD001/train using the same saved split and validation cutoffs; all 20 validation keys matched exactly across configurations. No official test inputs/answers were read.
+- Actual metrics: full MAE/RMSE 15.108697/21.092113; sensors-only 16.718605/21.282901; settings-only 53.064679/59.503527 cycles. All 3 fresh model reloads reproduced 20/20 predictions exactly. These exploratory results use the same validation set as P11-A1 model selection; they are not independent confirmation.
+- Independently rebuilt the saved validation example for FD001/train engine 4 at cutoff 164: 164 observed rows, 30 feature rows; sensors-only `sensor_2_latest=643.2`, mean 642.810667, slope 0.018959 per cycle. Saved vector matched direct prefix-only `engineer_features` output exactly. Full-history target 25 cycles was scoring-only; raw sensor units are not physically interpreted.
+- Added `scripts/run_p11_a2_feature_ablation.py` and `docs/p11_a2_feature_ablation.md`. Models, tables, and per-engine outputs are under ignored `artifacts/experiments/P11_A2_feature_ablation/`; no existing experiment/development artifacts overwritten.
+- Checks: `.venv/Scripts/python.exe -m pytest -q` — 468 passed in 31.41s; `.venv/Scripts/python.exe -m ruff check .` — passed; `git diff --check` — passed. Feature rebuild, same-key assertion, independent sample inspection, and 3/3 reload replays passed. App smoke not run; no app changes.
+- #137 remains open pending PR checks and owner-directed inspection after merge. Next: commit and open `Refs #137` PR to dev, wait for all five checks and resolved conversations, record merge on that PR, wait 35 seconds as directed, post the accurately labeled issue inspection and close only with evidence.
+## P11-A2 PR opened (2026-11-18)
+
+- Implementation commit `bc78e70` is in [PR #419](https://github.com/Artfever/FleetpulseAI/pull/419), targeting `dev` with `Refs #137`.
+- The PR includes the three rebuilt channel ablations, exact 20-row replay checks, independent engine-4 feature check, protocol/results, and handoff. Local full suite (468), Ruff, and diff check passed. Required GitHub checks and conversation resolution are pending; #137 remains open.
