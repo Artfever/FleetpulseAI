@@ -485,3 +485,8 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Added `test_fleet_predictions_keep_invalid_peer_ties_and_repeated_ids_distinct` to `tests/test_fleet_service.py`. It verifies a malformed engine retains its identity and error beside valid peers, repeated rows for one engine yield exactly one result, and tied outputs remain attached to separate dataset-qualified engine identities.
 - Verification: `.venv/Scripts/python.exe -m pytest tests/test_fleet_service.py -q` — 12 passed; `.venv/Scripts/python.exe -m pytest -q` — 445 passed; `.venv/Scripts/python.exe -m ruff check .` — passed; `git diff --check` — passed. No model-training or performance claim is made; outputs are controlled fixtures.
 - Changed files: `tests/test_fleet_service.py`, `handoff_Shaheer.md`. Next: commit and open a `Refs #150` PR to `dev`; wait for all five required CI checks and verify there are no unresolved conversations, then record the merge in the same PR, close #150 with evidence, and continue P15. Shared gate #17 stays open until all nine tasks and gate evidence are complete.
+
+## P15-S2 PR opened (2026-11-17)
+
+- Commit `14d8abcc87014c48ec293d77a5e935acae0b4fac` is in [PR #404](https://github.com/Artfever/FleetpulseAI/pull/404), targeting `dev` with `Refs #150`.
+- Local checks passed before PR creation: focused 12 tests, full suite 445 tests, Ruff, and diff check. Required GitHub checks and conversation resolution are pending; #150 remains open. P15 gate #17 stays open.
