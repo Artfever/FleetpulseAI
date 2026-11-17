@@ -50,11 +50,20 @@ else:
     st.dataframe(selection_rows, hide_index=True, width="stretch")
     decision = selection["decision"]
     selected_artifact = decision["selected_artifact"]
+    selected_config = decision["selected_configuration"]
+    mlp_refit_rule = decision["mlp_refit_rule"]
     st.write(
         f"Owner-delegated P11-T3 selection: **{decision['selected_candidate']}**. "
         f"Saved model: `{selected_artifact['name']}` / `{selected_artifact['version']}`. "
         f"Lowest MAE: {decision['lowest_mae_candidate']}; lowest RMSE: "
         f"{decision['lowest_rmse_candidate']}. {decision['reason']}"
+    )
+    st.caption(
+        f"Selected input contract: {selected_config['feature_config']['window_cycles']}-cycle "
+        f"window, {selected_config['engineered_feature_count']} past-only features across "
+        f"{len(selected_config['feature_config']['channels'])} channels. MLP (128, 64) "
+        f"alternative refit rule, if needed: exactly {mlp_refit_rule['frozen_epoch_count']} "
+        "epochs at seed 42, without reselecting epochs on this reused validation cohort."
     )
     st.caption(
         "The run files were independently checked against the same saved engine/cutoff "

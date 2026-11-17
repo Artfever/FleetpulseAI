@@ -108,6 +108,21 @@ def _prepare_model_laboratory(monkeypatch, tmp_path, *, forest_scores, mlp_score
                 "sha256": "d" * 64,
                 "matched_p11_run_checkpoint_sha256": "d" * 64,
             },
+            "selected_configuration": {
+                "seed": 42,
+                "feature_config": {
+                    "window_cycles": 30,
+                    "channels": [f"channel_{index}" for index in range(24)],
+                },
+                "engineered_feature_count": 96,
+            },
+            "mlp_refit_rule": {
+                "alternative_candidate": "Candidate 6",
+                "seed": 42,
+                "hidden_dims": [128, 64],
+                "window_cycles": 30,
+                "frozen_epoch_count": 8,
+            },
         },
     }
     encoded = json.dumps(selection_payload, sort_keys=True, separators=(",", ":"))
@@ -148,6 +163,7 @@ def test_model_laboratory_displays_verified_forest_validation_scores(monkeypatch
     assert len(selection_tables[0]) == 6
     assert any("Owner-delegated P11-T3 selection" in item.value for item in page.markdown)
     assert any("Candidate 6" in item.value for item in page.markdown)
+    assert any("exactly 8 epochs" in item.value for item in page.caption)
     assert any(
         "Constant baseline, Decision Tree, and Random Forest" == item.value
         for item in page.subheader

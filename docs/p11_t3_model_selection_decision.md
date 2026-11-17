@@ -29,6 +29,15 @@ estimators, depth 4, learning rate 0.05, subsample 0.8, column sample 0.8,
 CPU `hist` tree method, and one job. The saved P11-A1 result reports a
 machine-specific fit-and-predict time of 1.373 seconds.
 
+The selected configuration freezes the 30-cycle, 24-channel
+`past-only-v1` input window (96 engineered features). P11-S1's 30-cycle window
+had the lowest observed Decision Tree MAE/RMSE among the three window lengths;
+P11-A2's full-channel candidate (MAE/RMSE 15.108697/21.092113 cycles)
+outperformed its sensors-only (16.718605/21.282901) and settings-only
+(53.064679/59.503527) ablations on the same validation prefixes. These upstream
+results support the window and feature choice; they are not separate untouched
+evaluations.
+
 The selected model version is `xgboost-rul-v1`. The saved P11-A1 depth-4
 checkpoint SHA-256 is
 `20801e897816f879c0f93f56dc199c49735c3afc3a544b595247f5c62d419612` and
@@ -45,6 +54,13 @@ in favor of the best observed RMSE and tree explainability. The stronger MLP
 MAE result is retained in the manifest and Model Laboratory. The MLP's saved
 run used seed 42, batch size 128, learning rate 0.001, CPU, and selected epoch
 8 of 11 trained; its machine-specific runtime was 2.083 seconds.
+
+Freeze the alternative MLP refit rule at exactly 8 epochs for hidden widths
+`(128, 64)`, seed 42, the same 30-cycle/96-feature input, and no second early
+stopping/epoch selection on the reused validation cohort. Epoch 8 was the
+minimum saved validation MSE in the P11-S2 run (486.915088 cycles²), selected
+from 11 epochs trained under patience 3. This rule is recorded even though
+XGBoost is the selected production candidate.
 
 This choice is a candidate configuration decision from a repeatedly used
 20-engine development-validation selection cohort. It is not an untouched

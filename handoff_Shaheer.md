@@ -799,3 +799,20 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Decision and Model Laboratory update commit `c19c4f2f214d060693826b92e0c9fc966764f845` is in [PR #425](https://github.com/Artfever/FleetpulseAI/pull/425), targeting `dev` with `Refs #252`.
 - PR evidence includes the owner-delegated XGBoost depth-4 choice, the lower MLP MAE trade-off, model version/hash equality, 20/20 service replay, and the P11-A3 12-run reload audit. No teammate consensus is claimed.
 - Local checks: focused tests 7 passed; full suite 472 passed; Ruff and diff check passed; Streamlit health endpoint HTTP 200. Required GitHub CI and thread status are pending on the PR head; #252 remains open.
+
+## P11-T3 #252 merged; P11 shared gate #20 update in progress (2026-11-18)
+
+- PR #425 was squash-merged into `dev` at `b2d77972d1a939faf38185e20fb948d21c20911b`; all five required CI checks passed and review threads were 0. Same-PR merge record: https://github.com/Artfever/FleetpulseAI/pull/425#issuecomment-6962474595.
+- #252 was closed with an owner-directed inspection record after the requested 35-second wait: https://github.com/Artfever/FleetpulseAI/issues/252#issuecomment-6962492187. This is not teammate consensus.
+- Audited all nine P11 child issues; #60, #61, #62, #137, #138, #139, #202, #203, and #252 are CLOSED. Parent gate #20 remains open while its shared evidence is consolidated.
+- Gate decision: XGBoost depth 4, seed 42, 100 estimators, max depth 4, learning rate 0.05, subsample/colsample 0.8, CPU hist, one job; version `xgboost-rul-v1`; 30-cycle `past-only-v1` window with all 24 channels (96 engineered features). The selected checkpoint SHA-256 matches the P09 service model exactly. Its MAE/RMSE are 15.108697/21.092113 cycles; MLP (128,64) has 0.027907-cycle lower MAE but 0.974039-cycle higher RMSE. No claim of teammate consensus; no official-test evidence.
+- Frozen alternative MLP refit rule: hidden `(128,64)`, seed 42, same 30-cycle/96-feature input, exactly 8 epochs and no second epoch selection on the reused validation cohort. This was the minimum validation MSE (486.915088 cycles²) in the 11-epoch P11-S2 run under patience 3.
+- `artifacts/selection_manifest.json` now includes the selected configuration and frozen MLP refit rule; canonical payload SHA-256 `4cbda49f05eb928ebacc0a673de175dfae24b0017f7798db62a37cda8462fa2d`. `docs/p11_t3_model_selection_decision.md` contains the merged decision and gate evidence; Model Laboratory displays the selected config and MLP refit rule.
+- Verification after the gate additions: manifest builder matched all six candidates against the P11-T1 run audit; focused tests 7 passed in 3.84s; full suite 472 passed in 27.28s; Ruff and diff check passed; Streamlit health smoke returned HTTP 200 (`ok`). The P11-A3 run audit confirmed 12/12 saved models replay 20/20 predictions exactly; XGBoost service replay returned 20/20 exact (max delta 0.0 cycles).
+- Active branch `feat/P11-gate-frozen-configuration` from dev. Next: commit gate evidence, open a `Refs #20` PR to dev, pass the five required checks and resolve threads, record the merge in that PR, wait 35 seconds, post an accurately labeled owner-directed gate inspection, close #20, then inspect and proceed with the next unblocked P12 task.
+
+## P11 shared gate #20 PR opened (2026-11-18)
+
+- Gate evidence commit `742c6f98b4f2789e2e9087e14c346851246f732d` is in [PR #426](https://github.com/Artfever/FleetpulseAI/pull/426), targeting `dev` with `Refs #20`.
+- The PR packages the selected 30-cycle/all-channel XGBoost configuration, P11-T3 owner-delegated rationale and model hash, exact eight-epoch MLP alternative refit rule, consolidated evidence, Model Laboratory details, and this handoff update. All nine P11 child issues are closed; parent gate #20 remains open pending this PR.
+- Local checks: focused tests 7 passed; full suite 472 passed; Ruff and diff check passed; Streamlit health HTTP 200. Required GitHub CI and thread status are pending; no teammate consensus is claimed.
