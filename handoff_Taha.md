@@ -345,3 +345,9 @@ Starter record created by repository governance on 9 November 2026. Taha should 
 ## P10-A2 PR opened (2026-11-17)
 
 - Implementation commit `a7fa7a24c80537db40715bb59b16bf9eb27552ae` is pushed in [PR #390](https://github.com/Artfever/FleetpulseAI/pull/390) to `dev` with `Refs #134`. This status update is part of the same PR. CI and review threads are pending; #134 remains open.
+## Owner-directed takeover status: P10-A3 #250 (2026-11-17)
+
+- Current task is Abdullah-assigned #250, open/unblocked after #134 and #201 closed. Shaheer directed takeover through P16 including both teammates' work; ownership remains accurate. Branch `feat/P10-A3-scaler-provenance` starts at dev `a37410d398cf1f4ae8eedfc6c4e81ab28aff96d6`.
+- P10-A2 #134 merged via [PR #390](https://github.com/Artfever/FleetpulseAI/pull/390) as `a37410d398cf1f4ae8eedfc6c4e81ab28aff96d6`; all required checks passed, zero review threads, issue closed. Same-PR merge record: [comment](https://github.com/Artfever/FleetpulseAI/pull/390#issuecomment-6953945827); evidence/closure: [issue comment](https://github.com/Artfever/FleetpulseAI/issues/134#issuecomment-6953970643). Inspection is Shaheer-reported after the wait, not independently observed.
+- #250 audit compares actual saved scaler against source fitting rows: 16,738 rows, 96 features; mean, scale and variance maximum absolute deltas all 0.0. Including 20 validation prefixes instead changes them by 0.0024867583, 0.0029577058 and 0.0970157967. Updated synthetic fit-only and serialization assertions; focused tests 2 passed.
+- Changed `tests/test_mlp.py` and `docs/p10_mlp_artifact.md`; focused tests 2 PASS; Ruff PASS; full suite 393 PASS; diff check PASS. Next: merge #250 to dev and close after evidence/inspection. It is the last open P10 child, while parent gate #15 remains separate and open.
