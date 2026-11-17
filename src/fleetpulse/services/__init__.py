@@ -5,7 +5,9 @@ from fleetpulse.services.fleet import (
     FleetEngineHistory,
     FleetEngineHistoryError,
     FleetHistories,
+    FleetPredictionResult,
     extract_latest_engine_histories,
+    predict_fleet,
 )
 from fleetpulse.services.predictor import (
     PredictionArtifactError,
@@ -22,11 +24,13 @@ __all__ = [
     "FleetEngineHistory",
     "FleetEngineHistoryError",
     "FleetHistories",
+    "FleetPredictionResult",
     "PredictionArtifactError",
     "PredictionInputError",
     "RULPrediction",
     "RawRULPrediction",
     "extract_latest_engine_histories",
+    "predict_fleet",
     "predict_rul",
     "predict_rul_with_context",
     "predict_uploaded_csv",
