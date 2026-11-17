@@ -11,6 +11,11 @@ bytes with a header and maps fields by name to the normalized raw FD001 history
 schema (`unit_id`, `cycle`, three operating settings and 21 sensors). All 26
 required names must appear exactly once; extra columns, including any RUL
 target, are rejected. Header order may vary, but data row order is preserved.
+Unexpected fields (including guessed aliases and RUL/target columns) are
+rejected with instructions to remove them; the parser never infers column
+meanings. Each engine's cycles must be in ascending row order. Out-of-order
+input is rejected with a sorting instruction, and the parser does not reorder
+rows automatically.
 
 The upload limit is 1 MiB. CSV syntax, UTF-8 decoding, header, row width and
 numeric parsing errors use `UploadValidationError`, with stable finding codes

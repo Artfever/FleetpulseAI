@@ -88,8 +88,15 @@ def parse_fd001_csv_upload(
             if extra:
                 details.append(f"unexpected {', '.join(extra)}")
             raise UploadValidationError(
-                (_error("invalid_header", "CSV fields do not match the raw-history schema: "
-                        + "; ".join(details) + "."),)
+                (
+                    _error(
+                        "invalid_header",
+                        "CSV fields do not match the raw-history schema: "
+                        + "; ".join(details)
+                        + ". Include only the required raw-history fields; remove "
+                        "unexpected or target fields. Column meanings are never guessed.",
+                    ),
+                )
             )
 
         for row_number, values in enumerate(reader, start=2):

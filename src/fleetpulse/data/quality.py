@@ -202,7 +202,9 @@ def validate_engine_history(
                 "error",
                 row_number,
                 "cycle",
-                f"Engine {unit_id} cycle {cycle} is not greater than its previous cycle {previous_cycle}.",
+                f"Engine {unit_id} cycle {cycle} is not greater than its previous cycle "
+                f"{previous_cycle}. Sort rows in ascending cycle order for each engine; "
+                "the upload will not reorder rows.",
             )
         elif cycle > previous_cycle + 1:
             add(
