@@ -793,3 +793,9 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Updated tracked `artifacts/selection_manifest.json`; canonical payload SHA-256 `2cace1a0d781cf5fa32c054e8ba07c7f77667c032d877d5fd1ce2ccb9ed89725`. Added `docs/p11_t3_model_selection_decision.md`; Model Laboratory now surfaces the selected candidate and model version, with validation limitations.
 - Checks before commit: focused selection/page tests — 7 passed in 3.77s; full `.venv/Scripts/python.exe -m pytest -q` — 472 passed in 27.43s; Ruff and diff check passed; Streamlit smoke health endpoint returned HTTP 200 (`ok`).
 - Next: commit this work with the handoff, open a `Refs #252` PR to `dev`, pass all five checks and resolve any threads, record the merge in the same PR, wait 35 seconds, post the owner-directed inspection record without claiming teammate consensus, then close #252. Afterward audit all nine P11 tasks and the P11 shared gate before moving to the next unblocked phase task.
+
+## P11-T3 #252 PR opened (2026-11-18)
+
+- Decision and Model Laboratory update commit `c19c4f2f214d060693826b92e0c9fc966764f845` is in [PR #425](https://github.com/Artfever/FleetpulseAI/pull/425), targeting `dev` with `Refs #252`.
+- PR evidence includes the owner-delegated XGBoost depth-4 choice, the lower MLP MAE trade-off, model version/hash equality, 20/20 service replay, and the P11-A3 12-run reload audit. No teammate consensus is claimed.
+- Local checks: focused tests 7 passed; full suite 472 passed; Ruff and diff check passed; Streamlit health endpoint HTTP 200. Required GitHub CI and thread status are pending on the PR head; #252 remains open.
