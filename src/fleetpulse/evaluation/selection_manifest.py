@@ -61,5 +61,24 @@ def _validate(payload: dict[str, Any]) -> None:
         if not isinstance(run_hash, str) or len(run_hash) != 64:
             raise ValueError(f"invalid result artifact hash for {name}")
     decision = payload.get("decision", {})
-    if decision.get("status") != "team_choice_pending_p11_t3":
-        raise ValueError("selection manifest must preserve the P11-T3 team choice")
+    if decision.get("status") != "owner_selected_candidate":
+        raise ValueError("selection manifest must record the owner-delegated model choice")
+    candidate_names = {candidate["name"] for candidate in candidates}
+    for field in ("selected_candidate", "lowest_mae_candidate", "lowest_rmse_candidate"):
+        if decision.get(field) not in candidate_names:
+            raise ValueError(f"selection decision references an unknown candidate: {field}")
+    if not decision.get("selection_authority") or not decision.get("reason") or not decision.get(
+        "tradeoff"
+    ):
+        raise ValueError("selection decision must record its authority, rationale, and trade-off")
+    selected_artifact = decision.get("selected_artifact", {})
+    if not selected_artifact.get("name") or not selected_artifact.get("version"):
+        raise ValueError("selected artifact must include its model name and version")
+    if selected_artifact.get("sha256") != selected_artifact.get(
+        "matched_p11_run_checkpoint_sha256"
+    ):
+        raise ValueError("selected model checkpoint does not match its P11 comparison run")
+    for field in ("sha256", "matched_p11_run_checkpoint_sha256"):
+        value = selected_artifact.get(field)
+        if not isinstance(value, str) or len(value) != 64:
+            raise ValueError(f"invalid selected artifact {field}")
