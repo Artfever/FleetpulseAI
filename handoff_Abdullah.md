@@ -476,3 +476,9 @@ Publish via local gh authenticated as Abdullah-SE-bit. Do not send teammate mess
 ## P10-A3 PR opened (2026-11-17)
 
 - Implementation commit `4858a8638bc83d35b95614b6004e6ab5add445f7` is in [PR #391](https://github.com/Artfever/FleetpulseAI/pull/391) to `dev`, `Refs #250`. This status entry is in the same task PR. CI and review-thread checks are pending; issue #250 remains open.
+## P14-A1 takeover update (2026-11-17)
+
+- Shaheer's takeover through P16 now has current issue P14-A1 #69, still assigned to Abdullah and open with no native blockers. This implementation is by the assistant for Shaheer. Branch `feat/P14-A1-csv-validation` starts from dev `8fdf929904da7310125957848c605e6eb7bbb2be`.
+- P10-A3 #250 merged via [PR #391](https://github.com/Artfever/FleetpulseAI/pull/391) to dev as `8fdf929904da7310125957848c605e6eb7bbb2be`; all five checks passed, review threads 0; #250 closed with evidence [here](https://github.com/Artfever/FleetpulseAI/issues/250#issuecomment-6954194758). All nine P10 children are closed. P10 shared gate #15 remains open because the final all-three explanation requirement has not been independently verified.
+- #69 implementation adds a strict UTF-8 raw-history CSV parser with exactly the 26 normalized field names, no target/extra fields, 1 MiB limit, numeric and shared quality validation, duplicate identity checks, and preserved row order. The related #70/#71 contracts were read to align the schema; both are open/unblocked.
+- Changed `src/fleetpulse/data/input_validation.py`, `tests/test_input_validation.py`, `docs/p14_upload_validation.md`. Focused tests 14 PASS; Ruff PASS; full suite 407 PASS; diff check PASS. Next: open task PR to dev with `Refs #69`; verify CI and merge before closure.
