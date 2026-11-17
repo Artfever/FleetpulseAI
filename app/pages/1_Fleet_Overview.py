@@ -73,6 +73,34 @@ if records:
                 help="Rows with validation or prediction errors remain visible because they have no estimate.",
             )
             selected_set = set(selected_engine_ids)
+            saved_selection = [
+                {
+                    "Dataset": result.identity.dataset_partition,
+                    "Engine ID": result.identity.unit_id,
+                    "Observed cycle": result.observed_cycle,
+                    "Predicted RUL (cycles)": result.displayed_rul_cycles,
+                    "Raw RUL (cycles)": result.raw_rul_cycles,
+                    "Model": result.model_name,
+                    "Version": result.model_version,
+                    "Feature rows": result.input_window_rows,
+                    "Warnings": ", ".join(result.warnings),
+                    "Error": (
+                        f"{', '.join(result.error_codes)}: {result.error}"
+                        if result.error and result.error_codes
+                        else result.error
+                    ),
+                }
+                for result in predictions
+                if result.identity.unit_id in selected_set
+            ]
+            if st.button(
+                "Save selected engines for Maintenance Planner",
+                disabled=not selected_engine_ids,
+            ):
+                st.session_state[ui.P15_SELECTED_FLEET_STATE_KEY] = saved_selection
+                st.success(f"Saved {len(saved_selection)} selected engine records for the planner.")
+                st.page_link("pages/4_Maintenance_Planner.py", label="Open Maintenance Planner")
+
             visible_results = [
                 result
                 for result in predictions
