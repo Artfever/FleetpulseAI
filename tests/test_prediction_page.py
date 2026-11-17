@@ -3,12 +3,14 @@
 import json
 import math
 
+import streamlit as st
 from streamlit.testing.v1 import AppTest
 
-from fleetpulse import PROJECT_ROOT, services, ui
+from fleetpulse import PROJECT_ROOT, ui
 from fleetpulse.data.loader import HISTORY_COLUMNS
 from fleetpulse.data.quality import READING_COLUMNS
 from fleetpulse.services import RULPrediction
+from fleetpulse.services import history as history_service
 
 
 def _page(monkeypatch, tmp_path):
@@ -32,28 +34,38 @@ def test_selected_engine_and_cutoff_reach_service_without_future_or_target(monke
         calls.append((history, kwargs))
         return RULPrediction(12.5, 12.5, "test-model", "test-v1", 2, 2, ("short_window",))
 
-    monkeypatch.setattr(services, "predict_rul_with_context", predict)
+    chart_calls = []
+    original_line_chart = st.line_chart
+
+    def capture_chart(data, *args, **kwargs):
+        chart_calls.append((data, kwargs))
+        return original_line_chart(data, *args, **kwargs)
+
+    monkeypatch.setattr(history_service, "predict_rul_with_context", predict)
+    monkeypatch.setattr(st, "line_chart", capture_chart)
     page.run()
-    assert not calls
+    assert len(calls) == 1
     page.selectbox[2].select(2).run()
-    page.selectbox[3].select(2).run()
-    page.button[0].click().run()
+    page.select_slider[0].set_value(2).run()
     assert not page.exception
-    assert [row["cycle"] for row in calls[0][0]] == [1, 2]
+    assert [row["cycle"] for row in calls[-1][0]] == [1, 2]
     assert all(
         row["unit_id"] == 2 and set(row) == {"unit_id", "cycle", *READING_COLUMNS}
-        for row in calls[0][0]
+        for row in calls[-1][0]
     )
-    assert calls[0][1]["dataset_partition"] == "FD001/train"
-    assert calls[0][1]["unit_id"] == 2
+    assert calls[-1][1]["dataset_partition"] == "FD001/train"
+    assert calls[-1][1]["unit_id"] == 2
     assert (
-        calls[0][1]["manifest_path"]
+        calls[-1][1]["manifest_path"]
         == tmp_path / "artifacts/development/decision_tree_validation.json"
     )
+    assert chart_calls[-1][0]["cycle"] == [1, 2]
+    assert len(chart_calls[-1][0]["sensor_1"]) == 2
+    assert any("chart ends at cycle 2" in item.value for item in page.caption)
     assert page.metric[0].value == "12.50"
     assert any("test-model" in item.value and "test-v1" in item.value for item in page.markdown)
     assert any("short" in item.value for item in page.warning)
-    page.selectbox[3].select(1).run()
+    page.select_slider[0].set_value(1).run()
     assert not page.metric
 
 
@@ -87,7 +99,6 @@ def test_missing_bundle_shows_error_without_fabricating_prediction(monkeypatch, 
     assert "Dense MLP (CPU)" not in page.selectbox[1].options
     assert any("XGBoost is unavailable" in item.value for item in page.info)
     assert any("Dense MLP is unavailable" in item.value for item in page.info)
-    page.button[0].click().run()
     assert not page.exception
     assert not page.metric
     assert any("Prediction is unavailable" in item.value for item in page.warning)
@@ -106,16 +117,15 @@ def test_packaged_illustrative_history_is_distinct_and_has_no_future_rows(monkey
         calls.append((history, kwargs))
         return RULPrediction(3.0, 3.0, "test-model", "test-v1", 2, 2, ())
 
-    monkeypatch.setattr(services, "predict_rul_with_context", predict)
+    monkeypatch.setattr(history_service, "predict_rul_with_context", predict)
     page.run()
     page.selectbox[0].select("Illustrative synthetic example").run()
     assert any("not NASA data" in item.value for item in page.warning)
-    page.selectbox[3].select(2).run()
-    page.button[0].click().run()
+    page.select_slider[0].set_value(2).run()
     assert not page.exception
-    assert [row["cycle"] for row in calls[0][0]] == [1, 2]
-    assert calls[0][1]["dataset_partition"] == "illustrative/synthetic"
-    assert calls[0][1]["unit_id"] == 900001
+    assert [row["cycle"] for row in calls[-1][0]] == [1, 2]
+    assert calls[-1][1]["dataset_partition"] == "illustrative/synthetic"
+    assert calls[-1][1]["unit_id"] == 900001
     assert page.metric[0].value == "3.00"
 
 
@@ -140,20 +150,19 @@ def test_packaged_fd001_subset_uses_only_selected_training_prefix(monkeypatch, t
             34.19607843137255, 34.20, "decision-tree-rul", "decision-tree-rul-v1", 164, 30, ()
         )
 
-    monkeypatch.setattr(services, "predict_rul_with_context", predict)
+    monkeypatch.setattr(history_service, "predict_rul_with_context", predict)
     page.run()
     page.selectbox[0].select("Packaged FD001/train parity subset").run()
     assert any("not a complete dataset" in item.value for item in page.info)
-    page.selectbox[3].select(164).run()
-    page.button[0].click().run()
+    page.select_slider[0].set_value(164).run()
 
     assert not page.exception
-    assert len(calls[0][0]) == 164
-    assert {row["unit_id"] for row in calls[0][0]} == {4}
-    assert max(row["cycle"] for row in calls[0][0]) == 164
-    assert all(set(row) == {"unit_id", "cycle", *READING_COLUMNS} for row in calls[0][0])
-    assert calls[0][1]["dataset_partition"] == "FD001/train"
-    assert calls[0][1]["unit_id"] == 4
+    assert len(calls[-1][0]) == 164
+    assert {row["unit_id"] for row in calls[-1][0]} == {4}
+    assert max(row["cycle"] for row in calls[-1][0]) == 164
+    assert all(set(row) == {"unit_id", "cycle", *READING_COLUMNS} for row in calls[-1][0])
+    assert calls[-1][1]["dataset_partition"] == "FD001/train"
+    assert calls[-1][1]["unit_id"] == 4
     assert page.metric[0].value == "34.20"
 
 
@@ -188,33 +197,29 @@ def test_switching_models_keeps_engine_and_cycle_and_uses_matching_manifest(
             return RULPrediction(18.8, 18.8, "random-forest-rul", "random-forest-rul-v1", 2, 2, ())
         return RULPrediction(12.5, 12.5, "decision-tree-rul", "decision-tree-rul-v1", 2, 2, ())
 
-    monkeypatch.setattr(services, "predict_rul_with_context", predict)
+    monkeypatch.setattr(history_service, "predict_rul_with_context", predict)
     page.run()
     page.selectbox[2].select(2).run()
-    page.selectbox[3].select(2).run()
+    page.select_slider[0].set_value(2).run()
     page.selectbox[1].select("Random Forest").run()
     assert page.selectbox[2].value == 2
-    assert page.selectbox[3].value == 2
+    assert page.select_slider[0].value == 2
     assert any("available saved development model" in item.value for item in page.caption)
-    page.button[0].click().run()
-
     assert not page.exception
-    assert calls[0][1]["manifest_path"] == artifact_dir / "random_forest_validation.json"
-    assert [row["cycle"] for row in calls[0][0]] == [1, 2]
-    assert {row["unit_id"] for row in calls[0][0]} == {2}
+    assert calls[-1][1]["manifest_path"] == artifact_dir / "random_forest_validation.json"
+    assert [row["cycle"] for row in calls[-1][0]] == [1, 2]
+    assert {row["unit_id"] for row in calls[-1][0]} == {2}
     assert page.metric[0].value == "18.80"
     assert any("random-forest-rul-v1" in item.value for item in page.markdown)
 
     page.selectbox[1].select("Decision Tree").run()
     assert page.selectbox[2].value == 2
-    assert page.selectbox[3].value == 2
+    assert page.select_slider[0].value == 2
     assert not any("P06" in item.value for item in page.caption)
-    page.button[0].click().run()
-
     assert not page.exception
-    assert calls[1][1]["manifest_path"] == artifact_dir / "decision_tree_validation.json"
-    assert [row["cycle"] for row in calls[1][0]] == [1, 2]
-    assert {row["unit_id"] for row in calls[1][0]} == {2}
+    assert calls[-1][1]["manifest_path"] == artifact_dir / "decision_tree_validation.json"
+    assert [row["cycle"] for row in calls[-1][0]] == [1, 2]
+    assert {row["unit_id"] for row in calls[-1][0]} == {2}
     assert page.metric[0].value == "12.50"
     assert any("decision-tree-rul-v1" in item.value for item in page.markdown)
 
@@ -235,18 +240,16 @@ def test_xgboost_is_available_only_with_bundle_and_uses_registered_manifest(
         calls.append((history, kwargs))
         return RULPrediction(28.6938, 28.69, "xgboost-rul", "xgboost-rul-v1", 2, 2, ())
 
-    monkeypatch.setattr(services, "predict_rul_with_context", predict)
+    monkeypatch.setattr(history_service, "predict_rul_with_context", predict)
     page.run()
     assert list(page.selectbox[1].options) == ["Decision Tree", "XGBoost"]
     page.selectbox[2].select(2).run()
-    page.selectbox[3].select(2).run()
+    page.select_slider[0].set_value(2).run()
     page.selectbox[1].select("XGBoost").run()
-    page.button[0].click().run()
-
     assert not page.exception
-    assert calls[0][1]["manifest_path"] == manifest
-    assert [row["cycle"] for row in calls[0][0]] == [1, 2]
-    assert {row["unit_id"] for row in calls[0][0]} == {2}
+    assert calls[-1][1]["manifest_path"] == manifest
+    assert [row["cycle"] for row in calls[-1][0]] == [1, 2]
+    assert {row["unit_id"] for row in calls[-1][0]} == {2}
     assert page.metric[0].value == "28.69"
     assert any("xgboost-rul-v1" in item.value for item in page.markdown)
 
@@ -307,8 +310,7 @@ def test_app_loads_saved_mlp_and_predicts_without_starting_training(monkeypatch,
 
     page.selectbox[1].select("Dense MLP (CPU)").run()
     page.selectbox[2].select(2).run()
-    page.selectbox[3].select(3).run()
-    page.button[0].click().run()
+    page.select_slider[0].set_value(3).run()
 
     assert not page.exception
     assert not trainer_calls
@@ -331,16 +333,14 @@ def test_mlp_is_selectable_only_with_bundle_and_uses_its_saved_manifest(monkeypa
         calls.append((history, kwargs))
         return RULPrediction(9.25, 9.25, "dense-rul-mlp", "dense-rul-mlp-v1", 2, 2, ())
 
-    monkeypatch.setattr(services, "predict_rul_with_context", predict)
+    monkeypatch.setattr(history_service, "predict_rul_with_context", predict)
     page.run()
     assert "Dense MLP (CPU)" in page.selectbox[1].options
     page.selectbox[2].select(2).run()
-    page.selectbox[3].select(2).run()
+    page.select_slider[0].set_value(2).run()
     page.selectbox[1].select("Dense MLP (CPU)").run()
-    page.button[0].click().run()
-
     assert not page.exception
-    assert calls[0][1]["manifest_path"] == manifest
-    assert [row["cycle"] for row in calls[0][0]] == [1, 2]
+    assert calls[-1][1]["manifest_path"] == manifest
+    assert [row["cycle"] for row in calls[-1][0]] == [1, 2]
     assert page.metric[0].value == "9.25"
     assert any("dense-rul-mlp-v1" in item.value for item in page.markdown)

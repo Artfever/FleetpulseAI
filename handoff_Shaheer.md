@@ -597,3 +597,15 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 
 - Implementation commit `72aff3c` is in [PR #412](https://github.com/Artfever/FleetpulseAI/pull/412), targeting `dev` with `Refs #212`.
 - Local verification: focused history tests 15, full suite 468, Ruff, diff check, and saved-model cache replay verified. Required GitHub checks and conversation resolution are pending; #212 remains open and P16 gate #18 stays open.
+## P16-A3 resolved; P16-T1 cycle/chart interaction active (2026-11-18)
+
+- P16-A3 #212 evidence is recorded [on the issue](https://github.com/Artfever/FleetpulseAI/issues/212#issuecomment-6959609280). The exact task tree is present on `dev` at `d204eb329895e19e3abc0d42a93e02c6b3f7727c`; however, GitHub's PR API never reported #412 as merged. PR #412 was closed as already landed with that discrepancy stated in its record; do not describe it as formally merged. Required checks had passed and review threads were 0.
+- Current task: Taha-assigned P16-T1 #77, included in Shaheer's authorized takeover. Branch `feat/P16-T1-slider-chart-prediction` starts from dev `d204eb329895e19e3abc0d42a93e02c6b3f7727c`. Native blockers are empty; P07 #12 is closed. P16-T2 #154 depends on #77, and P16-T3 #257 depends on #154 and #212.
+- Reworked `app/pages/3_RUL_Prediction.py` to use a discrete observed-cycle slider, a selectable sensor chart truncated at the selected cycle, and automatic saved-model replay on that same cutoff via `replay_engine_history`. Prediction changes when engine, model, or cycle changes; the replay service receives only the selected engine's observed prefix.
+- Updated `tests/test_prediction_page.py` to verify selected engine/cycle and past-only service input, chart endpoint equality, packaged and synthetic histories, and saved model selection behavior. Focused page tests: 10 passed. Full suite: 468 passed. Ruff and `git diff --check` passed. Streamlit `/_stcore/health`: HTTP 200 `ok`.
+- Actual AppTest on packaged FD001/train engine 4 at selected cycle 100: saved `decision-tree-rul-v1` displayed 135.72 cycles (raw 135.722467), 30 feature-window rows; sensor chart covered cycles 1-100, and no exception occurred. Development-prefix output only, not official-test performance or maintenance evidence.
+- Changed files: `app/pages/3_RUL_Prediction.py`, `tests/test_prediction_page.py`, and this handoff. Next: commit and open `Refs #77` PR to `dev`, check all five required CI jobs and resolved conversations, record the resulting `dev` commit/PR state, close #77 only with evidence and the owner-directed inspection interval, then proceed to #154. Keep P16 gate #18 open until all nine tasks and shared acceptance evidence are complete.
+## P16-T1 PR opened (2026-11-18)
+
+- Implementation commit `3166edb` is in [PR #413](https://github.com/Artfever/FleetpulseAI/pull/413), targeting `dev` with `Refs #77`.
+- Local verification: focused prediction-page tests 10, full suite 468, Ruff, diff check, Streamlit health `200 ok`, and actual saved-model cycle-100 UI output/chart check. Required GitHub CI and conversation resolution are pending; #77 remains open and P16 gate #18 remains open.
