@@ -20,10 +20,15 @@ rows automatically.
 `fleetpulse.services.predict_uploaded_csv` is the prediction boundary for CSV
 histories: it completes parsing and quality validation before calling the
 shared saved-model predictor, and requires the caller to provide the selected
-engine ID. Tests verify an invalid CSV never reaches that predictor and a clean
-CSV made from the packaged engine 4 history matches the built-in service result
-exactly. This service-level check does not claim the Streamlit upload screen is
-implemented; that UI is covered by P14-T2.
+engine ID. A file may contain multiple engines, but only rows for the explicitly
+selected ID are sent to prediction; selecting an ID absent from the file fails
+before prediction. A missing required channel rejects the entire file before
+prediction. The predictor independently checks that its input contains only
+the requested engine. UI selection is explicit, and the shared model bundle's
+saved preprocessing is applied at prediction time; uploaded rows are never used
+to fit or refit normalization parameters. Tests verify these boundaries and
+that a clean CSV made from the packaged engine 4 history matches the built-in
+service result exactly. P14-T3 connects the upload UI to this boundary.
 
 Short valid histories keep the saved `FeatureConfig` schema unchanged (96
 ordered columns by default). Feature windows use the observations available

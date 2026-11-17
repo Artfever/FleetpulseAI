@@ -503,3 +503,10 @@ Publish via local gh authenticated as Abdullah-SE-bit. Do not send teammate mess
 
 - Commit `f0f37d5d82d03a7a39ee55f04cd1b3b602bdc2aa` is in [PR #395](https://github.com/Artfever/FleetpulseAI/pull/395), targeting `dev` with `Refs #146`.
 - Local focused tests 32 PASS; full suite 418 PASS; Ruff and diff check PASS. CI/review-thread status pending; #146 remains open.
+
+## P14-A3 takeover status (2026-11-17)
+
+- P14-A3 #208 remains assigned to Abdullah and open. Shaheer authorized the assistant to take over all teammate tasks through P16; this task is being implemented for Shaheer without changing issue ownership. Declared dependencies #146 and P07 gate #12 are closed.
+- Shaheer's P14-S3 #209 merged via [PR #398](https://github.com/Artfever/FleetpulseAI/pull/398) to dev at `5a9f819cc572ad3310c63639be1e7e7fdcf2df59`; all five CI checks passed, review threads 0, and #209 closed with evidence [here](https://github.com/Artfever/FleetpulseAI/issues/209#issuecomment-6956072946). The recorded inspection was Shaheer-reported, not independently observed.
+- #208 evidence work is on `feat/P14-A3-mixed-history-selection`. It adds tests showing a missing channel is rejected before prediction, a mixed-engine upload passes only the explicitly selected engine to prediction, and an absent selection fails before prediction. Docs record that the saved model preprocessing is reused and uploaded rows are not used to fit normalization. Focused tests: 24 passed; full suite: 430 passed; Ruff and `git diff --check`: PASS. Controlled-predictor tests establish boundaries, not a live model prediction. No commit or PR yet.
+- Next: commit and open a `Refs #208` PR to `dev`; record its commit hash in the next handoff update. P14-T3 #255 depends on #208.
