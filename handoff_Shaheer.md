@@ -771,3 +771,9 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - The selection builder matched the six referenced result-file SHA-256 values to the P11-T1 audit and wrote the tracked compact manifest at `artifacts/selection_manifest.json`, SHA-256 `e37a387be33205e15f884d44ab76c725059ffe12be2e9317f25a164cf9761b15`.
 - Tests: focused selection/Model Laboratory tests — 6 passed in 3.85s; full `.venv/Scripts/python.exe -m pytest -q` — 471 passed in 27.12s; `.venv/Scripts/python.exe -m ruff check .` — passed; `git diff --check` — passed. Streamlit smoke: `.venv/Scripts/python.exe -m streamlit run app/Home.py --server.headless true --server.port 8765`; `curl.exe -i http://127.0.0.1:8765/_stcore/health` returned HTTP 200 and `ok`, then the server was stopped.
 - Ready to commit the implementation and handoff together, then open/update the P11-T2 PR to `dev`.
+
+## P11-T2 #139 PR opened (2026-11-18)
+
+- Implementation commit `1390fb68fa72a9195af1639f688f2be96ab96a0f` is in [PR #424](https://github.com/Artfever/FleetpulseAI/pull/424), targeting `dev` with `Refs #139`.
+- The PR contains the generated six-candidate selection manifest, builder tied to the P11-T1 file-hash audit, Model Laboratory comparison, tests, report, and this handoff update. Local verification: focused tests 6 passed; full suite 471 passed; Ruff and diff check passed; Streamlit health endpoint HTTP 200.
+- Required GitHub CI checks and review-thread status are pending on the PR head. #139 remains open. After merge, record the merge in PR #424, wait 35 seconds, post the owner-directed inspection record, and close the issue only with evidence.
