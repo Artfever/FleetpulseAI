@@ -32,7 +32,10 @@ def test_selected_engine_and_cutoff_reach_service_without_future_or_target(monke
 
     def predict(history, **kwargs):
         calls.append((history, kwargs))
-        return RULPrediction(12.5, 12.5, "test-model", "test-v1", 2, 2, ("short_window",))
+        cutoff = int(history[-1]["cycle"])
+        return RULPrediction(
+            12.5, 12.5, "test-model", "test-v1", cutoff, len(history), ("short_window",)
+        )
 
     chart_calls = []
     original_line_chart = st.line_chart
@@ -44,7 +47,7 @@ def test_selected_engine_and_cutoff_reach_service_without_future_or_target(monke
     monkeypatch.setattr(history_service, "predict_rul_with_context", predict)
     monkeypatch.setattr(st, "line_chart", capture_chart)
     page.run()
-    assert len(calls) == 1
+    assert len(calls) == 3
     page.selectbox[2].select(2).run()
     page.select_slider[0].set_value(2).run()
     assert not page.exception
@@ -59,14 +62,19 @@ def test_selected_engine_and_cutoff_reach_service_without_future_or_target(monke
         calls[-1][1]["manifest_path"]
         == tmp_path / "artifacts/development/decision_tree_validation.json"
     )
-    assert chart_calls[-1][0]["cycle"] == [1, 2]
-    assert len(chart_calls[-1][0]["sensor_1"]) == 2
+    assert chart_calls[-2][0]["cycle"] == [1, 2]
+    assert len(chart_calls[-2][0]["sensor_1"]) == 2
+    assert chart_calls[-1][0]["Observed cycle"] == [1, 2]
+    assert chart_calls[-1][0]["Estimated remaining cycles"] == [12.5, 12.5]
+    assert len(page.dataframe[0].value) == 2
     assert any("chart ends at cycle 2" in item.value for item in page.caption)
     assert page.metric[0].value == "12.50"
     assert any("test-model" in item.value and "test-v1" in item.value for item in page.markdown)
     assert any("short" in item.value for item in page.warning)
     page.select_slider[0].set_value(1).run()
-    assert not page.metric
+    assert page.metric[0].value == "12.50"
+    assert chart_calls[-2][0]["cycle"] == [1]
+    assert chart_calls[-1][0]["Observed cycle"] == [1]
 
 
 def test_training_replay_is_labeled_by_saved_model_fit_membership(monkeypatch, tmp_path):
@@ -115,7 +123,8 @@ def test_packaged_illustrative_history_is_distinct_and_has_no_future_rows(monkey
 
     def predict(history, **kwargs):
         calls.append((history, kwargs))
-        return RULPrediction(3.0, 3.0, "test-model", "test-v1", 2, 2, ())
+        cutoff = int(history[-1]["cycle"])
+        return RULPrediction(3.0, 3.0, "test-model", "test-v1", cutoff, len(history), ())
 
     monkeypatch.setattr(history_service, "predict_rul_with_context", predict)
     page.run()
@@ -146,18 +155,27 @@ def test_packaged_fd001_subset_uses_only_selected_training_prefix(monkeypatch, t
 
     def predict(history, **kwargs):
         calls.append((history, kwargs))
+        cutoff = int(history[-1]["cycle"])
         return RULPrediction(
-            34.19607843137255, 34.20, "decision-tree-rul", "decision-tree-rul-v1", 164, 30, ()
+            34.19607843137255,
+            34.20,
+            "decision-tree-rul",
+            "decision-tree-rul-v1",
+            cutoff,
+            len(history),
+            (),
         )
 
     monkeypatch.setattr(history_service, "predict_rul_with_context", predict)
     page.run()
     page.selectbox[0].select("Packaged FD001/train parity subset").run()
     assert any("not a complete dataset" in item.value for item in page.info)
+    calls_before_slider_change = len(calls)
     page.select_slider[0].set_value(164).run()
 
     assert not page.exception
     assert len(calls[-1][0]) == 164
+    assert len(calls) - calls_before_slider_change <= 10
     assert {row["unit_id"] for row in calls[-1][0]} == {4}
     assert max(row["cycle"] for row in calls[-1][0]) == 164
     assert all(set(row) == {"unit_id", "cycle", *READING_COLUMNS} for row in calls[-1][0])
@@ -193,9 +211,14 @@ def test_switching_models_keeps_engine_and_cycle_and_uses_matching_manifest(
 
     def predict(history, **kwargs):
         calls.append((history, kwargs))
+        cutoff = int(history[-1]["cycle"])
         if kwargs["manifest_path"].name == "random_forest_validation.json":
-            return RULPrediction(18.8, 18.8, "random-forest-rul", "random-forest-rul-v1", 2, 2, ())
-        return RULPrediction(12.5, 12.5, "decision-tree-rul", "decision-tree-rul-v1", 2, 2, ())
+            return RULPrediction(
+                18.8, 18.8, "random-forest-rul", "random-forest-rul-v1", cutoff, len(history), ()
+            )
+        return RULPrediction(
+            12.5, 12.5, "decision-tree-rul", "decision-tree-rul-v1", cutoff, len(history), ()
+        )
 
     monkeypatch.setattr(history_service, "predict_rul_with_context", predict)
     page.run()
@@ -238,7 +261,10 @@ def test_xgboost_is_available_only_with_bundle_and_uses_registered_manifest(
 
     def predict(history, **kwargs):
         calls.append((history, kwargs))
-        return RULPrediction(28.6938, 28.69, "xgboost-rul", "xgboost-rul-v1", 2, 2, ())
+        cutoff = int(history[-1]["cycle"])
+        return RULPrediction(
+            28.6938, 28.69, "xgboost-rul", "xgboost-rul-v1", cutoff, len(history), ()
+        )
 
     monkeypatch.setattr(history_service, "predict_rul_with_context", predict)
     page.run()
@@ -331,7 +357,10 @@ def test_mlp_is_selectable_only_with_bundle_and_uses_its_saved_manifest(monkeypa
 
     def predict(history, **kwargs):
         calls.append((history, kwargs))
-        return RULPrediction(9.25, 9.25, "dense-rul-mlp", "dense-rul-mlp-v1", 2, 2, ())
+        cutoff = int(history[-1]["cycle"])
+        return RULPrediction(
+            9.25, 9.25, "dense-rul-mlp", "dense-rul-mlp-v1", cutoff, len(history), ()
+        )
 
     monkeypatch.setattr(history_service, "predict_rul_with_context", predict)
     page.run()
