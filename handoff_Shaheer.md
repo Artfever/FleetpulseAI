@@ -838,3 +838,18 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Implementation commit `f416252fa584fb5494438f13ab2d0f47eb7e719a` is in [PR #427](https://github.com/Artfever/FleetpulseAI/pull/427), targeting `dev` with `Refs #64`.
 - The PR contains the all-engine past-only feature/scaler builder, hashed local scaler manifest writer/loader, focused tests, reproduction report, and this handoff update. Local result: 100 engines, 20,631 rows, 96 features, exact scaler-stat reload, finite transform output.
 - Local checks: focused tests 2 passed; full suite 474 passed; Ruff and diff check passed. Required GitHub CI and thread status are pending on the PR head; #64 remains open.
+
+## P12-S1 #64 merged and closed (2026-11-18)
+
+- PR #427 was squash-merged into `dev` at `61332723042ca1aa084c1f76fea284b9d0d7ee5a`; all five required CI checks passed on head `a2b133d08cd45cd30714f72c201541fdff4db7c5`, with zero review threads. Same-PR merge record: https://github.com/Artfever/FleetpulseAI/pull/427#issuecomment-6962895912.
+- #64 was closed with the owner-directed inspection record: https://github.com/Artfever/FleetpulseAI/issues/64#issuecomment-6962912034. This records Shaheer's authorization and does not claim teammate review.
+- P12-S1 output remains in the ignored local `artifacts/final/mlp/scaler_manifest.json`; it fits 20,631 past-only rows across 100 FD001/train engines and reloads exact scaler statistics. P12-S2 consumes it.
+
+## P12-S2 #141 fixed-epoch MLP refit (2026-11-18)
+
+- Active task: P12-S2 #141 on `feat/P12-S2-final-mlp-refit`, branched from current `dev` after #64 merged and closed. P12-S3 #205 consumes the resulting local checkpoint for packaging.
+- Implemented `train_final_mlp` with no validation input and no early stopping; the script verifies the P11 selection/scaler/source lineage, rebuilds full-history uncapped training RUL targets, and refits the frozen hidden `(128,64)` MLP with seed 42, batch 128, Adam learning rate 0.001 for exactly 8 epochs on all 20,631 rows / 100 engines / 96 past-only features. Official test data and labels were not opened.
+- Actual local artifacts (ignored): `artifacts/final/mlp/refit_state.pt` SHA-256 `fcbd5a67ca8bf307f049c7131fee08ee484f8f35e6cb4e8966aa3c45839b4650`; `refit_manifest.json` payload SHA-256 `90353e2d68da6e35210a6492dbfd77fe2c96ccebc743a5a96b4631ee063c314a`. The checkpoint reloaded exactly. Eight training MSE values (cycles squared): 8230.773853, 2352.157843, 1771.913345, 1537.199479, 1440.561009, 1350.042640, 1276.461421, 1227.052282. These training losses are not validation or test metrics.
+- Changed files: `src/fleetpulse/models/final_mlp.py`, `scripts/refit_p12_final_mlp.py`, `tests/test_final_mlp.py`, `docs/p12_s2_final_mlp_refit.md`, and this handoff.
+- Verification: focused tests 2 passed in 5.24s; full `.venv/Scripts/python.exe -m pytest -q` 476 passed in 28.26s; `.venv/Scripts/python.exe -m ruff check .` passed; `git diff --check` passed; script reproduced the 8-epoch run and checkpoint reload successfully.
+- Next: commit implementation and handoff together, open a `Refs #141` PR to `dev`, verify all five required CI checks and zero unresolved threads, merge and record it in that PR, wait 35 seconds, post the authorized owner-directed inspection record, close #141, then proceed to P12-S3 #205.
