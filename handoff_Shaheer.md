@@ -998,3 +998,9 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Verification: `.venv/Scripts/python.exe -m pytest tests/test_history_service.py -q` — 15 passed in 1.97s; `.venv/Scripts/ruff.exe check .` passed; `git diff --check` passed. Prior P12-T2 clean-process report independently verified all five final bundles and output hashes.
 - Human review limitation: model inventories were checked from local files and task reports; no teammate was contacted, no teammate review is claimed, and the hosted app was not visually checked in this environment. P12-T1's selector was verified locally by AppTest/Streamlit smoke.
 - Next: commit the inventory/model-card/handoff changes, open a `Refs #253` PR to `dev`, pass required CI and resolve conversations. After merge, update the same PR with its merge record and verify the P12 shared gate before closing #22.
+
+## P12-T3 #253 PR opened (2026-11-18)
+
+- Documentation commit `2b02537` is in [PR #435](https://github.com/Artfever/FleetpulseAI/pull/435), targeting `dev` with `Refs #253`. The branch also carries merge-record handoff commit `a777f80` for #142.
+- The PR updates the model card and adds a tracked inventory of four development candidates plus five local final bundles, with actual versions, paths, hashes, artifact availability boundaries, and cache behavior. Existing development cache tests passed (15 tests); Ruff and diff check passed. No cache code change was needed because version/config/model/history invalidation is already implemented and tested.
+- Required GitHub CI and review-thread status are pending on PR #435. Hosted-page visual confirmation and teammate review are not claimed. Next: verify required checks/threads, merge to dev, record the merge in PR #435, then reverify and close the shared P12 gate only if all nine tasks and its evidence are complete.
