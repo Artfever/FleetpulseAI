@@ -749,3 +749,7 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Added `scripts/audit_p11_validation_comparability.py` and `docs/p11_t1_validation_comparability.md`. Local ignored index SHA-256 `2ce34aa7525957026ffea8b49a6831b0eb360904f5dd9cdfc3f5e9daf33e9f0`. This verifies the shared scoring cohort only; feature sets differ by design and final model choice remains with P11-T2/T3 and the gate. No official test data/answers opened.
 - Checks: `.venv/Scripts/python.exe scripts/audit_p11_validation_comparability.py` — 20 candidates, same 20 keys/cutoffs/targets, 19/19 recorded metric pairs matched; `.venv/Scripts/python.exe -m pytest -q` — 468 passed in 27.16s; `.venv/Scripts/python.exe -m ruff check .` — passed; `git diff --check` — passed. App smoke not run; no app changes.
 - #62 remains open pending PR checks and owner-directed inspection after merge. Next: commit/open `Refs #62` PR to dev, pass required CI, resolve threads, record merge on that PR, wait 35 seconds per instruction, post the labeled inspection record, and close with evidence.
+## P11-T1 PR opened (2026-11-18)
+
+- Comparability audit commit `3d34f97` is in [PR #423](https://github.com/Artfever/FleetpulseAI/pull/423), targeting `dev` with `Refs #62`.
+- The PR contains the 20-artifact shared-validation audit, independent metric recomputation, documentation, and handoff. Local audit, full suite (468), Ruff, and diff check passed. Required GitHub checks and conversation resolution are pending; #62 remains open.
