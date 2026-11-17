@@ -17,6 +17,12 @@ as a batch-level input error because no safe dataset-qualified result identity
 can be attached.
 
 P15-A1 prepares validated histories only; it does not load a model or predict.
-P15-A2 consumes the returned identities, prefixes and per-engine errors to run
-batch inference and attach estimates, cycles, and model versions. Sorting and
-filtering belong to later UI tasks and must retain these identities.
+`fleetpulse.services.predict_fleet` consumes the prepared histories and invokes
+the shared saved-model predictor for each valid engine. It returns one
+`FleetPredictionResult` per identified engine, including observed cycle, raw
+and displayed RUL cycles, model/version, feature-window rows, warnings, and
+error fields. A history or prediction failure for one engine remains on that
+engine's result while valid peers retain their predictions. Batch-level rows
+without an identifiable unit ID still fail the request because no safe result
+identity can be preserved. Sorting and filtering belong to later UI tasks and
+must retain these result identities.

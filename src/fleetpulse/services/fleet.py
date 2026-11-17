@@ -6,9 +6,15 @@ import math
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from numbers import Integral, Real
+from pathlib import Path
 
 from fleetpulse.data.quality import validate_engine_history
-from fleetpulse.services.predictor import PredictionInputError
+from fleetpulse.services.predictor import (
+    PredictionArtifactError,
+    PredictionInputError,
+    RULPrediction,
+    predict_rul_with_context,
+)
 
 
 @dataclass(frozen=True, order=True)
@@ -43,6 +49,57 @@ class FleetHistories:
 
     histories: tuple[FleetEngineHistory, ...]
     errors: tuple[FleetEngineHistoryError, ...]
+
+
+@dataclass(frozen=True)
+class FleetPredictionResult:
+    """Prediction or engine-specific failure, always attached to its identity."""
+
+    identity: EngineIdentity
+    observed_cycle: int | None
+    raw_rul_cycles: float | None
+    displayed_rul_cycles: float | None
+    model_name: str | None
+    model_version: str | None
+    input_window_rows: int | None
+    warnings: tuple[str, ...]
+    error_codes: tuple[str, ...]
+    error: str | None
+
+
+def _prediction_result(
+    identity: EngineIdentity,
+    prediction: RULPrediction | None = None,
+    *,
+    observed_cycle: int | None = None,
+    error_codes: tuple[str, ...] = (),
+    error: str | None = None,
+) -> FleetPredictionResult:
+    if prediction is None:
+        return FleetPredictionResult(
+            identity=identity,
+            observed_cycle=observed_cycle,
+            raw_rul_cycles=None,
+            displayed_rul_cycles=None,
+            model_name=None,
+            model_version=None,
+            input_window_rows=None,
+            warnings=(),
+            error_codes=error_codes,
+            error=error,
+        )
+    return FleetPredictionResult(
+        identity=identity,
+        observed_cycle=prediction.observed_cycle,
+        raw_rul_cycles=prediction.raw_rul_cycles,
+        displayed_rul_cycles=prediction.displayed_rul_cycles,
+        model_name=prediction.model_name,
+        model_version=prediction.model_version,
+        input_window_rows=prediction.input_window_rows,
+        warnings=prediction.warnings,
+        error_codes=(),
+        error=None,
+    )
 
 
 def _positive_integral_id(value: object) -> int | None:
@@ -120,3 +177,60 @@ def extract_latest_engine_histories(
         )
 
     return FleetHistories(histories=tuple(histories), errors=tuple(errors))
+
+
+def predict_fleet(
+    records: Iterable[Mapping[str, object]],
+    *,
+    dataset_partition: str,
+    manifest_path: str | Path,
+) -> tuple[FleetPredictionResult, ...]:
+    """Predict each valid engine prefix and keep results/errors ID-attached.
+
+    Each engine is passed through the same saved-model prediction service as a
+    single-engine call. History validation and prediction failures remain local
+    to that engine; malformed peers do not change another engine's identity or
+    discard its valid estimate. An empty/unidentifiable batch remains a
+    batch-level ``PredictionInputError`` from ``extract_latest_engine_histories``.
+    """
+    batch = extract_latest_engine_histories(records, dataset_partition=dataset_partition)
+    results: list[FleetPredictionResult] = []
+    for failure in batch.errors:
+        results.append(
+            _prediction_result(
+                failure.identity,
+                error_codes=failure.codes,
+                error=failure.message,
+            )
+        )
+
+    for engine in batch.histories:
+        try:
+            prediction = predict_rul_with_context(
+                engine.records,
+                dataset_partition=engine.identity.dataset_partition,
+                unit_id=engine.identity.unit_id,
+                manifest_path=manifest_path,
+            )
+        except PredictionInputError as error:
+            results.append(
+                _prediction_result(
+                    engine.identity,
+                    observed_cycle=engine.observed_cycle,
+                    error_codes=("prediction_input_error",),
+                    error=str(error),
+                )
+            )
+        except PredictionArtifactError as error:
+            results.append(
+                _prediction_result(
+                    engine.identity,
+                    observed_cycle=engine.observed_cycle,
+                    error_codes=("prediction_artifact_error",),
+                    error=str(error),
+                )
+            )
+        else:
+            results.append(_prediction_result(engine.identity, prediction))
+
+    return tuple(sorted(results, key=lambda result: result.identity))
