@@ -641,3 +641,15 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 
 - Closeout commit `207f1a8` is in [PR #416](https://github.com/Artfever/FleetpulseAI/pull/416), targeting `dev` with `Refs #18`.
 - Local Ruff and diff check passed. Required GitHub CI and conversation resolution are pending; gate #18 remains open until this evidence lands and final issue states are rechecked.
+## P11-S1 window comparison implementation (2026-11-18)
+
+- Active task: Shaheer-authorized takeover of P11-S1 #61 on `feat/P11-S1-window-comparison`, based on dev `15741977d50889c306b8b53ee31c76c1b5ead7ec`. P11 parent #20 is open and this task has no native blockers.
+- Compared 10/20/30-cycle `past-only-v1` features with `decision-tree-rul-v1`, Python 3.12.10, scikit-learn 1.9.1, seed 42, max_depth 8, min_samples_leaf 5. Each configuration rebuilt 16,738 fitting rows (80 engines) and the same 20 saved validation prefixes (96 features each) from original FD001/train and the tracked P04 split. No official test data or answers were opened.
+- Actual validation results: 10 cycles MAE 23.710807 / RMSE 31.458965; 20 cycles 23.478525 / 32.424615; 30 cycles 22.494270 / 29.449574 (cycles). The 30-cycle configuration had the lowest metrics in this limited comparison; it is only a candidate for the broader P11 choice.
+- Added `scripts/compare_p11_window_sizes.py` and `docs/p11_s1_window_comparison.md`. Local artifacts are in separate ignored folders under `artifacts/experiments/P11_S1_window_comparison/window_{10,20,30}/`; existing development artifacts were preserved. Fresh-process reload matched all 20 recorded predictions exactly for each window. Source SHA-256 `963b5e22825b34d8b21c69e1aeb4af3e647050eb672ee8834ba4b5d91d2de0f8`; semantic split SHA-256 `6fd1d32f7570f70f5a9513d900fbb9d26b182359aced425e2276700c84f08d92`.
+- Checks: `.venv/Scripts/python.exe -m pytest -q` — 468 passed in 33.24s; `.venv/Scripts/python.exe -m ruff check .` — passed; `git diff --check` — passed. Experiment script and serialized result reload/prediction check — passed for 3/3 configurations. App smoke not run; no app changes.
+- Issue #61 still open. Manual teammate inspection is not independently observed; the user's instruction is to record the inspection after the post-merge wait, and task PR CI/review remain pending. Next: commit these changes, open a `Refs #61` PR to dev, verify all required checks and conversations, record merge on that PR, then document the owner-directed inspection report and close #61 only after confirming the evidence.
+## P11-S1 PR opened (2026-11-18)
+
+- Implementation commit `ecf47e3` is in [PR #417](https://github.com/Artfever/FleetpulseAI/pull/417), targeting `dev` with `Refs #61`.
+- The PR contains the reproduced three-window experiment, public metrics/protocol, and prior handoff evidence. Full local suite (468), Ruff, and diff check passed; all three saved-model reload checks matched 20/20 predictions. Required GitHub checks and conversation resolution are pending; #61 remains open.
