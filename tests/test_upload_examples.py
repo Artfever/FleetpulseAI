@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+from fleetpulse.data.input_validation import UploadValidationError, parse_fd001_csv_upload
 from fleetpulse.data.loader import FD001LoadError, load_engine_history
 from fleetpulse.data.quality import validate_engine_history
 
@@ -59,3 +60,34 @@ def test_shuffled_cycle_upload_is_not_reordered_and_is_flagged():
     report = validate_engine_history(records)
     assert not report.is_valid
     assert "cycle_order" in {finding.code for finding in report.errors}
+
+
+def test_valid_csv_example_uses_the_p14_schema_without_target_columns():
+    contents = (FIXTURES / "valid_synthetic_history.csv").read_bytes()
+    records = parse_fd001_csv_upload(contents)
+
+    assert len(records) == 3
+    assert [row["cycle"] for row in records] == [1.0, 2.0, 3.0]
+    assert {row["unit_id"] for row in records} == {910001.0}
+    assert "rul" not in records[0]
+    assert validate_engine_history(records).is_valid
+
+
+@pytest.mark.parametrize(
+    ("filename", "expected_code"),
+    [
+        ("empty_history.csv", "empty_upload"),
+        ("duplicate_cycle.csv", "duplicate_engine_cycle"),
+        ("missing_channel.csv", "invalid_header"),
+        ("text_sensor.csv", "invalid_number"),
+        ("nonfinite_sensor.csv", "non_finite_reading"),
+        ("shuffled_cycles.csv", "cycle_order"),
+    ],
+)
+def test_bad_csv_examples_show_expected_validation_error(filename, expected_code):
+    contents = (FIXTURES / filename).read_bytes()
+
+    with pytest.raises(UploadValidationError) as error:
+        parse_fd001_csv_upload(contents)
+
+    assert expected_code in {finding.code for finding in error.value.findings}
