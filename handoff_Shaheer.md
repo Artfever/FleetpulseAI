@@ -832,3 +832,9 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Added reusable final scaler build/fit/save/load contract, `scripts/fit_p12_mlp_scaler.py`, `tests/test_final_scaler.py`, and `docs/p12_s1_final_mlp_scaler.md`. The local scaler artifact is Git-ignored under `artifacts/final`; the producing code and reproduction instructions are tracked.
 - Checks: focused `.venv/Scripts/python.exe -m pytest tests/test_final_scaler.py -q` — 2 passed in 1.64s; full suite — 474 passed in 27.16s; Ruff and `git diff --check` passed. Reproduction script succeeded with 100 engines/20,631 rows and exact scaler-stat reload.
 - Next: commit with this handoff, open a `Refs #64` PR to dev, pass all five CI checks and resolve threads, record the merge in that PR, wait 35 seconds, post the owner-directed inspection record without claiming teammate review, and close #64. Then proceed to dependent P12-S2 #141 under the frozen eight-epoch P11 rule.
+
+## P12-S1 #64 PR opened (2026-11-18)
+
+- Implementation commit `f416252fa584fb5494438f13ab2d0f47eb7e719a` is in [PR #427](https://github.com/Artfever/FleetpulseAI/pull/427), targeting `dev` with `Refs #64`.
+- The PR contains the all-engine past-only feature/scaler builder, hashed local scaler manifest writer/loader, focused tests, reproduction report, and this handoff update. Local result: 100 engines, 20,631 rows, 96 features, exact scaler-stat reload, finite transform output.
+- Local checks: focused tests 2 passed; full suite 474 passed; Ruff and diff check passed. Required GitHub CI and thread status are pending on the PR head; #64 remains open.
