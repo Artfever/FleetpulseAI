@@ -853,3 +853,9 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Changed files: `src/fleetpulse/models/final_mlp.py`, `scripts/refit_p12_final_mlp.py`, `tests/test_final_mlp.py`, `docs/p12_s2_final_mlp_refit.md`, and this handoff.
 - Verification: focused tests 2 passed in 5.24s; full `.venv/Scripts/python.exe -m pytest -q` 476 passed in 28.26s; `.venv/Scripts/python.exe -m ruff check .` passed; `git diff --check` passed; script reproduced the 8-epoch run and checkpoint reload successfully.
 - Next: commit implementation and handoff together, open a `Refs #141` PR to `dev`, verify all five required CI checks and zero unresolved threads, merge and record it in that PR, wait 35 seconds, post the authorized owner-directed inspection record, close #141, then proceed to P12-S3 #205.
+
+## P12-S2 #141 PR opened (2026-11-18)
+
+- Implementation and pre-commit handoff commit `bf35d5c1b6b0424e539518937aff44f342b176c7` is in [PR #428](https://github.com/Artfever/FleetpulseAI/pull/428), targeting `dev` with `Refs #141`.
+- Local evidence on the PR content: fixed eight-epoch training over 20,631 complete-history rows, exact checkpoint reload; full suite 476 passed, Ruff and diff check passed. Required GitHub CI and review-thread status are pending on this PR head; #141 remains open.
+- Next: verify the latest PR head passes branch-policy, quality, unit-and-contract-tests, streamlit-smoke, and ci-gate, confirm no unresolved threads, then merge and record the merge in PR #428.
