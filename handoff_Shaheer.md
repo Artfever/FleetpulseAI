@@ -717,3 +717,7 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Added `scripts/run_p11_s2_mlp_settings.py` and `docs/p11_s2_mlp_settings.md`. Three separate bundles and result records are under ignored `artifacts/experiments/P11_S2_mlp_settings/`. All fresh-process verifications returned 20 predictions, CPU eval mode, and max difference 0.0. Baseline run reproduced P10 best epoch12 and MSE526.1515625. Original P10 weights SHA-256 remains `a5dcf637a1178f44c837688646295250971dca5862cd934e3935293be53e6273`.
 - Checks: `.venv/Scripts/python.exe -m pytest -q` — 468 passed in 27.56s; `.venv/Scripts/python.exe -m ruff check .` — passed; `git diff --check` — passed; fresh-process MLP artifact verification — passed for all three configurations. App smoke not run; no app changes.
 - #138 remains open pending PR checks and the owner-directed inspection after merge. Next: commit, open `Refs #138` PR to dev, pass all five required CI checks, resolve threads, record merge on the PR, wait 35 seconds as directed, post the labeled inspection record, and close #138 with its evidence.
+## P11-S2 PR opened (2026-11-18)
+
+- Implementation commit `d02125a` is in [PR #421](https://github.com/Artfever/FleetpulseAI/pull/421), targeting `dev` with `Refs #138`.
+- The PR contains all three bounded MLP settings, separate CPU bundles, fresh-process exact replay evidence, the P10 baseline preservation check, report, and handoff. Local tests (468), Ruff, and diff check passed. Required GitHub CI and conversation resolution are pending; #138 remains open.
