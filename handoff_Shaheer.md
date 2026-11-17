@@ -1,3 +1,6 @@
+## P10-T1 PR opened (2026-11-17)
+
+- Implementation commit `bcf365562f29be2899e33b9882d5c30f64a9cc1f` is pushed in [PR #387](https://github.com/Artfever/FleetpulseAI/pull/387), targeting `dev` with `Refs #59`. This PR-status handoff update is included in the same PR. Required CI and review threads are pending.
 ## P10-T1 final pre-commit status (2026-11-17)
 
 - This session is completing Taha-assigned #59 as Shaheer's authorized P10-P16 takeover. Issue #59 is open, unblocked, with saved MLP input available. Base `dev` is `b06d9dbe7371fdc9b04449f8a67063164b27ff8f`; branch `feat/P10-T1-mlp-selector`.
