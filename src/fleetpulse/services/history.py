@@ -2,12 +2,16 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import math
+from collections import OrderedDict
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from itertools import islice
 from numbers import Integral, Real
 from pathlib import Path
+from threading import RLock
 
 from fleetpulse.data.quality import validate_engine_history
 from fleetpulse.services.fleet import EngineIdentity
@@ -18,6 +22,10 @@ from fleetpulse.services.predictor import (
 )
 
 MAX_REPLAY_POINTS = 10
+MAX_REPLAY_CACHE_POINTS = 128
+
+_REPLAY_CACHE: OrderedDict[tuple[str, ...], RULPrediction] = OrderedDict()
+_REPLAY_CACHE_LOCK = RLock()
 
 
 @dataclass(frozen=True)
@@ -35,6 +43,107 @@ class HistoryReplay:
     identity: EngineIdentity
     selected_cycle: int
     points: tuple[HistoryReplayPoint, ...]
+
+
+def clear_history_replay_cache() -> None:
+    """Clear cached replay predictions, primarily for controlled workflows/tests."""
+    with _REPLAY_CACHE_LOCK:
+        _REPLAY_CACHE.clear()
+
+
+def _canonical_json(value: object) -> bytes:
+    return json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        allow_nan=False,
+    ).encode("utf-8")
+
+
+def _model_cache_fingerprints(manifest_path: str | Path) -> tuple[str, str, str] | None:
+    """Return manifest/model, model-version and feature-config fingerprints.
+
+    If the local bundle metadata cannot be read or recognized, inference still
+    runs uncached so normal prediction errors and non-file manifests retain
+    their original behavior.
+    """
+    path = Path(manifest_path)
+    try:
+        manifest_bytes = path.read_bytes()
+        manifest = json.loads(manifest_bytes)
+        if not isinstance(manifest, Mapping):
+            return None
+        payload = manifest.get("payload", manifest)
+        if not isinstance(payload, Mapping):
+            return None
+        model = payload.get("model", {})
+        training = payload.get("training", {})
+        if not isinstance(model, Mapping) or not isinstance(training, Mapping):
+            return None
+        filename = model.get("filename")
+        version = model.get("version")
+        feature_config = training.get("feature_config")
+        if (
+            not isinstance(filename, str)
+            or Path(filename).name != filename
+            or not isinstance(version, str)
+            or not version
+            or not isinstance(feature_config, Mapping)
+        ):
+            return None
+        model_bytes = (path.parent / filename).read_bytes()
+        artifact_fingerprint = hashlib.sha256(manifest_bytes + b"\0" + model_bytes).hexdigest()
+        feature_fingerprint = hashlib.sha256(_canonical_json(feature_config)).hexdigest()
+    except (OSError, TypeError, ValueError, json.JSONDecodeError):
+        return None
+    return artifact_fingerprint, version, feature_fingerprint
+
+
+def _predict_with_replay_cache(
+    prefix: tuple[dict[str, object], ...],
+    *,
+    identity: EngineIdentity,
+    cutoff: int,
+    manifest_path: str | Path,
+) -> RULPrediction:
+    model_fingerprints = _model_cache_fingerprints(manifest_path)
+    if model_fingerprints is None:
+        return predict_rul_with_context(
+            prefix,
+            dataset_partition=identity.dataset_partition,
+            unit_id=identity.unit_id,
+            manifest_path=manifest_path,
+        )
+
+    artifact_fingerprint, model_version, feature_fingerprint = model_fingerprints
+    history_fingerprint = hashlib.sha256(_canonical_json(prefix)).hexdigest()
+    cache_key = (
+        identity.dataset_partition,
+        str(identity.unit_id),
+        str(cutoff),
+        history_fingerprint,
+        model_version,
+        feature_fingerprint,
+        artifact_fingerprint,
+    )
+    with _REPLAY_CACHE_LOCK:
+        cached = _REPLAY_CACHE.get(cache_key)
+        if cached is not None:
+            _REPLAY_CACHE.move_to_end(cache_key)
+            return cached
+
+    prediction = predict_rul_with_context(
+        prefix,
+        dataset_partition=identity.dataset_partition,
+        unit_id=identity.unit_id,
+        manifest_path=manifest_path,
+    )
+    with _REPLAY_CACHE_LOCK:
+        _REPLAY_CACHE[cache_key] = prediction
+        _REPLAY_CACHE.move_to_end(cache_key)
+        while len(_REPLAY_CACHE) > MAX_REPLAY_CACHE_POINTS:
+            _REPLAY_CACHE.popitem(last=False)
+    return prediction
 
 
 def _positive_integer(value: object, name: str) -> int:
@@ -130,10 +239,10 @@ def replay_engine_history(
             for record in engine_records
             if int(record["cycle"]) <= cutoff
         )
-        prediction = predict_rul_with_context(
+        prediction = _predict_with_replay_cache(
             prefix,
-            dataset_partition=identity.dataset_partition,
-            unit_id=identity.unit_id,
+            identity=identity,
+            cutoff=cutoff,
             manifest_path=manifest_path,
         )
         if prediction.observed_cycle != cutoff:

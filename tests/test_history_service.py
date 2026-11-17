@@ -1,5 +1,6 @@
 """P16 history replay sends only each observed prefix to saved inference."""
 
+import json
 from itertools import count
 
 import pytest
@@ -14,6 +15,37 @@ def _row(unit_id, cycle, *, sensor_1=0.25):
         field: unit_id if field == "unit_id" else cycle if field == "cycle" else sensor_1
         for field in HISTORY_COLUMNS
     }
+
+
+def _write_cache_bundle(directory, *, version="model-v1", feature_config=None, model_bytes=b"model"):
+    directory.mkdir(parents=True, exist_ok=True)
+    (directory / "model.bin").write_bytes(model_bytes)
+    manifest_path = directory / "manifest.json"
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "payload": {
+                    "model": {"filename": "model.bin", "version": version},
+                    "training": {
+                        "feature_config": feature_config or {"window_cycles": 30, "channels": ["sensor_1"]}
+                    },
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    return manifest_path
+
+
+def _controlled_prediction(calls):
+    def predict(prefix, **kwargs):
+        calls.append((prefix, kwargs))
+        cutoff = int(prefix[-1]["cycle"])
+        return RULPrediction(
+            float(cutoff), float(cutoff), "test-model", "test-v1", cutoff, len(prefix), ()
+        )
+
+    return predict
 
 
 def test_replay_predicts_each_sorted_cutoff_from_only_its_engine_prefix(monkeypatch):
@@ -90,6 +122,97 @@ def test_each_cutoff_gets_an_independent_prefix_copy(monkeypatch):
 
     assert seen_sensor_values == [[1.0, 2.0], [1.0, 2.0, 3.0, 4.0]]
     assert [row["sensor_1"] for row in records] == [1.0, 2.0, 3.0, 4.0]
+
+
+def test_replay_cache_reuses_identical_history_model_and_feature_version(tmp_path, monkeypatch):
+    history_service.clear_history_replay_cache()
+    manifest = _write_cache_bundle(tmp_path / "bundle")
+    records = [_row(4, cycle, sensor_1=float(cycle)) for cycle in range(1, 5)]
+    calls = []
+    monkeypatch.setattr(history_service, "predict_rul_with_context", _controlled_prediction(calls))
+
+    for _ in range(2):
+        replay = history_service.replay_engine_history(
+            records,
+            dataset_partition="FD001/train",
+            unit_id=4,
+            selected_cycle=4,
+            replay_cutoffs=[2, 4],
+            manifest_path=manifest,
+        )
+        assert [point.prediction.raw_rul_cycles for point in replay.points] == [2.0, 4.0]
+
+    assert len(calls) == 2
+
+
+@pytest.mark.parametrize("change", ["history", "model_version", "feature_config", "model_bytes"])
+def test_replay_cache_invalidates_on_history_or_saved_bundle_change(tmp_path, monkeypatch, change):
+    history_service.clear_history_replay_cache()
+    bundle = tmp_path / "bundle"
+    manifest = _write_cache_bundle(bundle)
+    records = [_row(4, cycle, sensor_1=float(cycle)) for cycle in range(1, 5)]
+    calls = []
+    monkeypatch.setattr(history_service, "predict_rul_with_context", _controlled_prediction(calls))
+
+    def replay(current_records=records):
+        return history_service.replay_engine_history(
+            current_records,
+            dataset_partition="FD001/train",
+            unit_id=4,
+            selected_cycle=4,
+            replay_cutoffs=[4],
+            manifest_path=manifest,
+        )
+
+    replay()
+    if change == "history":
+        changed_records = [dict(row) for row in records]
+        changed_records[-1]["sensor_1"] = 99.0
+        replay(changed_records)
+    elif change == "model_bytes":
+        (bundle / "model.bin").write_bytes(b"changed model")
+        replay()
+    else:
+        updated_manifest = _write_cache_bundle(
+            bundle,
+            version="model-v2" if change == "model_version" else "model-v1",
+            feature_config={"window_cycles": 20, "channels": ["sensor_1"]}
+            if change == "feature_config"
+            else None,
+        )
+        manifest = updated_manifest
+        replay()
+
+    assert len(calls) == 2
+
+
+def test_replay_cache_is_bounded_and_evicts_least_recently_used(tmp_path, monkeypatch):
+    history_service.clear_history_replay_cache()
+    monkeypatch.setattr(history_service, "MAX_REPLAY_CACHE_POINTS", 2)
+    manifest = _write_cache_bundle(tmp_path / "bundle")
+    calls = []
+    monkeypatch.setattr(history_service, "predict_rul_with_context", _controlled_prediction(calls))
+
+    for unit_id in (1, 2, 3):
+        history_service.replay_engine_history(
+            [_row(unit_id, cycle) for cycle in range(1, 3)],
+            dataset_partition="FD001/train",
+            unit_id=unit_id,
+            selected_cycle=2,
+            replay_cutoffs=[2],
+            manifest_path=manifest,
+        )
+
+    assert len(history_service._REPLAY_CACHE) == 2
+    history_service.replay_engine_history(
+        [_row(1, cycle) for cycle in range(1, 3)],
+        dataset_partition="FD001/train",
+        unit_id=1,
+        selected_cycle=2,
+        replay_cutoffs=[2],
+        manifest_path=manifest,
+    )
+    assert len(calls) == 4
 
 
 @pytest.mark.parametrize(
