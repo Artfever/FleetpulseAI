@@ -122,3 +122,89 @@ def test_fleet_overview_explains_missing_saved_model_without_fake_predictions(
     assert not page.exception
     assert not page.dataframe
     assert any("Fleet predictions are unavailable" in item.value for item in page.warning)
+
+
+def test_fleet_overview_sorts_selects_and_filters_without_losing_ids(monkeypatch, tmp_path):
+    manifest = tmp_path / "artifacts/development/decision_tree_validation.json"
+    manifest.parent.mkdir(parents=True)
+    manifest.write_text("test manifest", encoding="utf-8")
+    page = _page(monkeypatch, tmp_path)
+    records = [{"unit_id": engine, "cycle": 2} for engine in (4, 5, 9, 12)]
+    monkeypatch.setattr(ui, "render_packaged_training_subset", lambda: records)
+
+    @contextmanager
+    def use_test_manifest(path, supplied_bundle):
+        yield path
+
+    results = (
+        services.FleetPredictionResult(
+            services.EngineIdentity("FD001/train", 4),
+            2,
+            30.0,
+            30.0,
+            "Decision Tree",
+            "decision-tree-rul-v1",
+            2,
+            (),
+            (),
+            None,
+        ),
+        services.FleetPredictionResult(
+            services.EngineIdentity("FD001/train", 5),
+            2,
+            100.0,
+            100.0,
+            "Decision Tree",
+            "decision-tree-rul-v1",
+            2,
+            (),
+            (),
+            None,
+        ),
+        services.FleetPredictionResult(
+            services.EngineIdentity("FD001/train", 12),
+            2,
+            20.0,
+            20.0,
+            "Decision Tree",
+            "decision-tree-rul-v1",
+            2,
+            ("short_window",),
+            (),
+            None,
+        ),
+        services.FleetPredictionResult(
+            services.EngineIdentity("FD001/train", 9),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            (),
+            ("non_finite_reading",),
+            "Engine 9 history is invalid.",
+        ),
+    )
+    monkeypatch.setattr(deployment, "prediction_manifest", use_test_manifest)
+    monkeypatch.setattr(services, "predict_fleet", lambda *args, **kwargs: results)
+
+    page.run()
+    assert not page.exception
+    assert page.dataframe[0].value["Engine ID"].tolist() == [12, 4, 5, 9]
+    assert page.dataframe[0].value["Threshold status"].tolist() == [
+        "At or below threshold",
+        "At or below threshold",
+        "Above threshold",
+        "No estimate",
+    ]
+
+    page.number_input[0].set_value(35.0).run()
+    page.checkbox[0].set_value(True).run()
+    assert page.dataframe[0].value["Engine ID"].tolist() == [12, 4, 9]
+
+    page.multiselect[0].set_value([4, 9]).run()
+    filtered = page.dataframe[0].value
+    assert filtered["Engine ID"].tolist() == [4, 9]
+    assert filtered["Predicted RUL (cycles)"].tolist()[0] == 30.0
+    assert "non_finite_reading" in filtered["Error"].tolist()[1]

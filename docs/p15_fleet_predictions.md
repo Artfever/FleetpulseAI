@@ -58,3 +58,10 @@ These values are example model outputs on training-history prefixes, not
 official-test answers or observed failure times. Their differences illustrate
 that predicted RUL is not itself a diagnosis; even a valid number may come from
 a short input window and still needs context before anyone acts on it.
+
+The Fleet Overview sorts successful displayed estimates from lower to higher
+RUL and lets the user select engine IDs and set a review threshold in cycles.
+The threshold is only a table filter/status cue. It does not define a fault,
+recommended maintenance interval, or acceptable operating limit. Rows without
+a valid estimate are marked `No estimate`; threshold-only filtering keeps them
+visible so a failed prediction is not mistaken for a low-priority engine.

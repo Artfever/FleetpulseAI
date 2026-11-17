@@ -54,6 +54,45 @@ if records:
                 "and version. The packaged option contains only three training-history prefixes; "
                 "it is not a complete fleet or model-quality evidence."
             )
+            engine_ids = [result.identity.unit_id for result in predictions]
+            selected_engine_ids = st.multiselect(
+                "Engine IDs",
+                options=engine_ids,
+                default=engine_ids,
+            )
+            threshold = st.number_input(
+                "Review threshold (cycles)",
+                min_value=0.0,
+                value=50.0,
+                step=5.0,
+                help="A display filter for review; it is not a fault alarm or maintenance rule.",
+            )
+            threshold_only = st.checkbox(
+                "Show only predictions at or below the threshold",
+                value=False,
+                help="Rows with validation or prediction errors remain visible because they have no estimate.",
+            )
+            selected_set = set(selected_engine_ids)
+            visible_results = [
+                result
+                for result in predictions
+                if result.identity.unit_id in selected_set
+                and (
+                    not threshold_only
+                    or result.displayed_rul_cycles is None
+                    or result.displayed_rul_cycles <= threshold
+                )
+            ]
+            visible_results.sort(
+                key=lambda result: (
+                    result.displayed_rul_cycles is None,
+                    result.displayed_rul_cycles
+                    if result.displayed_rul_cycles is not None
+                    else 0.0,
+                    result.identity.dataset_partition,
+                    result.identity.unit_id,
+                )
+            )
             rows = [
                 {
                     "Dataset": result.identity.dataset_partition,
@@ -64,6 +103,13 @@ if records:
                     "Model": result.model_name,
                     "Version": result.model_version,
                     "Feature rows": result.input_window_rows,
+                    "Threshold status": (
+                        "No estimate"
+                        if result.displayed_rul_cycles is None
+                        else "At or below threshold"
+                        if result.displayed_rul_cycles <= threshold
+                        else "Above threshold"
+                    ),
                     "Warnings": ", ".join(result.warnings),
                     "Error": (
                         f"{', '.join(result.error_codes)}: {result.error}"
@@ -71,15 +117,18 @@ if records:
                         else result.error
                     ),
                 }
-                for result in predictions
+                for result in visible_results
             ]
-            st.dataframe(rows, hide_index=True, width="stretch")
+            if rows:
+                st.dataframe(rows, hide_index=True, width="stretch")
+            else:
+                st.info("No engines match the current selection and threshold filter.")
             if any(result.error for result in predictions):
                 st.warning(
                     "Rows with a validation or prediction error have no RUL estimate. "
                     "Their original engine IDs remain visible."
                 )
             else:
-                st.success(f"Displayed {len(predictions)} ID-attached engine predictions.")
+                st.success(f"Displayed {len(visible_results)} ID-attached engine predictions.")
 else:
     st.info("Choose a history source with validated engine records to view fleet predictions.")
