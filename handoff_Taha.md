@@ -393,3 +393,12 @@ Starter record created by repository governance on 9 November 2026. Taha should 
 
 - Commit `90961a6fc45ae96923ce6b9fa01300de13e0b1b1` is in [PR #397](https://github.com/Artfever/FleetpulseAI/pull/397), targeting `dev` with `Refs #148`.
 - Local AppTests (2), full suite (422), Ruff, diff check and Streamlit health check passed. Required CI and review-thread checks are pending; #148 remains open.
+
+## P14-T3 takeover active (2026-11-17)
+
+- P14-T3 #255 remains assigned to Taha and open. Shaheer authorized takeover of teammate tasks through P16; this work is by this session for Shaheer without changing issue ownership. P14-T2 #148 and P14-A3 #208 are closed; P07 gate #12 is closed.
+- #208 merged via [PR #399](https://github.com/Artfever/FleetpulseAI/pull/399) at `bd9327fbd58791f8d2ec29577b0af4535c173d28`; all five checks passed, review threads 0, and the issue was closed with evidence [here](https://github.com/Artfever/FleetpulseAI/issues/208#issuecomment-6956294659). Shaheer reported Abdullah's inspection after 35 seconds; not independently observed.
+- Implementation commit `db9c8d1` (`feat(P14-T3): predict from validated uploads`) is pushed on `feat/P14-T3-upload-prediction`. Changed `app/pages/3_RUL_Prediction.py` and `tests/test_upload_page.py`. Upload calls `predict_uploaded_csv` with the explicitly selected engine, `user/upload` provenance, and the saved model bundle. The UI reports model-domain limits, short-window/cycle-gap warnings, model/version, cutoff, feature-window rows, raw/display estimates and prediction errors. Focused AppTests + service tests: 9 passed; full suite: 432 passed; Ruff and diff check: PASS; Streamlit health endpoint: `200 ok`.
+- Local saved Decision Tree execution on packaged FD001/train prefixes: engine 4 through cycle 164 predicted 34.19607843137255 cycles using 30 rows, no warnings; engine 12 through cycle 7 predicted 184.35714285714286 cycles using 7 rows and reported `short_window`. These are development software checks on training-history prefixes, not official-test performance or maintenance evidence.
+- Next: open a `Refs #255` PR to `dev`, and verify CI and review threads before merge. P14 gate #16 remains open pending its shared gate evidence.
+- PR [#400](https://github.com/Artfever/FleetpulseAI/pull/400) is open to `dev` with `Refs #255`. Implementation commit `db9c8d1`; handoff commit `317cb4c`. Local checks and the qualified development-prefix outputs above passed; CI and review-thread checks are pending. #255 remains open until merge and evidence closeout.
