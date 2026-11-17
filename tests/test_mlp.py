@@ -5,6 +5,7 @@ from dataclasses import replace
 import numpy as np
 import pytest
 import torch
+from sklearn.preprocessing import StandardScaler
 
 from fleetpulse.data.quality import READING_COLUMNS
 from fleetpulse.data.split_manifest import build_split_manifest
@@ -129,13 +130,21 @@ def test_scaler_statistics_use_fitting_rows_only_and_validation_transform_does_n
     fitting, validation = mlp_tables
     result = train_mlp(fitting, validation, max_epochs=1, patience=1, batch_size=4)
     fitting_mean = np.asarray(fitting.X, dtype=np.float64).mean(axis=0)
-    combined_mean = np.concatenate((fitting.X, validation.X), axis=0).mean(axis=0)
+    fitting_scaler = StandardScaler().fit(np.asarray(fitting.X, dtype=np.float64))
+    combined_scaler = StandardScaler().fit(
+        np.concatenate((fitting.X, validation.X), axis=0)
+    )
     saved_mean = result.scaler.mean_.copy()
 
     evaluation = evaluate_mlp(result.model, validation, batch_size=1, scaler=result.scaler)
 
     np.testing.assert_allclose(saved_mean, fitting_mean)
-    assert not np.allclose(saved_mean, combined_mean)
+    np.testing.assert_array_equal(result.scaler.mean_, fitting_scaler.mean_)
+    np.testing.assert_array_equal(result.scaler.scale_, fitting_scaler.scale_)
+    np.testing.assert_array_equal(result.scaler.var_, fitting_scaler.var_)
+    assert result.scaler.n_samples_seen_ == len(fitting.rows)
+    assert not np.allclose(result.scaler.mean_, combined_scaler.mean_)
+    assert not np.allclose(result.scaler.scale_, combined_scaler.scale_)
     np.testing.assert_array_equal(result.scaler.mean_, saved_mean)
     assert len(evaluation.predictions) == len(validation.rows)
 
@@ -194,6 +203,10 @@ def test_saved_mlp_bundle_reloads_on_cpu_and_reproduces_predictions(mlp_tables, 
         result.validation_losses
     )
     assert saved["payload"]["training"]["scaler"]["fitting_row_count"] == len(fitting.rows)
+    saved_scaler = saved["payload"]["training"]["scaler"]
+    np.testing.assert_array_equal(saved_scaler["mean"], result.scaler.mean_)
+    np.testing.assert_array_equal(saved_scaler["scale"], result.scaler.scale_)
+    np.testing.assert_array_equal(saved_scaler["variance"], result.scaler.var_)
 
 
 def test_mlp_bundle_rejects_changed_weights_or_dataset_hash(mlp_tables, tmp_path):

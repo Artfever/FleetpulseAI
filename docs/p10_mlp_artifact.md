@@ -110,3 +110,20 @@ separate service check, engine 4 at observed cycle 164 returned
 15.8526315689 cycles (displayed 15.85). No official test histories or answers
 were used; the checkpoint was selected using the validation split, so these
 results are development evidence rather than an untouched final estimate.
+
+## P10-A3 scaler provenance check
+
+The scaler is fitted in `train_mlp` on fitting features only. Tests independently
+fit `StandardScaler` on fitting rows and compare the saved mean, scale, variance
+and sample count; the same test confirms validation evaluation leaves the
+statistics unchanged and that combining validation rows would change them.
+The artifact round-trip test also compares all serialized scaler numbers to the
+trained scaler.
+
+For the actual local FD001/train bundle, the saved scaler reports 16,738 fitted
+rows and 96 features. Compared with a newly fitted StandardScaler over the
+matching fitting table, maximum absolute differences in mean, scale and
+variance were each 0.0. Fitting over the combined fitting and 20 validation
+rows instead would change maximum absolute mean by 0.0024867583, scale by
+0.0029577058, and variance by 0.0970157967. This confirms the recorded values
+come from fitting rows only; validation rows were not used to fit the scaler.
