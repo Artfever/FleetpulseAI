@@ -527,3 +527,8 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Actual local saved-model AppTest on packaged `FD001/train` prefixes produced: engine 4/cycle 164: 34.196078 cycles, 30 rows; engine 5/cycle 58: 158.16 cycles, 30 rows; engine 12/cycle 7: 184.357143 cycles, 7 rows, `short_window`. Model `decision-tree-rul`, version `decision-tree-rul-v1`. These are development training-prefix outputs, not official-test or maintenance evidence.
 - Verification: Fleet Overview + page-shell tests 7 passed; full `.venv/Scripts/python.exe -m pytest -q` 450 passed; `.venv/Scripts/python.exe -m ruff check .` passed; `git diff --check` passed; `.venv/Scripts/python.exe -m streamlit run app/Home.py --server.headless true --server.port 8504` started and `/_stcore/health` returned `HTTP 200 ok`.
 - Changed files: `app/pages/1_Fleet_Overview.py`, `tests/test_fleet_overview_page.py`, `tests/test_page_shells.py`, and this handoff. Next: commit and open `Refs #74` PR to `dev`; verify all required checks and no unresolved conversations, record merge on that PR, close #74 after evidence and the directed inspection interval, then proceed to #151 and #256. #151 depends on #74; #256 depends on #151 and closed #210.
+
+## P15-T1 PR opened (2026-11-18)
+
+- Implementation commit `9a9d5088b690abaf4af5d0825211319fad53d8ce` is in [PR #407](https://github.com/Artfever/FleetpulseAI/pull/407), targeting `dev` with `Refs #74`.
+- Local verification passed: focused UI/page-shell tests 7, full suite 450, Ruff, diff check, Streamlit health `200 ok`, and three actual saved-model predictions on the packaged development prefixes. Required GitHub checks and conversation resolution are pending; #74 remains open.
