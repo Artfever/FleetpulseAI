@@ -593,3 +593,7 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Added tests for identical-input cache hits, invalidation after history/model bytes/model version/feature config changes, and LRU eviction. Focused history tests: 15 passed. Full suite: 468 passed. Ruff and `git diff --check` passed.
 - Actual saved-model replay on packaged FD001/train engine 4 at cycles 50/100/164 returned 154.478528/135.722467/34.196078 cycles using `decision-tree-rul-v1`; an identical second replay matched all outputs and made no extra predictor calls (3 total, all on first run). These are development training-prefix examples, not official-test metrics or maintenance evidence.
 - Changed files: `src/fleetpulse/services/history.py`, `src/fleetpulse/services/__init__.py`, `tests/test_history_service.py`, and this handoff. Next: commit and open `Refs #212` PR to `dev`, verify all required CI and no unresolved conversations, record merge on that same PR, close #212 after its evidence and the owner-directed inspection interval, then continue remaining P16 tasks. Do not close gate #18 until all nine tasks and shared acceptance evidence are verified.
+## P16-A3 PR opened (2026-11-18)
+
+- Implementation commit `72aff3c` is in [PR #412](https://github.com/Artfever/FleetpulseAI/pull/412), targeting `dev` with `Refs #212`.
+- Local verification: focused history tests 15, full suite 468, Ruff, diff check, and saved-model cache replay verified. Required GitHub checks and conversation resolution are pending; #212 remains open and P16 gate #18 stays open.
