@@ -1,6 +1,7 @@
 """Prediction-page behavior with synthetic history and controlled service results."""
 
 import json
+import math
 
 from streamlit.testing.v1 import AppTest
 
@@ -248,6 +249,72 @@ def test_xgboost_is_available_only_with_bundle_and_uses_registered_manifest(
     assert {row["unit_id"] for row in calls[0][0]} == {2}
     assert page.metric[0].value == "28.69"
     assert any("xgboost-rul-v1" in item.value for item in page.markdown)
+
+
+def test_app_loads_saved_mlp_and_predicts_without_starting_training(monkeypatch, tmp_path):
+    from fleetpulse.data.split_manifest import build_split_manifest
+    from fleetpulse.features import FeatureConfig
+    from fleetpulse.features.build_dataset import build_fitting_dataset, build_validation_dataset
+    from fleetpulse.models import mlp
+    from fleetpulse.models.mlp_artifact import save_mlp_artifact
+
+    rows = [
+        {"unit_id": unit, "cycle": cycle, **dict.fromkeys(READING_COLUMNS, cycle + unit)}
+        for unit, lifetime in ((1, 5), (2, 7), (3, 9), (4, 11))
+        for cycle in range(1, lifetime + 1)
+    ]
+    split = build_split_manifest(
+        rows,
+        dataset_partition="FD001/train",
+        source_path="synthetic/train.txt",
+        source_sha256="a" * 64,
+        validation_fraction=0.5,
+    )
+    options = {
+        "manifest": split,
+        "source_sha256": "a" * 64,
+        "config": FeatureConfig(channels=("sensor_1",)),
+    }
+    fitting = build_fitting_dataset(rows, **options)
+    validation = build_validation_dataset(rows, **options)
+    training_result = mlp.train_mlp(
+        fitting, validation, max_epochs=1, patience=1, batch_size=8, random_seed=42
+    )
+    artifact_dir = tmp_path / "artifacts/development/mlp"
+    artifact_dir.mkdir(parents=True)
+    save_mlp_artifact(
+        training_result,
+        fitting,
+        validation,
+        artifact_dir,
+        fitting_dataset_sha256="b" * 64,
+        validation_dataset_sha256="c" * 64,
+    )
+
+    trainer_calls = []
+
+    def unexpected_training(*_args, **_kwargs):
+        trainer_calls.append(True)
+        raise AssertionError("app runtime must not call the MLP training loop")
+
+    monkeypatch.setattr(mlp, "train_mlp", unexpected_training)
+    page = _page(monkeypatch, tmp_path)
+
+    page.run()
+    assert not page.exception
+    assert "Dense MLP (CPU)" in page.selectbox[1].options
+    assert not trainer_calls
+
+    page.selectbox[1].select("Dense MLP (CPU)").run()
+    page.selectbox[2].select(2).run()
+    page.selectbox[3].select(3).run()
+    page.button[0].click().run()
+
+    assert not page.exception
+    assert not trainer_calls
+    assert page.metric[0].label == "Estimated remaining cycles"
+    assert math.isfinite(float(page.metric[0].value))
+    assert any("dense-rul-mlp-v1" in item.value for item in page.markdown)
 
 
 def test_mlp_is_selectable_only_with_bundle_and_uses_its_saved_manifest(monkeypatch, tmp_path):
