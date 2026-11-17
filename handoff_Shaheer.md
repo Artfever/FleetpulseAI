@@ -419,3 +419,8 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Current task: Taha-assigned P14-T2 #148, open with #71 closed, no task blockers, and P07 gate #12 closed. Shaheer's takeover includes the task. Branch `feat/P14-T2-upload-preview` starts from dev `2b05e6e...`.
 - Added an `Upload CSV` source to RUL Prediction. It restricts uploads to CSV, parses through the shared 1 MiB/26-field validator, selects a single engine for preview, shows the first 10 selected-engine rows and any cycle-gap warnings, and renders clear validation errors. Clearing the uploader removes the error on rerun. Upload remains preview-only here; P14-T3 #255 remains responsible for connecting the UI to prediction.
 - Changed `app/pages/3_RUL_Prediction.py` and added `tests/test_upload_page.py`. Focused AppTests: 2 passed. Ruff PASS; full suite 422 passed; `git diff --check` PASS. `.venv/Scripts/python.exe -m streamlit run app/Home.py --server.headless true --server.port 8504` started; `/_stcore/health` returned `200 ok`. No PR yet. Next: commit and open `Refs #148` PR to `dev`, verify CI/conversations, merge, and close after the requested inspection interval. P14 parent #16 stays open.
+
+## P14-T2 PR opened (2026-11-17)
+
+- Implementation commit `90961a6fc45ae96923ce6b9fa01300de13e0b1b1` is in [PR #397](https://github.com/Artfever/FleetpulseAI/pull/397), targeting `dev` with `Refs #148`.
+- Local focused tests 2 PASS; full suite 422 PASS; Ruff/diff check PASS; Streamlit health `200 ok`. CI and review-thread checks are pending; #148 remains open.
