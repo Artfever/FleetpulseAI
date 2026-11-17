@@ -12,6 +12,11 @@ from fleetpulse.data.quality import READING_COLUMNS
 from fleetpulse.services import RULPrediction
 from fleetpulse.services import history as history_service
 
+TREE_OPTION = "Decision Tree · Development · decision-tree-rul-v1"
+FOREST_OPTION = "Random Forest · Development · random-forest-rul-v1"
+XGBOOST_OPTION = "XGBoost · Development · xgboost-rul-v1"
+MLP_OPTION = "Dense MLP (CPU) · Development · dense-rul-mlp-v1"
+
 
 def _page(monkeypatch, tmp_path):
     monkeypatch.setattr(ui, "PROJECT_ROOT", tmp_path)
@@ -123,8 +128,8 @@ def test_training_replay_is_labeled_by_saved_model_fit_membership(monkeypatch, t
 
 def test_missing_bundle_shows_error_without_fabricating_prediction(monkeypatch, tmp_path):
     page = _page(monkeypatch, tmp_path).run()
-    assert "XGBoost" not in page.selectbox[1].options
-    assert "Dense MLP (CPU)" not in page.selectbox[1].options
+    assert not any(option.startswith("XGBoost ·") for option in page.selectbox[1].options)
+    assert not any(option.startswith("Dense MLP (CPU) ·") for option in page.selectbox[1].options)
     assert any("XGBoost is unavailable" in item.value for item in page.info)
     assert any("Dense MLP is unavailable" in item.value for item in page.info)
     assert not page.exception
@@ -207,16 +212,30 @@ def test_packaged_fd001_subset_uses_only_selected_training_prefix(monkeypatch, t
 def test_forest_is_selectable_only_when_its_complete_bundle_is_present(monkeypatch, tmp_path):
     page = _page(monkeypatch, tmp_path)
     page.run()
-    assert list(page.selectbox[1].options) == ["Decision Tree"]
+    assert list(page.selectbox[1].options) == [TREE_OPTION]
     assert any("Random Forest is unavailable" in item.value for item in page.info)
-
     artifact_dir = tmp_path / "artifacts/development"
     artifact_dir.mkdir(parents=True)
     (artifact_dir / "random_forest_validation.json").write_text("{}", encoding="utf-8")
     (artifact_dir / "random_forest_model.joblib").write_bytes(b"test fixture")
     page.run()
-    assert list(page.selectbox[1].options) == ["Decision Tree", "Random Forest"]
+    assert list(page.selectbox[1].options) == [TREE_OPTION, FOREST_OPTION]
     assert not any("Random Forest is unavailable" in item.value for item in page.info)
+
+
+def test_model_selector_discloses_selected_development_and_registered_final_versions(
+    monkeypatch, tmp_path
+):
+    page = _page(monkeypatch, tmp_path)
+    page.run()
+
+    assert not page.exception
+    assert any(
+        "Selected: Development candidate `decision-tree-rul-v1`" in item.value
+        and "Final refit is registered separately as `decision-tree-rul-v1`" in item.value
+        and "this page does not load it" in item.value
+        for item in page.caption
+    )
 
 
 def test_switching_models_keeps_engine_and_cycle_and_uses_matching_manifest(
@@ -244,7 +263,7 @@ def test_switching_models_keeps_engine_and_cycle_and_uses_matching_manifest(
     page.run()
     page.selectbox[2].select(2).run()
     page.select_slider[0].set_value(2).run()
-    page.selectbox[1].select("Random Forest").run()
+    page.selectbox[1].select(FOREST_OPTION).run()
     assert page.selectbox[2].value == 2
     assert page.select_slider[0].value == 2
     assert any("available saved development model" in item.value for item in page.caption)
@@ -255,7 +274,7 @@ def test_switching_models_keeps_engine_and_cycle_and_uses_matching_manifest(
     assert page.metric[0].value == "18.80"
     assert any("random-forest-rul-v1" in item.value for item in page.markdown)
 
-    page.selectbox[1].select("Decision Tree").run()
+    page.selectbox[1].select(TREE_OPTION).run()
     assert page.selectbox[2].value == 2
     assert page.select_slider[0].value == 2
     assert not any("P06" in item.value for item in page.caption)
@@ -288,10 +307,10 @@ def test_xgboost_is_available_only_with_bundle_and_uses_registered_manifest(
 
     monkeypatch.setattr(history_service, "predict_rul_with_context", predict)
     page.run()
-    assert list(page.selectbox[1].options) == ["Decision Tree", "XGBoost"]
+    assert list(page.selectbox[1].options) == [TREE_OPTION, XGBOOST_OPTION]
     page.selectbox[2].select(2).run()
     page.select_slider[0].set_value(2).run()
-    page.selectbox[1].select("XGBoost").run()
+    page.selectbox[1].select(XGBOOST_OPTION).run()
     assert not page.exception
     assert calls[-1][1]["manifest_path"] == manifest
     assert [row["cycle"] for row in calls[-1][0]] == [1, 2]
@@ -351,10 +370,10 @@ def test_app_loads_saved_mlp_and_predicts_without_starting_training(monkeypatch,
 
     page.run()
     assert not page.exception
-    assert "Dense MLP (CPU)" in page.selectbox[1].options
+    assert MLP_OPTION in page.selectbox[1].options
     assert not trainer_calls
 
-    page.selectbox[1].select("Dense MLP (CPU)").run()
+    page.selectbox[1].select(MLP_OPTION).run()
     page.selectbox[2].select(2).run()
     page.select_slider[0].set_value(3).run()
 
@@ -384,10 +403,10 @@ def test_mlp_is_selectable_only_with_bundle_and_uses_its_saved_manifest(monkeypa
 
     monkeypatch.setattr(history_service, "predict_rul_with_context", predict)
     page.run()
-    assert "Dense MLP (CPU)" in page.selectbox[1].options
+    assert MLP_OPTION in page.selectbox[1].options
     page.selectbox[2].select(2).run()
     page.select_slider[0].set_value(2).run()
-    page.selectbox[1].select("Dense MLP (CPU)").run()
+    page.selectbox[1].select(MLP_OPTION).run()
     assert not page.exception
     assert calls[-1][1]["manifest_path"] == manifest
     assert [row["cycle"] for row in calls[-1][0]] == [1, 2]

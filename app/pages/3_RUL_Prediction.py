@@ -22,6 +22,7 @@ from fleetpulse.models.mlp_contract import (
 from fleetpulse.models.mlp_contract import (
     WEIGHTS_FILENAME as MLP_WEIGHTS_FILENAME,
 )
+from fleetpulse.models.registry import DEVELOPMENT_MODEL_REGISTRY, FINAL_MODEL_REGISTRY
 from fleetpulse.models.usage_scope import classify_training_engine
 from fleetpulse.models.xgboost_artifact import (
     MANIFEST_FILENAME as XGBOOST_MANIFEST_FILENAME,
@@ -83,7 +84,28 @@ else:
         "Dense MLP is unavailable in this workspace until its verified checkpoint, "
         "architecture and scaler are present in `artifacts/development/mlp/`."
     )
-selected_model = st.selectbox("RUL model", model_options)
+development_versions = {
+    "Decision Tree": DEVELOPMENT_MODEL_REGISTRY["decision-tree-rul"].version,
+    "Random Forest": DEVELOPMENT_MODEL_REGISTRY["random-forest-rul"].version,
+    "XGBoost": DEVELOPMENT_MODEL_REGISTRY["xgboost-rul"].version,
+    "Dense MLP (CPU)": DEVELOPMENT_MODEL_REGISTRY["dense-rul-mlp"].version,
+}
+final_registry_names = {
+    "Decision Tree": "decision-tree-rul",
+    "Random Forest": "random-forest-rul",
+    "XGBoost": "xgboost-rul",
+    "Dense MLP (CPU)": "dense-rul-mlp-final",
+}
+selected_model = st.selectbox(
+    "RUL model",
+    model_options,
+    format_func=lambda name: f"{name} · Development · {development_versions[name]}",
+)
+final_model_spec = FINAL_MODEL_REGISTRY[final_registry_names[selected_model]]
+st.caption(
+    f"Selected: Development candidate `{development_versions[selected_model]}`. "
+    f"Final refit is registered separately as `{final_model_spec.version}`; this page does not load it."
+)
 
 partition = "FD001/train"
 if source == "Local FD001 training data":
