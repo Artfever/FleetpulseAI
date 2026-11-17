@@ -518,3 +518,17 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 
 - Commit `8334eaec1c797b189244f0c9d17f5cb86f5443b3` is in [PR #406](https://github.com/Artfever/FleetpulseAI/pull/406), targeting `dev` with `Refs #210`.
 - Local checks passed: focused fleet tests 15, full suite 448, Ruff, and diff check. Required GitHub checks and conversation resolution are pending; #210 remains open and P15 gate #17 stays open.
+
+## P15-A3 merged; P15-T1 fleet UI active (2026-11-18)
+
+- P15-A3 #210 merged via [PR #406](https://github.com/Artfever/FleetpulseAI/pull/406) to `dev` at `458f38a04dc9fe80645796262950e1f73d3bf019`; all five required checks passed and review threads were 0. Same-PR merge record: [comment](https://github.com/Artfever/FleetpulseAI/pull/406#issuecomment-6958170831). #210 closed with evidence [here](https://github.com/Artfever/FleetpulseAI/issues/210#issuecomment-6958197260); teammate inspection is owner-directed/reported, not independently observed.
+- Current task: P15-T1 #74, originally assigned to Taha and included in Shaheer's authorized takeover. Branch `feat/P15-T1-fleet-overview-predictions` starts from dev `458f38a04dc9fe80645796262950e1f73d3bf019`; P07 #12 is closed and #74 has no remaining task blocker. P15 gate #17 stays open.
+- Replaced the Fleet Overview empty shell with validated local/packaged history selection and saved-model fleet predictions. The view shows partition, engine ID, observed cycle, displayed/raw RUL, model/version, feature rows, warnings and errors. It uses the trusted deployment bundle secret when no local Decision Tree manifest is available, and presents an explicit unavailable state otherwise. Updated the empty-shell assertion and added AppTest coverage for result identity/model details, warnings, per-engine errors, and missing bundles.
+- Actual local saved-model AppTest on packaged `FD001/train` prefixes produced: engine 4/cycle 164: 34.196078 cycles, 30 rows; engine 5/cycle 58: 158.16 cycles, 30 rows; engine 12/cycle 7: 184.357143 cycles, 7 rows, `short_window`. Model `decision-tree-rul`, version `decision-tree-rul-v1`. These are development training-prefix outputs, not official-test or maintenance evidence.
+- Verification: Fleet Overview + page-shell tests 7 passed; full `.venv/Scripts/python.exe -m pytest -q` 450 passed; `.venv/Scripts/python.exe -m ruff check .` passed; `git diff --check` passed; `.venv/Scripts/python.exe -m streamlit run app/Home.py --server.headless true --server.port 8504` started and `/_stcore/health` returned `HTTP 200 ok`.
+- Changed files: `app/pages/1_Fleet_Overview.py`, `tests/test_fleet_overview_page.py`, `tests/test_page_shells.py`, and this handoff. Next: commit and open `Refs #74` PR to `dev`; verify all required checks and no unresolved conversations, record merge on that PR, close #74 after evidence and the directed inspection interval, then proceed to #151 and #256. #151 depends on #74; #256 depends on #151 and closed #210.
+
+## P15-T1 PR opened (2026-11-18)
+
+- Implementation commit `9a9d5088b690abaf4af5d0825211319fad53d8ce` is in [PR #407](https://github.com/Artfever/FleetpulseAI/pull/407), targeting `dev` with `Refs #74`.
+- Local verification passed: focused UI/page-shell tests 7, full suite 450, Ruff, diff check, Streamlit health `200 ok`, and three actual saved-model predictions on the packaged development prefixes. Required GitHub checks and conversation resolution are pending; #74 remains open.
