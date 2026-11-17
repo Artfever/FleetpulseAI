@@ -1,10 +1,85 @@
-"""Fleet Overview view."""
+"""Show saved-model fleet predictions with their engine identities."""
 
-from fleetpulse.ui import render_page
+import streamlit as st
+from streamlit.errors import StreamlitSecretNotFoundError
 
-render_page(
-    'Fleet Overview',
-    'Review a fleet of simulated engines.',
-    'Fleet data and predictions are not available yet.',
-    'Fleet summaries will appear here when data and predictions are available.',
+from fleetpulse import deployment, ui
+from fleetpulse.services import (
+    PredictionArtifactError,
+    PredictionInputError,
+    predict_fleet,
 )
+
+st.title("Fleet Overview")
+st.caption(
+    "Review saved-model RUL estimates for observed engine histories. Estimates are in operating "
+    "cycles and do not confirm physical faults or maintenance needs."
+)
+
+source = st.selectbox(
+    "History source",
+    ["Packaged FD001/train parity subset", "Local FD001 training data"],
+)
+if source == "Packaged FD001/train parity subset":
+    records = ui.render_packaged_training_subset()
+else:
+    records = ui.render_training_data()
+
+if records:
+    artifact_dir = ui.PROJECT_ROOT / "artifacts" / "development"
+    manifest_path = artifact_dir / "decision_tree_validation.json"
+    try:
+        supplied_bundle = st.secrets.get("deployment_model")
+    except StreamlitSecretNotFoundError:
+        supplied_bundle = None
+
+    if not manifest_path.is_file() and supplied_bundle is None:
+        st.warning(
+            "Fleet predictions are unavailable: provide the trusted Decision Tree bundle "
+            "through Streamlit secrets or install the verified local development bundle."
+        )
+    else:
+        try:
+            with deployment.prediction_manifest(manifest_path, supplied_bundle) as active_manifest:
+                predictions = predict_fleet(
+                    records,
+                    dataset_partition="FD001/train",
+                    manifest_path=active_manifest,
+                )
+        except (PredictionArtifactError, PredictionInputError) as error:
+            st.warning(f"Fleet predictions are unavailable: {error}")
+        else:
+            st.caption(
+                "The displayed rows are one snapshot from the same saved Decision Tree model "
+                "and version. The packaged option contains only three training-history prefixes; "
+                "it is not a complete fleet or model-quality evidence."
+            )
+            rows = [
+                {
+                    "Dataset": result.identity.dataset_partition,
+                    "Engine ID": result.identity.unit_id,
+                    "Observed cycle": result.observed_cycle,
+                    "Predicted RUL (cycles)": result.displayed_rul_cycles,
+                    "Raw RUL (cycles)": result.raw_rul_cycles,
+                    "Model": result.model_name,
+                    "Version": result.model_version,
+                    "Feature rows": result.input_window_rows,
+                    "Warnings": ", ".join(result.warnings),
+                    "Error": (
+                        f"{', '.join(result.error_codes)}: {result.error}"
+                        if result.error and result.error_codes
+                        else result.error
+                    ),
+                }
+                for result in predictions
+            ]
+            st.dataframe(rows, hide_index=True, width="stretch")
+            if any(result.error for result in predictions):
+                st.warning(
+                    "Rows with a validation or prediction error have no RUL estimate. "
+                    "Their original engine IDs remain visible."
+                )
+            else:
+                st.success(f"Displayed {len(predictions)} ID-attached engine predictions.")
+else:
+    st.info("Choose a history source with validated engine records to view fleet predictions.")
