@@ -816,3 +816,25 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Gate evidence commit `742c6f98b4f2789e2e9087e14c346851246f732d` is in [PR #426](https://github.com/Artfever/FleetpulseAI/pull/426), targeting `dev` with `Refs #20`.
 - The PR packages the selected 30-cycle/all-channel XGBoost configuration, P11-T3 owner-delegated rationale and model hash, exact eight-epoch MLP alternative refit rule, consolidated evidence, Model Laboratory details, and this handoff update. All nine P11 child issues are closed; parent gate #20 remains open pending this PR.
 - Local checks: focused tests 7 passed; full suite 472 passed; Ruff and diff check passed; Streamlit health HTTP 200. Required GitHub CI and thread status are pending; no teammate consensus is claimed.
+
+## P11 shared gate #20 completed (2026-11-18)
+
+- PR #426 merged into `dev` at `cc002a28d4e18cba8a23aa039242d61eb3ea61b0`; all five required CI checks passed on head `53bd3b933ee456e9db370d926030ff5dc7743db1`, with zero unresolved threads. Same-PR gate merge record: https://github.com/Artfever/FleetpulseAI/pull/426#issuecomment-6962675737.
+- All nine P11 child tasks (#60, #61, #62, #137, #138, #139, #202, #203, #252) are closed. Parent gate #20 is closed with the owner-directed inspection record: https://github.com/Artfever/FleetpulseAI/issues/20#issuecomment-6962692490. The record explicitly does not claim teammate consensus.
+- Frozen choices and evidence: XGBoost depth 4, `xgboost-rul-v1`, seed42, 100 estimators, max_depth4, learning_rate0.05, subsample/colsample0.8, CPU hist, one job; 30-cycle 24-channel/96-feature `past-only-v1`. MLP (128,64) alternative refit rule is seed42, same input, exactly 8 epochs without reselecting on the reused validation cohort. Lowest-MAE MLP and lowest-RMSE XGBoost trade-off retained. No official test data used.
+- Next: inspect current P12 parent/task blockers and shared dependencies; start only the first unblocked assigned task from latest dev.
+
+## P12-S1 #64 final MLP scaler implementation (2026-11-18)
+
+- Active task: Shaheer-assigned P12-S1 #64 on `feat/P12-S1-final-scaler`, branched from dev after P11 gate #20 closed. P12-S2 #141 consumes this scaler; P12-S3 #205 will package it with final MLP weights.
+- Built all cycle-level features from the original FD001/train histories only, with the selected P11 30-cycle/24-channel/96-feature past-only input. A fresh StandardScaler used 20,631 rows across all 100 engines. The scaler fit used feature values only; no RUL labels were read by the scaler operation and no official test data was opened.
+- Actual ignored output: `artifacts/final/mlp/scaler_manifest.json`; source SHA `963b5e22825b34d8b21c69e1aeb4af3e647050eb672ee8834ba4b5d91d2de0f8`; P11 selection manifest SHA `4cbda49f05eb928ebacc0a673de175dfae24b0017f7798db62a37cda8462fa2d`; scaler payload SHA `b56c8d1d3a8b946f48bbfd231ff9f6596c44a3ccbf2ab2235c69f4acde4f69cd`. Saved and reloaded mean/scale/variance matched exactly; all 20,631 transformed rows were finite.
+- Added reusable final scaler build/fit/save/load contract, `scripts/fit_p12_mlp_scaler.py`, `tests/test_final_scaler.py`, and `docs/p12_s1_final_mlp_scaler.md`. The local scaler artifact is Git-ignored under `artifacts/final`; the producing code and reproduction instructions are tracked.
+- Checks: focused `.venv/Scripts/python.exe -m pytest tests/test_final_scaler.py -q` — 2 passed in 1.64s; full suite — 474 passed in 27.16s; Ruff and `git diff --check` passed. Reproduction script succeeded with 100 engines/20,631 rows and exact scaler-stat reload.
+- Next: commit with this handoff, open a `Refs #64` PR to dev, pass all five CI checks and resolve threads, record the merge in that PR, wait 35 seconds, post the owner-directed inspection record without claiming teammate review, and close #64. Then proceed to dependent P12-S2 #141 under the frozen eight-epoch P11 rule.
+
+## P12-S1 #64 PR opened (2026-11-18)
+
+- Implementation commit `f416252fa584fb5494438f13ab2d0f47eb7e719a` is in [PR #427](https://github.com/Artfever/FleetpulseAI/pull/427), targeting `dev` with `Refs #64`.
+- The PR contains the all-engine past-only feature/scaler builder, hashed local scaler manifest writer/loader, focused tests, reproduction report, and this handoff update. Local result: 100 engines, 20,631 rows, 96 features, exact scaler-stat reload, finite transform output.
+- Local checks: focused tests 2 passed; full suite 474 passed; Ruff and diff check passed. Required GitHub CI and thread status are pending on the PR head; #64 remains open.
