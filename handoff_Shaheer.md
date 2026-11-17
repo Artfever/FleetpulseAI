@@ -684,3 +684,7 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Added `scripts/run_p11_a2_feature_ablation.py` and `docs/p11_a2_feature_ablation.md`. Models, tables, and per-engine outputs are under ignored `artifacts/experiments/P11_A2_feature_ablation/`; no existing experiment/development artifacts overwritten.
 - Checks: `.venv/Scripts/python.exe -m pytest -q` — 468 passed in 31.41s; `.venv/Scripts/python.exe -m ruff check .` — passed; `git diff --check` — passed. Feature rebuild, same-key assertion, independent sample inspection, and 3/3 reload replays passed. App smoke not run; no app changes.
 - #137 remains open pending PR checks and owner-directed inspection after merge. Next: commit and open `Refs #137` PR to dev, wait for all five checks and resolved conversations, record merge on that PR, wait 35 seconds as directed, post the accurately labeled issue inspection and close only with evidence.
+## P11-A2 PR opened (2026-11-18)
+
+- Implementation commit `bc78e70` is in [PR #419](https://github.com/Artfever/FleetpulseAI/pull/419), targeting `dev` with `Refs #137`.
+- The PR includes the three rebuilt channel ablations, exact 20-row replay checks, independent engine-4 feature check, protocol/results, and handoff. Local full suite (468), Ruff, and diff check passed. Required GitHub checks and conversation resolution are pending; #137 remains open.
