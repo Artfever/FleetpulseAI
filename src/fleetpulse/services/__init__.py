@@ -9,6 +9,12 @@ from fleetpulse.services.fleet import (
     extract_latest_engine_histories,
     predict_fleet,
 )
+from fleetpulse.services.history import (
+    MAX_REPLAY_POINTS,
+    HistoryReplay,
+    HistoryReplayPoint,
+    replay_engine_history,
+)
 from fleetpulse.services.predictor import (
     PredictionArtifactError,
     PredictionInputError,
@@ -20,11 +26,14 @@ from fleetpulse.services.predictor import (
 from fleetpulse.services.uploaded_history import predict_uploaded_csv
 
 __all__ = [
+    "MAX_REPLAY_POINTS",
     "EngineIdentity",
     "FleetEngineHistory",
     "FleetEngineHistoryError",
     "FleetHistories",
     "FleetPredictionResult",
+    "HistoryReplay",
+    "HistoryReplayPoint",
     "PredictionArtifactError",
     "PredictionInputError",
     "RULPrediction",
@@ -34,4 +43,5 @@ __all__ = [
     "predict_rul",
     "predict_rul_with_context",
     "predict_uploaded_csv",
+    "replay_engine_history",
 ]

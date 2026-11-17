@@ -558,3 +558,17 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 
 - Implementation commit `0a9754100f7cbb76d82ac2d800d920e90142fe68` is in [PR #409](https://github.com/Artfever/FleetpulseAI/pull/409), targeting `dev` with `Refs #256`.
 - Local checks passed: focused planner/Fleet Overview/page-shell tests 10, full suite 453, Ruff, diff check, and Streamlit health `200 ok`. Required GitHub checks and conversation resolution are pending; #256 remains open and gate #17 stays open.
+
+## P15 gate closed; P16-A1 replay service active (2026-11-18)
+
+- P15-T3 #256 merged through [PR #409](https://github.com/Artfever/FleetpulseAI/pull/409) into `dev` at `efecdc6a614a482277787bd17a00aeb3c9bc005c`; all five required checks passed and review threads were 0. Same-PR merge record: [comment](https://github.com/Artfever/FleetpulseAI/pull/409#issuecomment-6958858554). #256 closed with evidence [here](https://github.com/Artfever/FleetpulseAI/issues/256#issuecomment-6958882744).
+- P15 gate #17 was verified and closed with the all-nine-task and shared parity/identity/filter evidence [here](https://github.com/Artfever/FleetpulseAI/issues/17#issuecomment-6958910840). Current `dev` was clean and up to date at `efecdc6...` before this P16 branch. P16-S1 #76, S2 #153, and S3 #213 were already closed; P16 gate #18 remains open.
+- Current task: Abdullah-assigned P16-A1 #75, included in Shaheer's authorized takeover. Branch `feat/P16-A1-bounded-history-replay` starts from dev `efecdc6a614a482277787bd17a00aeb3c9bc005c`; P07 gate #12 is closed and #75 has no task blocker.
+- Added `src/fleetpulse/services/history.py`: `replay_engine_history` validates one identified engine, selected cycle, and unique observed replay cutoffs; accepts at most 10 points; filters out other engines; sorts cutoffs; and passes a separate copy of only that engine's rows through each cutoff to saved inference. Exported `HistoryReplay`, `HistoryReplayPoint`, `MAX_REPLAY_POINTS`, and the service.
+- Actual local saved `decision-tree-rul-v1` replay on packaged FD001/train prefixes: engine 4 at cycles 50/100/164 yielded 154.478528/135.722466/34.196078 cycles; engine 5 at 20/40/58 yielded 158.16 at each cutoff (cycle 20 has `short_window`); engine 12 at 3/7 yielded 175.519231/184.357143 (both `short_window`). The six cutoffs are observed training-prefix software outputs, not official-test metrics.
+- Focused `tests/test_history_service.py`: 8 passed; full suite: 461 passed; Ruff and `git diff --check` passed. Changed files: `src/fleetpulse/services/history.py`, `src/fleetpulse/services/__init__.py`, `tests/test_history_service.py`, and this handoff. Next: commit and open `Refs #75` PR to `dev`; verify required checks and resolved conversations, record merge on the same PR, close #75 after evidence and the directed inspection interval, then continue P16.
+
+## P16-A1 PR opened (2026-11-18)
+
+- Implementation commit `e30e1f9634ecb52c39e6d4b691afc78e5f034391` is in [PR #410](https://github.com/Artfever/FleetpulseAI/pull/410), targeting `dev` with `Refs #75`.
+- Local verification passed: focused replay tests 8, full suite 461, Ruff, diff check, and six real saved-model training-prefix replay points. Required GitHub checks and conversation resolution are pending; #75 remains open and P16 gate #18 remains open.
