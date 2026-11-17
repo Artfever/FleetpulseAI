@@ -407,3 +407,9 @@ Starter record created by repository governance on 9 November 2026. Taha should 
 
 - P14-T3 #255 merged via [PR #400](https://github.com/Artfever/FleetpulseAI/pull/400) as `ef8b325a8c4b004ef7ad99bd071692a01ffb144a`; all five checks passed, review threads 0, and issue evidence is [here](https://github.com/Artfever/FleetpulseAI/issues/255#issuecomment-6956559398). P14 shared gate #16 is closed with evidence [here](https://github.com/Artfever/FleetpulseAI/issues/16#issuecomment-6956611967).
 - Current task P15-A1 #72 is assigned to Abdullah; P15-S1 #73's phase ordering says parity integration follows this batch service. P15-T1 #74, T2 #151 and T3 #256 remain open for later takeover work.
+
+## P15-A2 merged; fleet UI consumers active (2026-11-17)
+
+- P15-A1 #72 merged via [PR #401](https://github.com/Artfever/FleetpulseAI/pull/401) as `0bd366317075176ea729cf71c2e14a17175bea3e`; issue evidence is [here](https://github.com/Artfever/FleetpulseAI/issues/72#issuecomment-6957034538). P15-A2 #149 merged via [PR #402](https://github.com/Artfever/FleetpulseAI/pull/402) as `e9795a8bc9a6ee5e8eba4b9894cf482eb0246dcb`; issue evidence is [here](https://github.com/Artfever/FleetpulseAI/issues/149#issuecomment-6957248842).
+- The fleet result row is ready for P15-T1/T2 UI work: dataset-qualified engine identity, observed cycle, raw/display estimate, model/version, window/warnings, and per-engine error. Current parity task P15-S1 #73 verifies the service output; P15 gate #17 remains open.
+- Local batch/single parity with saved `decision-tree-rul-v1` on packaged FD001/train prefixes is exact for engines 4, 5, and 12 (zero-cycle delta). Engine 12's 7-row history is marked `short_window`. The evidence uses development training prefixes, not official-test performance. Fleet UI tasks should retain the result's dataset-qualified identity through filtering/sorting.
