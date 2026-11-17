@@ -82,3 +82,21 @@ def _validate(payload: dict[str, Any]) -> None:
         value = selected_artifact.get(field)
         if not isinstance(value, str) or len(value) != 64:
             raise ValueError(f"invalid selected artifact {field}")
+    selected_config = decision.get("selected_configuration", {})
+    feature_config = selected_config.get("feature_config", {})
+    if (
+        selected_config.get("seed") != 42
+        or feature_config.get("window_cycles") != 30
+        or len(feature_config.get("channels", [])) != 24
+        or selected_config.get("engineered_feature_count") != 96
+    ):
+        raise ValueError("selected model configuration must retain the P11 window/feature protocol")
+    mlp_rule = decision.get("mlp_refit_rule", {})
+    if (
+        mlp_rule.get("alternative_candidate") not in candidate_names
+        or mlp_rule.get("seed") != 42
+        or mlp_rule.get("hidden_dims") != [128, 64]
+        or mlp_rule.get("frozen_epoch_count") != 8
+        or mlp_rule.get("window_cycles") != 30
+    ):
+        raise ValueError("selection manifest must record the frozen P11 MLP refit epoch rule")

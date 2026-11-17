@@ -107,6 +107,15 @@ def build_manifest():
         rel_tol=0, abs_tol=1e-9,
     ):
         raise ValueError("selected P11 result metrics differ from the saved service candidate")
+    service_manifest = _read(PROJECT_ROOT / "artifacts/development/xgboost_validation.json")[
+        "payload"
+    ]
+    feature_config = service_manifest["training"]["feature_config"]
+    if feature_config["window_cycles"] != 30 or len(feature_config["channels"]) != 24:
+        raise ValueError("selected XGBoost feature window/channels differ from P11 protocol")
+    wide_mlp = next(row for row in comparison if row["name"] == "MLP, hidden (128, 64)")
+    if wide_mlp["best_epoch"] != 8 or wide_mlp["seed"] != 42:
+        raise ValueError("unexpected selected MLP alternative epoch/seed for refit rule")
     return {
         "schema_version": SCHEMA_VERSION,
         "dataset_partition": "FD001/train",
@@ -144,6 +153,26 @@ def build_manifest():
                 "path": "artifacts/development/xgboost_model.joblib",
                 "sha256": service_model_sha256,
                 "matched_p11_run_checkpoint_sha256": selected_run_model_sha256,
+            },
+            "selected_configuration": {
+                "seed": 42,
+                "model_parameters": selected["configuration"],
+                "feature_config": feature_config,
+                "engineered_feature_count": len(service_manifest["training"]["feature_names"]),
+            },
+            "mlp_refit_rule": {
+                "alternative_candidate": wide_mlp["name"],
+                "seed": 42,
+                "hidden_dims": [128, 64],
+                "window_cycles": 30,
+                "feature_config": feature_config,
+                "frozen_epoch_count": 8,
+                "basis": (
+                    "The P11-S2 (128, 64) candidate reached its lowest validation MSE at "
+                    "epoch 8 after 11 epochs under patience 3. If this MLP alternative is "
+                    "refit, train for exactly 8 epochs without selecting epochs again on "
+                    "the reused validation cohort."
+                ),
             },
         },
         "official_test_data_opened": False,

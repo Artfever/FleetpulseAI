@@ -44,6 +44,21 @@ def _write_manifest(path, *, sample_count=20):
                 "sha256": "c" * 64,
                 "matched_p11_run_checkpoint_sha256": "c" * 64,
             },
+            "selected_configuration": {
+                "seed": 42,
+                "feature_config": {
+                    "window_cycles": 30,
+                    "channels": [f"channel_{index}" for index in range(24)],
+                },
+                "engineered_feature_count": 96,
+            },
+            "mlp_refit_rule": {
+                "alternative_candidate": "Candidate 0",
+                "seed": 42,
+                "hidden_dims": [128, 64],
+                "window_cycles": 30,
+                "frozen_epoch_count": 8,
+            },
         },
     }
     encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), allow_nan=False)
