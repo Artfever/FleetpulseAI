@@ -37,3 +37,26 @@ Validation labels selected the checkpoint, so this score is selection evidence,
 not an untouched performance estimate. No official test data or answers were
 read. The bundle does not establish deployment, maintenance readiness, or
 performance on unseen engines.
+
+When the verified bundle is present, the RUL Prediction page offers **Dense
+MLP (CPU)** as a selectable saved model. The Model Laboratory independently
+verifies the checkpoint against the same fitting/validation tables before
+showing its per-engine MAE/RMSE and prediction points. Validation MSE and the
+selected epoch are identified as checkpoint-selection evidence because that
+split selected the checkpoint; the displayed results are not an untouched
+performance estimate. No MLP selection or score is shown when its bundle is
+missing or fails verification.
+
+## Model page inspection
+
+Using the local saved bundle with Python 3.12.10, PyTorch 2.15.0+cpu and
+scikit-learn 1.9.1, Model Laboratory verified the artifact against the matching
+FD001/train tables and showed 20 validation engines: MAE 15.511258 cycles and
+RMSE 22.937993 cycles. The prediction plot includes the same saved per-engine
+predictions. The RUL Prediction page selected **Dense MLP (CPU)** for engine 4
+at cycle 164 and displayed 15.85 cycles (raw service output 15.8526315689,
+model `dense-rul-mlp-v1`). This single-row service output differs from the saved
+batch oracle by 0.0000019073 cycles because CPU floating-point execution varies
+slightly with batch shape. These remain development-validation results; the
+checkpoint was selected using these validation targets, and no official test
+partition or answers were used.

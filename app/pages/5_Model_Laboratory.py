@@ -11,6 +11,7 @@ from fleetpulse.data.split_audit_view import verified_split_manifest
 from fleetpulse.evaluation.model_comparison import (
     load_model_comparison,
     load_verified_forest_scores,
+    load_verified_mlp_scores,
 )
 from fleetpulse.features import FeatureConfig
 from fleetpulse.features.build_dataset import manifest_digest
@@ -110,11 +111,36 @@ else:
                 "Verified Random Forest scores are unavailable until the matching saved "
                 "development model bundle is present."
             )
-        st.subheader(
-            "Constant baseline, Decision Tree, and Random Forest"
-            if forest_scores is not None
-            else "Constant baseline and Decision Tree"
+        mlp_scores = None
+        try:
+            mlp_scores = load_verified_mlp_scores(
+                artifact_dir,
+                fitting,
+                validation_features,
+                fitting_dataset_sha256=fitting_sha,
+                validation_dataset_sha256=validation_sha,
+            )
+        except (ImportError, OSError, RuntimeError, ValueError, KeyError, TypeError) as error:
+            st.warning(
+                "Dense MLP results are not shown because its saved development checkpoint "
+                f"could not be verified: {error}"
+            )
+        if mlp_scores is None:
+            st.info(
+                "Verified Dense MLP results are unavailable until its saved development "
+                "checkpoint, architecture and scaler are present."
+            )
+        model_names = ["Constant baseline", "Decision Tree"]
+        if forest_scores is not None:
+            model_names.append("Random Forest")
+        if mlp_scores is not None:
+            model_names.append("Dense MLP")
+        section_title = (
+            " and ".join(model_names)
+            if len(model_names) == 2
+            else f"{', '.join(model_names[:-1])}, and {model_names[-1]}"
         )
+        st.subheader(section_title)
         st.caption(
             f"All displayed model scores use the same {comparison.validation_engine_count} "
             "held-out FD001 training engines and saved cutoff cycles. These are "
@@ -140,6 +166,14 @@ else:
                     "RMSE (cycles)": forest_scores.rmse_cycles,
                 }
             )
+        if mlp_scores is not None:
+            metric_rows.append(
+                {
+                    "Model": f"Dense MLP ({mlp_scores.model_version})",
+                    "MAE (cycles)": mlp_scores.mae_cycles,
+                    "RMSE (cycles)": mlp_scores.rmse_cycles,
+                }
+            )
         st.dataframe(metric_rows, hide_index=True, width="stretch")
         st.write(
             f"The constant baseline predicts {comparison.baseline_prediction:.2f} cycles for every engine. "
@@ -161,14 +195,39 @@ else:
                 "This is a saved development-validation result, not official-test "
                 "performance or evidence of future performance."
             )
+        if mlp_scores is not None:
+            st.write(
+                f"The verified Dense MLP ({mlp_scores.model_name}, "
+                f"{mlp_scores.model_version}) has MAE {mlp_scores.mae_cycles:.2f} cycles "
+                f"and RMSE {mlp_scores.rmse_cycles:.2f} cycles across "
+                f"{mlp_scores.sample_count} held-out development engines. Its checkpoint "
+                f"was selected at epoch {mlp_scores.best_epoch} using validation MSE "
+                f"{mlp_scores.selected_validation_mse_cycles_squared:.2f} cycles^2. "
+                "This is a saved development-validation result, not an untouched "
+                "performance estimate or official-test result."
+            )
         figure = px.scatter(
             comparison.predictions,
             x="Actual RUL (cycles)",
             y="Predicted RUL (cycles)",
             color="Model",
             hover_data=["Engine", "Cutoff cycle"],
-            title="Baseline and Decision Tree predictions on held-out development engines",
+            title=(
+                "Saved model predictions on held-out development engines"
+                if mlp_scores is not None
+                else "Baseline and Decision Tree predictions on held-out development engines"
+            ),
         )
+        if mlp_scores is not None:
+            figure.add_trace(
+                px.scatter(
+                    mlp_scores.predictions,
+                    x="Actual RUL (cycles)",
+                    y="Predicted RUL (cycles)",
+                    color="Model",
+                    hover_data=["Engine", "Cutoff cycle"],
+                ).data[0]
+            )
         upper = max(
             max(row["Actual RUL (cycles)"] for row in comparison.predictions),
             max(row["Predicted RUL (cycles)"] for row in comparison.predictions),

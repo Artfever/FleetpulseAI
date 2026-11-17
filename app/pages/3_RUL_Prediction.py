@@ -15,6 +15,12 @@ from fleetpulse.models.forest_artifact import (
 from fleetpulse.models.forest_artifact import (
     MODEL_FILENAME as FOREST_MODEL_FILENAME,
 )
+from fleetpulse.models.mlp_contract import (
+    MANIFEST_FILENAME as MLP_MANIFEST_FILENAME,
+)
+from fleetpulse.models.mlp_contract import (
+    WEIGHTS_FILENAME as MLP_WEIGHTS_FILENAME,
+)
 from fleetpulse.models.usage_scope import classify_training_engine
 from fleetpulse.models.xgboost_artifact import (
     MANIFEST_FILENAME as XGBOOST_MANIFEST_FILENAME,
@@ -47,6 +53,9 @@ artifact_dir = ui.PROJECT_ROOT / "artifacts" / "development"
 tree_manifest = artifact_dir / "decision_tree_validation.json"
 forest_manifest = artifact_dir / FOREST_MANIFEST_FILENAME
 forest_model = artifact_dir / FOREST_MODEL_FILENAME
+mlp_artifact_dir = artifact_dir / "mlp"
+mlp_manifest = mlp_artifact_dir / MLP_MANIFEST_FILENAME
+mlp_weights = mlp_artifact_dir / MLP_WEIGHTS_FILENAME
 xgboost_manifest = artifact_dir / XGBOOST_MANIFEST_FILENAME
 xgboost_model = artifact_dir / XGBOOST_MODEL_FILENAME
 model_options = ["Decision Tree"]
@@ -63,6 +72,13 @@ else:
     st.info(
         "XGBoost is unavailable in this workspace until its verified model bundle "
         "is present in `artifacts/development/`."
+    )
+if mlp_manifest.is_file() and mlp_weights.is_file():
+    model_options.append("Dense MLP (CPU)")
+else:
+    st.info(
+        "Dense MLP is unavailable in this workspace until its verified checkpoint, "
+        "architecture and scaler are present in `artifacts/development/mlp/`."
     )
 selected_model = st.selectbox("RUL model", model_options)
 
@@ -135,6 +151,7 @@ if records is not None:
             "Decision Tree": tree_manifest,
             "Random Forest": forest_manifest,
             "XGBoost": xgboost_manifest,
+            "Dense MLP (CPU)": mlp_manifest,
         }[selected_model]
         try:
             supplied = None

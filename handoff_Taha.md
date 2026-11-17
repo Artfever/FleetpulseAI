@@ -1,3 +1,20 @@
+## P10-T1 PR opened (2026-11-17)
+
+- Implementation commit `bcf365562f29be2899e33b9882d5c30f64a9cc1f` is pushed in [PR #387](https://github.com/Artfever/FleetpulseAI/pull/387) to `dev`, `Refs #59`. This PR-status update is in the same task PR. Required CI and conversations are pending; issue #59 is still open.
+## P10-T1 final verification before commit (2026-11-17)
+
+- Shaheer's authorized takeover covers tasks through P16, including tasks assigned to Taha. P10-T1 #59 remains open, assigned to Taha, and has no native blockers. Base `dev` is `b06d9dbe7371fdc9b04449f8a67063164b27ff8f`; branch `feat/P10-T1-mlp-selector`.
+- Added Dense MLP (CPU) as a selectable saved model when the local manifest and weights exist. Model Laboratory verifies the ignored checkpoint against matching fitting/validation tables, source/split hashes, runtime versions, exact identities and saved batch predictions before showing metrics and per-engine plot points. The separate learning-curve task #136 remains separate.
+- Actual local result on 20 FD001/train held-out engines: MAE 15.511258125305176 cycles, RMSE 22.93799320625662 cycles; best epoch 12, validation MSE 526.1515625 cycles^2. Prediction-page AppTest selected the MLP for engine 4/cycle 164 and displayed 15.85 cycles (raw 15.852631568908691). Validation targets selected the checkpoint, so these are not untouched performance estimates. No official test partition/answers used.
+- Files changed: `app/pages/3_RUL_Prediction.py`, `app/pages/5_Model_Laboratory.py`, `src/fleetpulse/evaluation/model_comparison.py`, `docs/p10_mlp_artifact.md`, `tests/test_prediction_page.py`, `tests/test_model_laboratory_page.py`, `tests/test_mlp.py`, and task handoffs. Ruff PASS, focused tests 27 PASS, full suite 391 PASS, `git diff --check` PASS, Streamlit local health PASS (`ok`). No PR yet.
+- Next: commit and open task PR against dev with `Refs #59`; confirm all required checks and threads, merge, then record the owner-reported inspection after Shaheer's requested wait. #136 depends on #59, and #251 depends on #136 plus closed #201. Keep P10 gate open until complete.
+## Owner-directed takeover: P10-T1 in progress (2026-11-17)
+
+- Shaheer instructed this session to take over all task allocations through P16, including this handoff's Taha tasks. This is takeover work, not work attributed to Taha.
+- P10-A1 #57 is merged and closed. PR #386 merged to `dev` as `b06d9dbe7371fdc9b04449f8a67063164b27ff8f`; all five CI checks passed, and A1 evidence/limitations are recorded in `handoff_Abdullah.md` and the PR.
+- Current task: P10-T1 #59, open and assigned to Taha, no native blockers. Shaheer's local MLP bundle is available and verified. Branch `feat/P10-T1-mlp-selector` from `dev` `b06d9db`.
+- Changes under way add Dense MLP (CPU) to RUL Prediction when local bundle files exist and add verified per-engine MLP results to Model Laboratory. Actual local MLP validation: 20 FD001/train engines, MAE 15.511258125305176 cycles, RMSE 22.93799320625662 cycles, epoch 12 selected by validation MSE 526.1515625 cycles^2. Engine 4 at cycle 164 gave raw service output 15.8526315689 cycles, displayed 15.85. Results are validation-selection evidence, not official-test or untouched performance estimates.
+- Targeted tests passed before final runtime/path updates; rerun focused and full tests, Ruff and diff check. PR not yet opened. #136 depends on #59; #251 depends on #136 and closed #201. Keep P10 gate #15 open until all phase tasks and gate evidence are complete.
 # Taha handoff
 
 ## Owner-directed takeover update: P09-T2/T3 and P09-A2/A3 complete; P09-S1 active (2026-11-16)
