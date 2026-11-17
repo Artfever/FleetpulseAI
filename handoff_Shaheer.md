@@ -532,3 +532,16 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 
 - Implementation commit `9a9d5088b690abaf4af5d0825211319fad53d8ce` is in [PR #407](https://github.com/Artfever/FleetpulseAI/pull/407), targeting `dev` with `Refs #74`.
 - Local verification passed: focused UI/page-shell tests 7, full suite 450, Ruff, diff check, Streamlit health `200 ok`, and three actual saved-model predictions on the packaged development prefixes. Required GitHub checks and conversation resolution are pending; #74 remains open.
+
+## P15-T1 merged; P15-T2 fleet controls active (2026-11-18)
+
+- P15-T1 #74 merged via [PR #407](https://github.com/Artfever/FleetpulseAI/pull/407) into `dev` at `85c6ec2c0f3c8b93a8ac9689b7738cfee0c71750`; all five required checks passed and review threads were 0. Same-PR merge record: [comment](https://github.com/Artfever/FleetpulseAI/pull/407#issuecomment-6958517732). #74 closed with evidence [here](https://github.com/Artfever/FleetpulseAI/issues/74#issuecomment-6958539016); inspection was recorded as owner-directed/reported, not independently observed.
+- Current task: P15-T2 #151, originally assigned to Taha and included in Shaheer's authorized takeover. Branch `feat/P15-T2-fleet-filters` starts from dev `85c6ec2c0f3c8b93a8ac9689b7738cfee0c71750`. P07 #12 and predecessor #74 are closed; #151 is now unblocked. #256 still waits on #151; P15 gate #17 remains open.
+- Fleet Overview now sorts valid estimates by displayed RUL ascending, with identity as tie-breaker and no-estimate rows last. Added engine-ID multiselect, configurable cycle threshold, threshold status, and optional threshold-only filtering; no-estimate/error rows remain visible under that filter. Documented that the threshold is a display cue, not a fault or maintenance rule.
+- Added AppTest interactions that verify sorted IDs, threshold statuses, filtering, engine selection, and preserved error identity. Focused UI/page-shell tests: 8 passed. Full suite: 451 passed. Ruff and `git diff --check`: passed. Streamlit started and health returned HTTP 200 `ok`.
+- Changed files: `app/pages/1_Fleet_Overview.py`, `docs/p15_fleet_predictions.md`, `tests/test_fleet_overview_page.py`, and this handoff. Next: commit and open `Refs #151` PR to `dev`, verify required checks and conversations, record merge in the same PR, close #151 after evidence and the directed inspection interval, then implement #256. Keep gate #17 open until all nine task outputs and shared evidence are complete.
+
+## P15-T2 PR opened (2026-11-18)
+
+- Implementation commit `6a78179853ed2788ef7b46b25e62001c051122cf` is in [PR #408](https://github.com/Artfever/FleetpulseAI/pull/408), targeting `dev` with `Refs #151`.
+- Local checks passed: focused UI/page-shell tests 8, full suite 451, Ruff, diff check, and Streamlit health `200 ok`. Required GitHub checks and conversation resolution are pending; #151 remains open and P15 gate #17 stays open.
