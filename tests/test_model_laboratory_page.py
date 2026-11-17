@@ -123,14 +123,17 @@ def test_model_laboratory_displays_verified_mlp_results_and_checkpoint_selection
     monkeypatch, tmp_path
 ):
     scores = MLPValidationScores(
-        "dense-rul-mlp",
-        "dense-rul-mlp-v1",
-        1,
-        22.5,
-        28.0,
-        12,
-        526.15,
-        (
+        model_name="dense-rul-mlp",
+        model_version="dense-rul-mlp-v1",
+        sample_count=1,
+        mae_cycles=22.5,
+        rmse_cycles=28.0,
+        best_epoch=2,
+        selected_validation_mse_cycles_squared=526.15,
+        fitting_row_count=16,
+        training_mse_cycles_squared=(900.0, 700.0, 500.0),
+        validation_mse_cycles_squared=(800.0, 526.15, 600.0),
+        predictions=(
             {
                 "Model": "Dense MLP (dense-rul-mlp-v1)",
                 "Engine": 2,
@@ -147,8 +150,19 @@ def test_model_laboratory_displays_verified_mlp_results_and_checkpoint_selection
     ).run()
 
     assert not page.exception
-    assert any("selected at epoch 12" in item.value for item in page.markdown)
+    assert any("selected at epoch 2" in item.value for item in page.markdown)
     assert any("not an untouched performance estimate" in item.value for item in page.markdown)
+    chart_specs = [json.loads(item.proto.spec) for item in page.get("plotly_chart")]
+    learning_curve = next(
+        chart for chart in chart_specs if chart["layout"]["title"]["text"] == "Dense MLP saved learning curves"
+    )
+    assert [trace["name"] for trace in learning_curve["data"]] == [
+        "Training MSE — fitting rows (16)",
+        "Validation MSE — engine prefixes (1)",
+    ]
+    assert learning_curve["layout"]["xaxis"]["title"]["text"] == "Training epoch"
+    assert learning_curve["layout"]["yaxis"]["title"]["text"] == "Mean squared error (cycles²)"
+    assert any("different sample units" in item.value for item in page.caption)
     tables = [
         item.value
         for item in page.dataframe

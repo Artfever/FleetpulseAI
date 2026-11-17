@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass
-from math import isclose
+from math import isclose, isfinite
 from pathlib import Path
 from typing import Any
 
@@ -70,6 +70,9 @@ class MLPValidationScores:
     rmse_cycles: float
     best_epoch: int
     selected_validation_mse_cycles_squared: float
+    fitting_row_count: int
+    training_mse_cycles_squared: tuple[float, ...]
+    validation_mse_cycles_squared: tuple[float, ...]
     predictions: tuple[dict[str, Any], ...]
 
 
@@ -171,12 +174,26 @@ def load_verified_mlp_scores(
         )
     metrics = calculate_validation_metrics(values)
     best_epoch = training["best_epoch"]
-    validation_curve = training["validation_mse_cycles_squared"]
+    training_curve = tuple(training["training_mse_cycles_squared"])
+    validation_curve = tuple(training["validation_mse_cycles_squared"])
     _require(
         type(best_epoch) is int
         and 1 <= best_epoch <= len(validation_curve)
         and validation_curve[best_epoch - 1] == min(validation_curve),
         "MLP selected epoch does not match its saved validation curve",
+    )
+    _require(
+        len(training_curve) == len(validation_curve)
+        and all(
+            type(value) in (int, float) and value >= 0 and isfinite(value)
+            for value in (*training_curve, *validation_curve)
+        ),
+        "MLP saved learning curves must have matching finite, nonnegative values",
+    )
+    _require(
+        training["fitting_row_count"] == len(fitting.rows)
+        and training["validation_row_count"] == len(validation.rows),
+        "MLP learning curve sample counts do not match the supplied datasets",
     )
     return MLPValidationScores(
         model_name=payload["model"]["name"],
@@ -186,6 +203,9 @@ def load_verified_mlp_scores(
         rmse_cycles=metrics.rmse,
         best_epoch=best_epoch,
         selected_validation_mse_cycles_squared=validation_curve[best_epoch - 1],
+        fitting_row_count=training["fitting_row_count"],
+        training_mse_cycles_squared=training_curve,
+        validation_mse_cycles_squared=validation_curve,
         predictions=tuple(predictions),
     )
 

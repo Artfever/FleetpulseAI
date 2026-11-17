@@ -315,4 +315,7 @@ def test_model_comparison_loads_only_verified_mlp_scores(mlp_tables, tmp_path):
     assert scores.sample_count == len(validation.rows)
     assert scores.best_epoch == result.best_epoch
     assert scores.selected_validation_mse_cycles_squared == min(result.validation_losses)
+    assert scores.fitting_row_count == len(fitting.rows)
+    assert scores.training_mse_cycles_squared == result.training_losses
+    assert scores.validation_mse_cycles_squared == result.validation_losses
     assert len(scores.predictions) == len(validation.rows)

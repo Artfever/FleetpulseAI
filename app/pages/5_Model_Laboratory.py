@@ -206,6 +206,39 @@ else:
                 "This is a saved development-validation result, not an untouched "
                 "performance estimate or official-test result."
             )
+            curve_figure = go.Figure()
+            epochs = list(range(1, len(mlp_scores.training_mse_cycles_squared) + 1))
+            curve_figure.add_trace(
+                go.Scatter(
+                    x=epochs,
+                    y=mlp_scores.training_mse_cycles_squared,
+                    mode="lines+markers",
+                    name=f"Training MSE — fitting rows ({mlp_scores.fitting_row_count:,})",
+                )
+            )
+            curve_figure.add_trace(
+                go.Scatter(
+                    x=epochs,
+                    y=mlp_scores.validation_mse_cycles_squared,
+                    mode="lines+markers",
+                    name=f"Validation MSE — engine prefixes ({mlp_scores.sample_count})",
+                )
+            )
+            curve_figure.update_layout(
+                title="Dense MLP saved learning curves",
+                xaxis_title="Training epoch",
+                yaxis_title="Mean squared error (cycles²)",
+                legend_title="Split and sample unit",
+            )
+            st.plotly_chart(curve_figure, width="stretch")
+            st.caption(
+                "Training MSE is averaged over cycle-level fitting rows; validation MSE is "
+                "averaged over one prefix per held-out engine. The values share cycles² "
+                "units but use different sample units, so compare their trends cautiously. "
+                f"Epoch {mlp_scores.best_epoch} was selected by the lowest validation MSE; "
+                "this validation curve is checkpoint-selection evidence, not an untouched "
+                "final performance estimate."
+            )
         figure = px.scatter(
             comparison.predictions,
             x="Actual RUL (cycles)",
