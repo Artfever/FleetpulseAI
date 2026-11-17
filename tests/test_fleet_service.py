@@ -182,6 +182,53 @@ def test_fleet_predictions_keep_invalid_peer_ties_and_repeated_ids_distinct(monk
     assert predicted_ids == [4, 8]
 
 
+@pytest.mark.parametrize("engine_order", [(9, 4, 3), (3, 9, 4), (4, 3, 9)])
+def test_reordered_batch_keeps_filtered_prediction_and_error_ids(monkeypatch, engine_order):
+    histories = {
+        3: [_row(3, 1), _row(3, 2)],
+        4: [_row(4, 1), _row(4, 2)],
+        9: [_row(9, 1, sensor_1=math.nan), _row(9, 2)],
+    }
+    rows = [row for unit_id in engine_order for row in histories[unit_id]]
+    called_ids = []
+
+    def identity_specific_prediction(history, **kwargs):
+        unit_id = kwargs["unit_id"]
+        called_ids.append(unit_id)
+        estimate = float(unit_id * 10)
+        return RULPrediction(
+            estimate,
+            estimate,
+            "test-model",
+            "test-v1",
+            history[-1]["cycle"],
+            len(history),
+            (),
+        )
+
+    monkeypatch.setattr(fleet_service, "predict_rul_with_context", identity_specific_prediction)
+
+    results = predict_fleet(
+        rows,
+        dataset_partition="FD001/train",
+        manifest_path="test-manifest.json",
+    )
+
+    assert [(result.identity.dataset_partition, result.identity.unit_id) for result in results] == [
+        ("FD001/train", 3),
+        ("FD001/train", 4),
+        ("FD001/train", 9),
+    ]
+    assert [(result.identity.unit_id, result.raw_rul_cycles) for result in results[:2]] == [
+        (3, 30.0),
+        (4, 40.0),
+    ]
+    assert results[2].identity.unit_id == 9
+    assert results[2].raw_rul_cycles is None
+    assert results[2].error_codes == ("non_finite_reading",)
+    assert called_ids == [3, 4]
+
+
 @pytest.mark.parametrize(
     ("exception", "expected_code"),
     [

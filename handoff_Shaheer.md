@@ -503,3 +503,18 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 
 - Commit `ce9646f1c6cb4e23e53dd76768001e0b8ab281e1` is in [PR #405](https://github.com/Artfever/FleetpulseAI/pull/405), targeting `dev` with `Refs #211`.
 - The note documents decision-support limits and three observed training-prefix examples. `git diff --check` passed; no prose-mirroring test was added. Required CI and conversation resolution are pending; #211 remains open.
+
+## P15-S3 merged; P15-A3 identity regression active (2026-11-18)
+
+- P15-S3 #211 merged via [PR #405](https://github.com/Artfever/FleetpulseAI/pull/405) to `dev` at `5f825ae932f4db9c7ebf4ac4bbba219a62164ef9`; all five required checks passed and review threads were 0. Same-PR merge record: [comment](https://github.com/Artfever/FleetpulseAI/pull/405#issuecomment-6957873275). #211 closed with evidence [here](https://github.com/Artfever/FleetpulseAI/issues/211#issuecomment-6957894586); inspection is owner-directed/reported, not independently observed.
+- Current task: P15-A3 #210, originally assigned to Abdullah and included in Shaheer's authorized takeover. Branch `feat/P15-A3-reordered-identity` starts from dev `5f825ae932f4db9c7ebf4ac4bbba219a62164ef9`. Its listed prerequisites #149 and P07 gate #12 are closed; P15 gate #17 remains open.
+- Planned test change: explicitly permute engine input order while one malformed engine is filtered, and verify every valid prediction and error remains attached to its original dataset-qualified ID. Current `predict_fleet` sorts by identity and retains per-engine errors.
+- Changed files and checks are pending implementation. Next: run focused and full checks, open a `Refs #210` PR to `dev`, verify required CI and conversation state, record merge on that PR, then close #210 after evidence and the directed inspection interval.
+- Implemented the parameterized regression in `tests/test_fleet_service.py`: three input engine orders are tested with engine 9 malformed. In every order, valid engines 3 and 4 retain controlled estimates 30.0 and 40.0, while engine 9 remains attached to `non_finite_reading` and is never predicted.
+- Verification: `.venv/Scripts/python.exe -m pytest tests/test_fleet_service.py -q` — 15 passed; `.venv/Scripts/python.exe -m pytest -q` — 448 passed; `.venv/Scripts/python.exe -m ruff check .` — passed; `git diff --check` — passed. These are controlled service fixtures, not model-quality outputs.
+- Changed files: `tests/test_fleet_service.py`, `handoff_Shaheer.md`. Next: commit and open a `Refs #210` PR to `dev`, wait for all required checks and confirm no unresolved conversations, record the merge in the same PR, close #210 with evidence, then continue remaining P15 tasks. Gate #17 stays open.
+
+## P15-A3 PR opened (2026-11-18)
+
+- Commit `8334eaec1c797b189244f0c9d17f5cb86f5443b3` is in [PR #406](https://github.com/Artfever/FleetpulseAI/pull/406), targeting `dev` with `Refs #210`.
+- Local checks passed: focused fleet tests 15, full suite 448, Ruff, and diff check. Required GitHub checks and conversation resolution are pending; #210 remains open and P15 gate #17 stays open.
