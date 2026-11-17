@@ -8,6 +8,7 @@ from fleetpulse.services.predictor import (
     predict_rul,
     predict_rul_with_context,
 )
+from fleetpulse.services.uploaded_history import predict_uploaded_csv
 
 __all__ = [
     "PredictionArtifactError",
@@ -16,4 +17,5 @@ __all__ = [
     "RawRULPrediction",
     "predict_rul",
     "predict_rul_with_context",
+    "predict_uploaded_csv",
 ]

@@ -399,3 +399,10 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 
 - Implementation commit `f0f37d5d82d03a7a39ee55f04cd1b3b602bdc2aa` is in [PR #395](https://github.com/Artfever/FleetpulseAI/pull/395), targeting `dev` with `Refs #146`.
 - Local focused tests (32), full suite (418), Ruff, and diff check passed. CI and review-thread checks are pending. #146 remains open until merge and evidence closeout.
+
+## P14-A2 merged; P14-S2 active (2026-11-17)
+
+- P14-A2 #146 merged via PR #395 to `dev` as `33be74caa826d53c7edf98811dbf7f1a2f9b9c77`; all five required checks passed, review threads 0. Same-PR merge record: [comment](https://github.com/Artfever/FleetpulseAI/pull/395#issuecomment-6955157286). #146 closed with evidence [here](https://github.com/Artfever/FleetpulseAI/issues/146#issuecomment-6955177260); Abdullah inspection is Shaheer-reported after the requested wait, not independently observed.
+- Current task P14-S2 #147 is Shaheer-owned, open, with #70 closed and no task blockers. This work is on `feat/P14-S2-upload-prediction-boundary` from updated dev.
+- Added `predict_uploaded_csv` as a validated upload-to-prediction boundary: parse/quality validation happens before the shared predictor, and one engine ID must be explicit. Invalid text-sensor fixture raised `UploadValidationError` with zero predictor calls. For packaged FD001/train engine 4 through cycle 164, actual decision-tree service output matched built-in history exactly: 34.19607843137255 cycles (difference 0.0), model `decision-tree-rul-v1`, 30-row feature window. This is a training-history software parity check, not held-out evidence.
+- Changed `src/fleetpulse/services/uploaded_history.py`, service exports, `tests/test_uploaded_history_service.py`, and P14 validation docs. Focused tests 2 passed; Ruff passed; full suite 420 passed; `git diff --check` passed. No PR yet. Next: commit, open `Refs #147` PR to `dev`, verify CI/conversations, merge, and close after the requested inspection interval. P14 parent #16 remains open.
