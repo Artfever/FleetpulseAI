@@ -1,8 +1,16 @@
 """Exercise the real saved-model Fleet Overview to Maintenance Planner flow."""
 
+import pytest
 from streamlit.testing.v1 import AppTest
 
 from fleetpulse import PROJECT_ROOT, ui
+
+_DECISION_TREE_BUNDLE = PROJECT_ROOT / "artifacts" / "development"
+pytestmark = pytest.mark.skipif(
+    not (_DECISION_TREE_BUNDLE / "decision_tree_validation.json").is_file()
+    or not (_DECISION_TREE_BUNDLE / "decision_tree_model.joblib").is_file(),
+    reason="the real development Decision Tree bundle is intentionally not tracked",
+)
 
 
 def test_real_saved_model_fleet_selection_reaches_both_schedulers():
