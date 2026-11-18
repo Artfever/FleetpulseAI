@@ -130,3 +130,45 @@ successive-pair zip with `itertools.pairwise`; focused
 **47 passed in0.28s**; full `.venv/Scripts/python.exe -m pytest -q`
 **556 passed, 1 skipped in106.28s**. The skip needs the absent P06 development
 bundle. `git diff --check` PASS. Local Streamlit NOT RUN:no app changes.
+
+
+## P18-A1 common deterministic decoder
+
+`fleetpulse.optimization.decoder.decode_order(scenario, ordering)` accepts a
+`SchedulingScenario` and an ordering of every selected `EngineIdentity` exactly
+once. Numeric unit IDs alone are rejected because they lose dataset identity.
+It assigns the next job to the earliest available team; availability ties use
+the lowest one-based team ID. Every team starts at relative cycle zero. Jobs
+are contiguous/non-preemptive and none are dropped for deadline/horizon misses.
+
+The result is the shared `ScheduleEvaluation`: the generated assignments pass
+`evaluate_schedule` before returning. Decoder code does not duplicate due-date,
+objective, overflow, or feasibility formulas. It does not choose an EDD/GA
+ordering. Input/scenario are unchanged. Ordering reads are bounded at n+1
+values to reject oversized/infinite iterables; idle teams above the number of
+jobs are not allocated in memory. Heap dispatch is O(n log min(n, team_count)).
+
+```python
+from fleetpulse.optimization.decoder import decode_order
+from fleetpulse.optimization.jobs import appendix_b_jobs
+from fleetpulse.optimization.scoring import SchedulingScenario
+
+scenario = SchedulingScenario(appendix_b_jobs(), 1, 2, 6)
+result = decode_order(scenario, tuple(job.engine for job in scenario.jobs))
+assert result.weighted_tardiness_cycles == 6
+```
+
+Actual generated one-team A/B/C completions are3/4/6 with cost6; B/A/C
+completions are1/4/6 with cost2. These reproduce the synthetic hand example
+Abdullah checked/accepted in the timing/objective review on18Nov. With two
+teams and A/B/C ordering, assignments are A team1[0,3), B team2[0,1),
+C team2[1,3); cost1. At H2 all3jobs remain, twooverflow and aggregateoverflow1.
+Independent tie tests dispatch equal-duration jobs to teams1,2,1,2. Invalid,
+duplicate, missing, extra or wrong-partition orderings are rejected; repeated
+calls are identical. These are software simulation outputs, not fleet results.
+
+Verification: RuffPASS; focused
+`.venv/Scripts/python.exe -m pytest -q tests/test_schedule_decoder.py tests/test_schedule_scoring.py tests/test_scheduling_jobs.py`
+**60passed in0.46s**; full `.venv/Scripts/python.exe -m pytest -q`
+**569passed,1skipped in118.00s**. The skip requires the absent P06development
+bundle. `git diff --check`PASS; localStreamlit NOT RUN:noappchange.
