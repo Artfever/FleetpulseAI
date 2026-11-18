@@ -1,3 +1,9 @@
+## P19-T2 search history and method
+
+- #86 closed after PR #461 merged at 71dfd318f2e6a9c57edc15a1a14acb8e5c753022. Its head 87d5df6 passed all five checks in run 44301761521 and all 629 local tests. #163's blocker #86 is closed.
+- Added method summary and recorded best-score chart with the EDD reference line. The chart starts at generation zero. Tests verify all 13 points for seed 1, starts at 6 and drops to 2, and only the EDD timeline remains after changing the method back.
+- Ruff and diff checks passed. Focused pytest passed 10 in 11.65 seconds. Streamlit health returned HTTP 200 ok on port 18587. Full local pytest is running. #220 will cover a one-job scenario, tied deadlines and invalid-capacity handling. Abdullah implemented this under the all-owner authorization.
+
 ## P19-T1 bounded planner controls
 
 - #259 closed after PR #460 merged at 3a20aeff1486d38cf935a06b694de08244fdfce1 with all five checks on b3ad81e in run 44301169757. #86 has no native blockers and uses the bounded runner already on dev. Abdullah implemented it under the authorized all-owner takeover.
