@@ -172,3 +172,27 @@ Verification: RuffPASS; focused
 **60passed in0.46s**; full `.venv/Scripts/python.exe -m pytest -q`
 **569passed,1skipped in118.00s**. The skip requires the absent P06development
 bundle. `git diff --check`PASS; localStreamlit NOT RUN:noappchange.
+
+
+## P18-A2 earliest-due-date baseline
+
+`fleetpulse.optimization.edd.edd_order(scenario)` sorts exact, unrounded due
+completion cycles, then `(dataset_partition, unit_id)` for deterministic ties.
+It deliberately does not use duration or priority weight to choose an order.
+`schedule_edd(scenario)` sends that ordering and the unchanged scenario to
+`decode_order`, returning the same validated `ScheduleEvaluation` used by
+other orderings. No assignment, objective or feasibility code is duplicated.
+
+Actual synthetic Appendix B EDD order is A/B/C: one-team completions3/4/6,
+weighted cost6; two-team completions3/1/3,cost1. At one-team H2 it still keeps
+all3jobs, cost6 and aggregateoverflow4. Input storage order does not affect
+results, qualified-ID ties are stable, and fractional deadlines are not
+rounded. Tests show the B/A/C alternative costs2 versus EDD6: EDD is a simple
+baseline, not a claim of weighted-tardiness optimality. These are the same
+underlying hand-checked assumptions/example accepted by Abdullah18Nov.
+
+Verification: RuffPASS; focused
+`.venv/Scripts/python.exe -m pytest -q tests/test_edd.py tests/test_schedule_decoder.py tests/test_schedule_scoring.py tests/test_scheduling_jobs.py`
+**70passed in0.65s**; full `.venv/Scripts/python.exe -m pytest -q`
+**579passed,1skipped in114.78s** (absentP06developmentbundle integration).
+`git diff --check`PASS; localStreamlit NOT RUN:noappchange.
