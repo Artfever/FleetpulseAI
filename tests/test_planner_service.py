@@ -4,6 +4,7 @@ from dataclasses import replace
 
 import pytest
 
+from fleetpulse.optimization.jobs import calculate_job_timing
 from fleetpulse.services import (
     EngineIdentity,
     FleetPredictionResult,
@@ -53,6 +54,43 @@ def test_planner_uses_single_prediction_snapshot_and_separate_assumptions():
     assert (scenario.team_count, scenario.buffer_cycles, scenario.horizon_cycles) == (2, 1.5, 10)
     # The raw model output remains available for evaluation and was not mutated.
     assert [result.raw_rul_cycles for result in predictions] == [8.125, -0.25]
+
+
+def test_planner_deadlines_use_unrounded_raw_rul_not_display_value():
+    predictions = (
+        _prediction(4, 2.0000004, displayed=2.0),
+        _prediction(5, -0.0000004, displayed=0.0),
+    )
+    scenario = build_planning_scenario(
+        predictions,
+        _assumptions(4, 5),
+        team_count=1,
+        buffer_cycles=2.0,
+        horizon_cycles=6.0,
+    )
+
+    jobs = {job.engine.unit_id: job for job in scenario.jobs}
+    above_buffer = calculate_job_timing(jobs[4], buffer_cycles=scenario.buffer_cycles)
+    below_zero = calculate_job_timing(jobs[5], buffer_cycles=scenario.buffer_cycles)
+
+    assert jobs[4].predicted_rul_cycles == 2.0000004
+    assert above_buffer.due_completion_cycle == pytest.approx(0.0000004)
+    assert jobs[5].predicted_rul_cycles == 0.0
+    assert below_zero.due_completion_cycle == 0.0
+    assert [row.raw_rul_cycles for row in predictions] == [2.0000004, -0.0000004]
+
+
+@pytest.mark.parametrize("raw", [None, float("nan"), float("inf"), -float("inf"), True])
+def test_planner_requires_finite_nonboolean_raw_rul(raw):
+    prediction = _prediction(4, raw, displayed=0.0)
+    with pytest.raises(ValueError, match="finite raw RUL"):
+        build_planning_scenario(
+            (prediction,),
+            _assumptions(4),
+            team_count=1,
+            buffer_cycles=2,
+            horizon_cycles=6,
+        )
 
 
 @pytest.mark.parametrize(
