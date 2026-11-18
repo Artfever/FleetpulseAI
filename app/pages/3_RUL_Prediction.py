@@ -275,6 +275,12 @@ if records is not None:
     st.caption(
         "Only readings through the selected cycle are used; this is not a maintenance guarantee."
     )
+    st.info(
+        "A feature contribution shows how a sensor statistic shifted the model's estimate relative "
+        "to its reference. It does not mean that the sensor caused engine wear, and it does not "
+        "identify an FD001 fault type. FD001 is simulated; these cycle estimates are not a "
+        "maintenance diagnosis."
+    )
     replay_point_count = min(len(visible_history), MAX_REPLAY_POINTS)
     if replay_point_count == 1:
         replay_cutoffs = [cycle]
