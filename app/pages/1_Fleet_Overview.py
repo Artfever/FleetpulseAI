@@ -1,5 +1,8 @@
 """Show saved-model fleet predictions with their engine identities."""
 
+import hashlib
+import json
+
 import streamlit as st
 from streamlit.errors import StreamlitSecretNotFoundError
 
@@ -7,6 +10,7 @@ from fleetpulse import deployment, ui
 from fleetpulse.services import (
     PredictionArtifactError,
     PredictionInputError,
+    model_provenance_from_manifest,
     predict_fleet,
 )
 
@@ -21,8 +25,10 @@ source = st.selectbox(
     ["Packaged FD001/train parity subset", "Local FD001 training data"],
 )
 if source == "Packaged FD001/train parity subset":
+    source_path = ui.PROJECT_ROOT / "data" / "demo" / "fd001_training_prefixes.txt"
     records = ui.render_packaged_training_subset()
 else:
+    source_path = ui.PROJECT_ROOT / "data" / "raw" / "train_FD001.txt"
     records = ui.render_training_data()
 
 if records:
@@ -46,9 +52,29 @@ if records:
                     dataset_partition="FD001/train",
                     manifest_path=active_manifest,
                 )
-        except (PredictionArtifactError, PredictionInputError) as error:
+                try:
+                    model_provenance = model_provenance_from_manifest(active_manifest)
+                except ValueError as error:
+                    model_provenance = None
+                    st.warning(f"Comparison provenance is unavailable: {error}")
+        except (PredictionArtifactError, PredictionInputError, ValueError) as error:
             st.warning(f"Fleet predictions are unavailable: {error}")
         else:
+            canonical_records = json.dumps(
+                records, sort_keys=True, separators=(",", ":"), allow_nan=False
+            ).encode("utf-8")
+            source_provenance = {
+                "source_name": source,
+                "source_path": source_path.relative_to(ui.PROJECT_ROOT).as_posix(),
+                "dataset_partition": "FD001/train",
+                "source_records_sha256": hashlib.sha256(canonical_records).hexdigest(),
+                "source_record_count": len(records),
+                "source_file_sha256": (
+                    hashlib.sha256(source_path.read_bytes()).hexdigest()
+                    if source_path.is_file()
+                    else None
+                ),
+            }
             st.caption(
                 "The displayed rows are one snapshot from the same saved Decision Tree model "
                 "and version. The packaged option contains only three training-history prefixes; "
@@ -98,6 +124,13 @@ if records:
                 disabled=not selected_engine_ids,
             ):
                 st.session_state[ui.P15_SELECTED_FLEET_STATE_KEY] = saved_selection
+                st.session_state[ui.P15_SELECTED_FLEET_PROVENANCE_STATE_KEY] = {
+                    "source": source_provenance,
+                    "model": model_provenance,
+                }
+                st.session_state.pop(ui.P20_FLEET_SCENARIO_STATE_KEY, None)
+                st.session_state.pop(ui.P20_FLEET_COMPARISON_STATE_KEY, None)
+                st.session_state.pop(ui.P20_FLEET_COMPARISON_ARTIFACT_STATE_KEY, None)
                 st.success(f"Saved {len(saved_selection)} selected engine records for the planner.")
                 st.page_link("pages/4_Maintenance_Planner.py", label="Open Maintenance Planner")
 

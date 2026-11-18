@@ -1,5 +1,6 @@
 """Maintenance Planner view with the selected fleet snapshot."""
 
+import json
 from dataclasses import replace
 
 import plotly.graph_objects as go
@@ -20,6 +21,7 @@ from fleetpulse.services import (
     EngineIdentity,
     FleetPredictionResult,
     PlannerJobAssumption,
+    build_paired_comparison_artifact,
     build_planning_scenario,
     compare_schedules,
 )
@@ -229,16 +231,30 @@ if selected_fleet:
                 buffer_cycles=fleet_buffer_cycles,
                 horizon_cycles=fleet_horizon_cycles,
             )
-        except (TypeError, ValueError) as error:
-            st.error(f"Selected fleet cannot be planned: {error}")
-        else:
-            st.session_state[ui.P20_FLEET_SCENARIO_STATE_KEY] = fleet_scenario
-            st.session_state[ui.P20_FLEET_COMPARISON_STATE_KEY] = _run_schedule_comparison(
+            comparison = _run_schedule_comparison(
                 fleet_scenario,
                 population_size=DEFAULT_POPULATION_SIZE,
                 generations=DEFAULT_GENERATIONS,
                 seed=DEFAULT_SEED,
             )
+            provenance = st.session_state.get(ui.P15_SELECTED_FLEET_PROVENANCE_STATE_KEY)
+            if not isinstance(provenance, dict):
+                raise TypeError(
+                    "Selected fleet provenance is missing; save the engine selection again from Fleet Overview."
+                )
+            paired_artifact = build_paired_comparison_artifact(
+                fleet_predictions,
+                fleet_scenario,
+                comparison,
+                source_provenance=provenance.get("source", {}),
+                model_provenance=provenance.get("model", {}),
+            )
+        except (TypeError, ValueError) as error:
+            st.error(f"Selected fleet cannot be planned: {error}")
+        else:
+            st.session_state[ui.P20_FLEET_SCENARIO_STATE_KEY] = fleet_scenario
+            st.session_state[ui.P20_FLEET_COMPARISON_STATE_KEY] = comparison
+            st.session_state[ui.P20_FLEET_COMPARISON_ARTIFACT_STATE_KEY] = paired_artifact
             st.success("Selected fleet predictions and explicit assumptions are ready for scheduling.")
 
     saved_fleet_scenario = st.session_state.get(ui.P20_FLEET_SCENARIO_STATE_KEY)
@@ -263,6 +279,14 @@ if selected_fleet:
             hide_index=True,
             width="stretch",
         )
+        saved_artifact = st.session_state.get(ui.P20_FLEET_COMPARISON_ARTIFACT_STATE_KEY)
+        if saved_artifact is not None:
+            st.download_button(
+                "Download paired fleet comparison JSON",
+                data=json.dumps(saved_artifact, indent=2, allow_nan=False),
+                file_name="fleetpulse_paired_schedule_comparison.json",
+                mime="application/json",
+            )
         fleet_labels = {
             (job.engine.dataset_partition, job.engine.unit_id):
                 f"{job.engine.dataset_partition} engine {job.engine.unit_id}"

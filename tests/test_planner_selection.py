@@ -47,15 +47,41 @@ def test_selected_fleet_snapshot_is_available_on_planner_page(monkeypatch, tmp_p
     )
     monkeypatch.setattr(deployment, "prediction_manifest", use_test_manifest)
     monkeypatch.setattr(services, "predict_fleet", lambda *args, **kwargs: results)
+    monkeypatch.setattr(
+        services,
+        "model_provenance_from_manifest",
+        lambda path: {
+            "model_name": "Decision Tree",
+            "model_version": "decision-tree-rul-v1",
+            "artifact_filename": "decision_tree_model.joblib",
+            "artifact_sha256": "c" * 64,
+            "manifest_sha256": "b" * 64,
+            "manifest_payload_sha256": "d" * 64,
+            "training_seed": 42,
+            "training_parameters": {"max_depth": 8},
+            "scikit_learn_version": "1.9.1",
+            "feature_config": {"channels": ["sensor_1"], "window_cycles": 30},
+            "feature_schema": ["sensor_1_latest"],
+        },
+    )
 
     app = AppTest.from_file(str(PROJECT_ROOT / "app/Home.py"), default_timeout=30).run()
     fleet = app.switch_page("pages/1_Fleet_Overview.py").run()
     assert not fleet.exception
     fleet.multiselect[0].set_value([5]).run()
+    fleet.session_state[ui.P20_FLEET_SCENARIO_STATE_KEY] = "stale scenario"
+    fleet.session_state[ui.P20_FLEET_COMPARISON_STATE_KEY] = "stale comparison"
+    fleet.session_state[ui.P20_FLEET_COMPARISON_ARTIFACT_STATE_KEY] = "stale artifact"
     fleet.button[0].click().run()
 
     assert not fleet.exception
     assert any("Saved 1 selected engine records" in item.value for item in fleet.success)
+    saved_provenance = fleet.session_state[ui.P15_SELECTED_FLEET_PROVENANCE_STATE_KEY]
+    assert saved_provenance["model"]["model_version"] == "decision-tree-rul-v1"
+    assert len(saved_provenance["source"]["source_records_sha256"]) == 64
+    assert ui.P20_FLEET_SCENARIO_STATE_KEY not in fleet.session_state
+    assert ui.P20_FLEET_COMPARISON_STATE_KEY not in fleet.session_state
+    assert ui.P20_FLEET_COMPARISON_ARTIFACT_STATE_KEY not in fleet.session_state
 
     planner = app.switch_page("pages/4_Maintenance_Planner.py").run()
     assert not planner.exception
@@ -90,6 +116,13 @@ def test_selected_fleet_snapshot_is_available_on_planner_page(monkeypatch, tmp_p
     assert planner.dataframe[2].value["Engine"].tolist() == ["FD001/train engine 5"]
     assert planner.dataframe[3].value["Engine"].tolist() == ["FD001/train engine 5"]
     assert len(planner.get("plotly_chart")) == 3
+    artifact = planner.session_state[ui.P20_FLEET_COMPARISON_ARTIFACT_STATE_KEY]
+    assert artifact["schema_version"] == "p20-paired-schedule-comparison-v1"
+    assert artifact["provenance"]["model"]["manifest_sha256"] == "b" * 64
+    assert artifact["scenario"]["scenario_sha256"] == comparison.scenario_sha256
+    assert [item.label for item in planner.get("download_button")] == [
+        "Download paired fleet comparison JSON"
+    ]
 
 
 def test_planner_reports_saved_fleet_prediction_errors(monkeypatch, tmp_path):

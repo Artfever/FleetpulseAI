@@ -1,5 +1,9 @@
 """Raw prediction and explicitly separate presentation/context services."""
 
+from fleetpulse.services.comparison_artifact import (
+    build_paired_comparison_artifact,
+    model_provenance_from_manifest,
+)
 from fleetpulse.services.final_comparison import (
     FinalHistoryComparison,
     FinalModelFailure,
@@ -59,11 +63,13 @@ __all__ = [
     "RawRULPrediction",
     "ScheduleComparisonResult",
     "ScheduleMethodResult",
+    "build_paired_comparison_artifact",
     "build_planning_scenario",
     "clear_history_replay_cache",
     "compare_final_models",
     "compare_schedules",
     "extract_latest_engine_histories",
+    "model_provenance_from_manifest",
     "predict_fleet",
     "predict_rul",
     "predict_rul_with_context",
