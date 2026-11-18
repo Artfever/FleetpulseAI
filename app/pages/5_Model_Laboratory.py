@@ -8,6 +8,10 @@ import streamlit as st
 
 from fleetpulse import ui
 from fleetpulse.data.split_audit_view import verified_split_manifest
+from fleetpulse.evaluation.final_test_display import (
+    FINAL_TEST_REPORT_PATH,
+    load_final_test_display,
+)
 from fleetpulse.evaluation.model_comparison import (
     load_model_comparison,
     load_verified_forest_scores,
@@ -22,10 +26,11 @@ from fleetpulse.ui import render_page
 render_page(
     "Model Laboratory",
     "Inspect model development and evaluation.",
-    "Compare saved development models using verified held-out development results.",
-    "This page reports held-out development results only; it does not show official test performance.",
+    "Development validation and final test results are separated into distinct sections.",
+    "Development validation informs model work. The official test section is held out and for final reporting only.",
 )
 
+st.subheader("Development validation and selection (FD001/train)")
 st.subheader("P11 candidate selection comparison")
 selection_path = ui.PROJECT_ROOT / "artifacts" / "selection_manifest.json"
 try:
@@ -331,3 +336,37 @@ else:
             "saved validation cutoff. The Random Forest aggregate scores appear in the table above. "
             "RUL estimates are not clipped."
         )
+
+st.divider()
+st.subheader("Official held-out test results (FD001/test)")
+st.caption(
+    "This is a distinct final reporting section for the official FD001 test engines. "
+    "These scores were not used to fit, select, or tune the models. They are error measures in cycles, not accuracy percentages."
+)
+official_results_path = ui.PROJECT_ROOT / FINAL_TEST_REPORT_PATH
+try:
+    official_results = load_final_test_display(official_results_path)
+except FileNotFoundError:
+    st.info(
+        "Verified official test results are unavailable in this deployment. "
+        "The local P13 report is not part of the public source checkout."
+    )
+except (OSError, ValueError, KeyError, TypeError) as error:
+    st.warning(f"Official test results are hidden because the saved P13 report failed verification: {error}")
+else:
+    st.dataframe(
+        [
+            {
+                "Model": result.display_name,
+                "MAE (cycles)": result.mae_cycles,
+                "RMSE (cycles)": result.rmse_cycles,
+            }
+            for result in official_results
+        ],
+        hide_index=True,
+        width="stretch",
+    )
+    st.caption(
+        "The figures above come from the checksum-verified local P13 report. "
+        "Official test data is used only for this final evaluation, not model selection."
+    )
