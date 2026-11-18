@@ -81,3 +81,52 @@ No duplicate timing code or new model result was created.
 This completes the timing convention/evidence for #159 after closeout merge.
 The weighted objective/hard feasibility rules (#217), decoder (#81), EDD
 (#158), scenario UI and shared P18 gate are separate remaining work.
+
+
+## P18-S3 shared objective and hard feasibility
+
+`fleetpulse.optimization.scoring` defines immutable `SchedulingScenario`,
+`JobAssignment`, `ScheduledJob`, and `ScheduleEvaluation` records. A scenario
+owns the reviewed jobs, a positive integer `team_count`, nonnegative finite
+`buffer_cycles`, and a positive finite soft `horizon_cycles`. Job identities
+are dataset-qualified and unique. An assignment supplies an engine identity,
+a one-based team ID and a nonnegative integer start cycle. Completion and
+lateness are derived through the existing reviewed `calculate_job_timing`.
+
+`evaluate_schedule(scenario, assignments)` requires every selected job exactly
+once, no unknown jobs, every team ID within capacity, and non-overlapping
+half-open service intervals `[start, completion)` on each team. Touching
+intervals are allowed; different identical teams work concurrently. Violations
+raise `ScheduleFeasibilityError` instead of receiving a comparable score.
+No ordering/decoder/EDD/GA is implemented by this scoring component.
+
+The sole objective is **sum(priority_weight * tardiness_cycles)**. Lower is
+better. Weights are dimensionless simulation assumptions; the cost has weighted
+cycle units. There is no hidden horizon penalty or dropped job. The result
+records weighted and unweighted tardiness, late job count, makespan, overflow
+job count, and every scheduled job with its input/timing/team/per-job overflow.
+Aggregate `horizon_overflow_cycles` means `max(0, makespan - horizon)`, not a sum
+of per-job overflow. Fractional RUL/deadlines retain precision. Nonfinite
+objectives are rejected.
+
+Executed Appendix B results:
+
+| Scenario | Weighted tardiness | Makespan | Horizon | Aggregate overflow | Jobs kept |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| One team, A/B/C | 6 | 6 | 6 | 0 | 3 |
+| One team, B/A/C | 2 | 6 | 6 | 0 | 3 |
+| One team, A/B/C | 6 | 6 | 2 | 4 | 3 |
+| Two teams: A[0,3), B[0,1), C[1,3) | 1 | 3 | 2 | 1 | 3 |
+
+Weights A/B/C are 1/5/1. Thus A/B/C costs `1*1 + 5*1 + 1*0 = 6`;
+B/A/C costs `5*0 + 1*2 + 1*0 = 2`. Abdullah explicitly independently checked
+and accepted this objective/example and the hard/soft rule distinction on
+18 November 2026 under the all-owner takeover. No another-person approval or
+real maintenance improvement is claimed.
+
+Checks: `.venv/Scripts/python.exe -m ruff check .` PASS after replacing a
+successive-pair zip with `itertools.pairwise`; focused
+`.venv/Scripts/python.exe -m pytest -q tests/test_schedule_scoring.py tests/test_scheduling_jobs.py`
+**47 passed in0.28s**; full `.venv/Scripts/python.exe -m pytest -q`
+**556 passed, 1 skipped in106.28s**. The skip needs the absent P06 development
+bundle. `git diff --check` PASS. Local Streamlit NOT RUN:no app changes.
