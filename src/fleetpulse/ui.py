@@ -10,6 +10,8 @@ P15_SELECTED_FLEET_STATE_KEY = "fleetpulse_p15_selected_fleet"
 P18_SYNTHETIC_SCENARIO_STATE_KEY = "fleetpulse_p18_synthetic_scenario"
 P19_GENETIC_SEARCH_STATE_KEY = "fleetpulse_p19_genetic_search"
 P20_FLEET_SCENARIO_STATE_KEY = "fleetpulse_p20_fleet_scenario"
+P20_FLEET_COMPARISON_STATE_KEY = "fleetpulse_p20_fleet_comparison"
+P20_SYNTHETIC_COMPARISON_STATE_KEY = "fleetpulse_p20_synthetic_comparison"
 
 
 def render_page(title: str, description: str, missing: str, next_step: str) -> None:

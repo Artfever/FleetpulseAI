@@ -52,6 +52,127 @@ def _prediction_from_saved_row(row: dict) -> FleetPredictionResult:
         raise ValueError("A saved fleet row is missing valid engine prediction fields.") from error
 
 
+def _run_schedule_comparison(
+    scenario: SchedulingScenario, *, population_size: int, generations: int, seed: int
+):
+    """Run both schedulers against the same immutable scenario value."""
+    return {
+        "edd": schedule_edd(scenario),
+        "ga": schedule_ga(
+            scenario,
+            population_size=population_size,
+            generations=generations,
+            seed=seed,
+        ),
+    }
+
+
+def _render_method_result(
+    column, scenario, schedule, method_name, labels, *, key_prefix, search=None
+):
+    report = build_schedule_report(scenario, schedule)
+    summary = report["summary"]
+    column.subheader(method_name)
+    column.caption("All times use relative cycles. Both methods use the same scenario.")
+    metrics = column.columns(2)
+    metrics[0].metric("Weighted tardiness (weighted cycles)", f"{summary['weighted_tardiness_cycles']:g}")
+    metrics[1].metric("Total tardiness (cycles)", f"{summary['total_tardiness_cycles']:g}")
+    metrics = column.columns(2)
+    metrics[0].metric("Makespan (cycles)", f"{summary['makespan_cycles']:g}")
+    metrics[1].metric("Horizon overflow (cycles)", f"{summary['horizon_overflow_cycles']:g}")
+    column.metric("Late jobs", summary["late_job_count"])
+    column.dataframe(
+        [
+            {
+                "Engine": labels.get(
+                    (row["dataset_partition"], row["unit_id"]),
+                    f"{row['dataset_partition']} engine {row['unit_id']}",
+                ),
+                "Team": row["team_id"],
+                "Start (cycles)": row["start_cycle"],
+                "Finish (cycles)": row["completion_cycle"],
+                "Deadline (cycles)": row["due_completion_cycle"],
+                "Late by (cycles)": row["tardiness_cycles"],
+                "Beyond horizon (cycles)": row["horizon_overflow_cycles"],
+            }
+            for row in report["jobs"]
+        ],
+        hide_index=True,
+        width="stretch",
+    )
+    timeline = go.Figure()
+    for row in report["jobs"]:
+        engine = labels.get(
+            (row["dataset_partition"], row["unit_id"]),
+            f"{row['dataset_partition']} engine {row['unit_id']}",
+        )
+        timeline.add_bar(
+            name=engine,
+            y=[f"Team {row['team_id']}"],
+            x=[row["duration_cycles"]],
+            base=[row["start_cycle"]],
+            orientation="h",
+            text=[engine],
+            hovertemplate=(
+                f"{engine}<br>Start {row['start_cycle']:g}<br>"
+                f"Finish {row['completion_cycle']:g}<extra></extra>"
+            ),
+        )
+    timeline.add_vline(
+        x=summary["horizon_cycles"], line_dash="dash", annotation_text="Soft horizon"
+    )
+    timeline.update_layout(
+        barmode="overlay",
+        xaxis_title="Relative cycles",
+        yaxis_title=None,
+        showlegend=False,
+        xaxis_range=[0, max(summary["makespan_cycles"], summary["horizon_cycles"])],
+    )
+    column.plotly_chart(timeline, width="stretch", key=f"{key_prefix}-timeline")
+    if search is not None:
+        column.caption(
+            f"GA search: seed {search.seed}, population {search.population_size}, "
+            f"{search.generations} generations, {search.evaluations} distinct orders. "
+            f"EDD reference weighted tardiness: {search.edd_penalty:g} cycles."
+        )
+        history = go.Figure(
+            go.Scatter(
+                x=list(range(len(search.best_penalties))),
+                y=list(search.best_penalties),
+                mode="lines+markers",
+                line_shape="hv",
+                name="Best so far",
+                hovertemplate="Generation %{x}<br>Weighted tardiness %{y:g}<extra></extra>",
+            )
+        )
+        history.add_hline(y=search.edd_penalty, line_dash="dash", annotation_text="EDD")
+        history.update_layout(
+            xaxis_title="Generation (0 = initial population)",
+            yaxis_title="Best weighted tardiness (weighted cycles)",
+            showlegend=False,
+        )
+        column.plotly_chart(history, width="stretch", key=f"{key_prefix}-history")
+
+
+def _render_comparison(scenario, comparison, labels, *, heading):
+    st.subheader(heading)
+    st.caption(
+        "These results use one fixed scenario and one identical set of engine jobs. "
+        "Durations, priority weights, team count, buffer, and horizon are simulation assumptions."
+    )
+    columns = st.columns(2)
+    key_prefix = heading.lower().replace(" ", "-")
+    _render_method_result(
+        columns[0], scenario, comparison["edd"], "EDD", labels,
+        key_prefix=f"{key_prefix}-edd",
+    )
+    ga = comparison["ga"]
+    _render_method_result(
+        columns[1], scenario, ga.schedule, "Genetic Algorithm", labels,
+        key_prefix=f"{key_prefix}-ga", search=ga,
+    )
+
+
 selected_fleet = st.session_state.get(ui.P15_SELECTED_FLEET_STATE_KEY, [])
 if selected_fleet:
     st.success(f"Loaded {len(selected_fleet)} selected engine records from Fleet Overview.")
@@ -110,11 +231,16 @@ if selected_fleet:
             st.error(f"Selected fleet cannot be planned: {error}")
         else:
             st.session_state[ui.P20_FLEET_SCENARIO_STATE_KEY] = fleet_scenario
+            st.session_state[ui.P20_FLEET_COMPARISON_STATE_KEY] = _run_schedule_comparison(
+                fleet_scenario,
+                population_size=DEFAULT_POPULATION_SIZE,
+                generations=DEFAULT_GENERATIONS,
+                seed=DEFAULT_SEED,
+            )
             st.success("Selected fleet predictions and explicit assumptions are ready for scheduling.")
 
     saved_fleet_scenario = st.session_state.get(ui.P20_FLEET_SCENARIO_STATE_KEY)
     if saved_fleet_scenario is not None:
-        st.subheader("Selected fleet planning inputs")
         st.caption(
             f"{saved_fleet_scenario.team_count} teams; "
             f"{saved_fleet_scenario.buffer_cycles:g}-cycle buffer; "
@@ -134,6 +260,17 @@ if selected_fleet:
             ],
             hide_index=True,
             width="stretch",
+        )
+        fleet_labels = {
+            (job.engine.dataset_partition, job.engine.unit_id):
+                f"{job.engine.dataset_partition} engine {job.engine.unit_id}"
+            for job in saved_fleet_scenario.jobs
+        }
+        _render_comparison(
+            saved_fleet_scenario,
+            st.session_state[ui.P20_FLEET_COMPARISON_STATE_KEY],
+            fleet_labels,
+            heading="Selected fleet: compare schedules",
         )
 else:
     st.info("No fleet is selected yet.")
@@ -172,15 +309,14 @@ with st.form("synthetic_scenario"):
                 ),
             )
         )
-    method = st.selectbox("Scheduling method", ("EDD", "Genetic Algorithm"))
     with st.expander("Advanced genetic algorithm settings"):
-        st.caption("These settings apply when Genetic Algorithm is selected.")
+        st.caption("Both schedules are compared; these settings control the genetic search.")
         seed = st.number_input("Random seed", 0, MAX_SEED, DEFAULT_SEED)
         population = st.number_input(
             "Population size", 2, MAX_POPULATION_SIZE, DEFAULT_POPULATION_SIZE
         )
         generations = st.number_input("Generations", 0, MAX_GENERATIONS, DEFAULT_GENERATIONS)
-    submitted = st.form_submit_button("Save synthetic scenario")
+    submitted = st.form_submit_button("Save scenario and compare both schedules")
 
 if submitted:
     try:
@@ -195,16 +331,15 @@ if submitted:
             for job, rul, duration, priority in job_inputs
         )
         scenario = SchedulingScenario(jobs, team_count, buffer_cycles, horizon_cycles)
-        search_result = (
-            schedule_ga(scenario, population_size=population, generations=generations, seed=seed)
-            if method == "Genetic Algorithm"
-            else None
+        comparison = _run_schedule_comparison(
+            scenario, population_size=population, generations=generations, seed=seed
         )
     except ValueError as error:
         st.error(str(error))
     else:
         st.session_state[ui.P18_SYNTHETIC_SCENARIO_STATE_KEY] = scenario
-        st.session_state[ui.P19_GENETIC_SEARCH_STATE_KEY] = search_result
+        st.session_state[ui.P19_GENETIC_SEARCH_STATE_KEY] = comparison["ga"]
+        st.session_state[ui.P20_SYNTHETIC_COMPARISON_STATE_KEY] = comparison
 
 saved_scenario = st.session_state.get(ui.P18_SYNTHETIC_SCENARIO_STATE_KEY)
 if saved_scenario is not None:
@@ -227,92 +362,15 @@ if saved_scenario is not None:
         width="stretch",
     )
 
-    saved_search = st.session_state.get(ui.P19_GENETIC_SEARCH_STATE_KEY)
-    schedule = saved_search.schedule if saved_search is not None else schedule_edd(saved_scenario)
-    report = build_schedule_report(saved_scenario, schedule)
-    summary = report["summary"]
-    row_labels = {
-        (engine.dataset_partition, engine.unit_id): label for engine, label in labels.items()
-    }
-    if saved_search is None:
-        st.subheader("EDD baseline schedule")
-        st.caption("Earliest completion deadline first. All timings are simulated relative cycles.")
-    else:
-        st.subheader("Genetic algorithm schedule")
-        st.caption("Best schedule found within the selected budget. Timings are simulated cycles.")
-    cost, makespan, overflow = st.columns(3)
-    cost.metric("Weighted tardiness", f"{summary['weighted_tardiness_cycles']:g}")
-    makespan.metric("Makespan (cycles)", f"{summary['makespan_cycles']:g}")
-    overflow.metric("Horizon overflow (cycles)", f"{summary['horizon_overflow_cycles']:g}")
-    st.dataframe(
-        [
-            {
-                "Engine": row_labels[row["dataset_partition"], row["unit_id"]],
-                "Team": row["team_id"],
-                "Start": row["start_cycle"],
-                "Finish": row["completion_cycle"],
-                "Deadline": row["due_completion_cycle"],
-                "Late by": row["tardiness_cycles"],
-                "Past horizon": row["horizon_overflow_cycles"],
-            }
-            for row in report["jobs"]
-        ],
-        hide_index=True,
-        width="stretch",
-    )
-
-    timeline = go.Figure()
-    for row in report["jobs"]:
-        label = row_labels[row["dataset_partition"], row["unit_id"]]
-        timeline.add_bar(
-            name=label,
-            y=[f"Team {row['team_id']}"],
-            x=[row["duration_cycles"]],
-            base=[row["start_cycle"]],
-            orientation="h",
-            text=[label],
-            hovertemplate=(
-                f"Engine {label}<br>Start {row['start_cycle']:g}<br>"
-                f"Finish {row['completion_cycle']:g}<extra></extra>"
-            ),
+    comparison = st.session_state.get(ui.P20_SYNTHETIC_COMPARISON_STATE_KEY)
+    if comparison is not None:
+        row_labels = {
+            (engine.dataset_partition, engine.unit_id): label
+            for engine, label in labels.items()
+        }
+        _render_comparison(
+            saved_scenario,
+            comparison,
+            row_labels,
+            heading="Compare schedules on the saved synthetic scenario",
         )
-    timeline.add_vline(
-        x=summary["horizon_cycles"], line_dash="dash", annotation_text="Soft horizon"
-    )
-    timeline.update_layout(
-        barmode="overlay",
-        xaxis_title="Relative cycles",
-        yaxis_title=None,
-        showlegend=False,
-    )
-    st.plotly_chart(timeline, width="stretch")
-
-    if saved_search is not None:
-        st.subheader("Search progress")
-        st.write(
-            f"Seed {saved_search.seed} ? Population {saved_search.population_size} ? "
-            f"{saved_search.generations} generations ? {saved_search.evaluations} distinct orders "
-            f"evaluated in {saved_search.runtime_seconds:.3f} s"
-        )
-        st.caption(
-            f"EDD reference score is {saved_search.edd_penalty:g}. "
-            "Each generation keeps the best order found so far. A larger search can sometimes "
-            "find a better schedule."
-        )
-        history = go.Figure(
-            go.Scatter(
-                x=list(range(len(saved_search.best_penalties))),
-                y=list(saved_search.best_penalties),
-                mode="lines+markers",
-                line_shape="hv",
-                name="Best so far",
-                hovertemplate="Generation %{x}<br>Weighted tardiness %{y:g}<extra></extra>",
-            )
-        )
-        history.add_hline(y=saved_search.edd_penalty, line_dash="dash", annotation_text="EDD")
-        history.update_layout(
-            xaxis_title="Generation (0 = initial population)",
-            yaxis_title="Best weighted tardiness",
-            showlegend=False,
-        )
-        st.plotly_chart(history, width="stretch")
