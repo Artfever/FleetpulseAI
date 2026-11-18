@@ -1,3 +1,9 @@
+## P19-A3 exhaustive tiny reference
+
+- #161 closed after PR #459 merged at f2dd3e57d9cbeeee273def85371be2f4d36fb6ee. Work 2d3861b passed all five checks in run 44300678615. #259's blockers #161 and #219 are both closed.
+- Enumerated ABC, ACB, BAC, BCA, CAB and CBA. Hand scores are 6/16/2/4/18/4 for one team and 1/1/1/2/1/2 for two teams. The standard run reaches minima of 2 and 1. A run with seed 3, population 2 and 12 generations ends feasibly at 4 on one team, above the exact minimum 2 but below EDD 6. The previously reviewed A/B/C synthetic assumptions and score arithmetic are reused.
+- Ruff and diff checks passed. Focused pytest passed 6 in 0.65 seconds. Full pytest and Streamlit launch were not repeated locally for this test-only PR. CI covers both. After merge, continue with planner controls #86.
+
 ## P19-A2 seeded repeatability and score
 
 - PR #458 merged at 2980cb39b59a708bce4a265279e88bd8c9fc3527 on dev; #84 closed. Work f68b4a0 and handoff 5cb9b2c passed all five checks in run 44262533092. This cleared the native blocker of #161.
