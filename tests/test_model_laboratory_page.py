@@ -323,7 +323,17 @@ def test_model_laboratory_separates_official_test_scores_from_development(monkey
         "Constant mean baseline",
         "Dense MLP",
     ]
+    assert list(official_tables[0]["Model version"]) == [
+        "decision-tree-rul-v1",
+        "random-forest-rul-v1",
+        "xgboost-rul-v1",
+        "constant-rul-v1",
+        "dense-rul-mlp-final-v1",
+    ]
+    assert all(official_tables[0]["Sample count (engines)"] == 100)
     assert all(official_tables[0]["MAE (cycles)"] == 20.0)
+    assert any("MAE is mean absolute error" in item.value for item in page.caption)
+    assert any("Neither is an accuracy percentage" in item.value for item in page.caption)
 
 
 def test_model_laboratory_labels_missing_official_report(monkeypatch, tmp_path):
