@@ -34,6 +34,7 @@ from fleetpulse.models.xgboost_artifact import (
 from fleetpulse.services import (
     PredictionArtifactError,
     PredictionInputError,
+    compare_final_models,
     explain_final_tree_history,
     predict_uploaded_csv,
 )
@@ -444,5 +445,79 @@ if records is not None:
                     "The result depends on the documented FD001/train reference sample and does not "
                     "measure model accuracy or confidence."
                 )
+        st.subheader("Frozen final model comparison")
+        st.caption(
+            "Compare the frozen final models on this same observed history prefix. "
+            "The raw spread describes disagreement between models; it is not a confidence interval."
+        )
+        if st.button("Compare frozen final models", key="compare_frozen_final_models"):
+            try:
+                with st.spinner("Loading verified frozen models and comparing raw estimates..."):
+                    comparison = compare_final_models(
+                        visible_history,
+                        dataset_partition=partition,
+                        unit_id=engine,
+                        artifact_root=ui.PROJECT_ROOT,
+                    )
+            except (
+                OSError,
+                ValueError,
+                TypeError,
+                RuntimeError,
+                KeyError,
+                EOFError,
+                ImportError,
+                OverflowError,
+                pickle.UnpicklingError,
+            ) as error:
+                st.info(f"Frozen model comparison is unavailable: {error}")
+            else:
+                st.write(
+                    f"{comparison.dataset_partition} engine {comparison.unit_id}, "
+                    f"observed cycle {comparison.observed_cycle}. Successful estimates are raw "
+                    "and unclipped."
+                )
+                if comparison.predictions:
+                    st.dataframe(
+                        [
+                            {
+                                "Model": prediction.model_name,
+                                "Version": prediction.model_version,
+                                "Raw estimate (cycles)": prediction.raw_rul_cycles,
+                            }
+                            for prediction in comparison.predictions
+                        ],
+                        hide_index=True,
+                        width="stretch",
+                    )
+                    spread = comparison.raw_spread_cycles
+                    if spread is None:
+                        st.info("Model disagreement is unavailable for these results.")
+                    else:
+                        st.metric("Raw model disagreement (max − min)", f"{spread:.2f} cycles")
+                        st.caption(
+                            f"Successful-model raw range: {comparison.raw_min_rul_cycles:.2f}–"
+                            f"{comparison.raw_max_rul_cycles:.2f} cycles. This range describes "
+                            "model disagreement, not prediction uncertainty or confidence."
+                        )
+                else:
+                    st.info("No frozen final model produced a usable estimate; no spread is available.")
+                if comparison.failures:
+                    st.write("Unavailable or incompatible models")
+                    st.dataframe(
+                        [
+                            {
+                                "Model": failure.model_name,
+                                "Status": failure.code,
+                                "Reason": failure.reason,
+                            }
+                            for failure in comparison.failures
+                        ],
+                        hide_index=True,
+                        width="stretch",
+                    )
+                    st.caption(
+                        "Failed models are listed separately and are excluded from the raw range."
+                    )
 else:
     st.write("Choose an engine once the selected history is available.")

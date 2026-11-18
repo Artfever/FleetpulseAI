@@ -2,6 +2,7 @@
 
 import json
 import math
+from types import SimpleNamespace
 
 import streamlit as st
 from streamlit.testing.v1 import AppTest
@@ -145,6 +146,136 @@ def test_final_tree_explanation_shows_signed_cycle_contributions(monkeypatch, tm
     negative_rows = page.dataframe[-1].value.to_dict("records")
     assert positive_rows[0]["Contribution (cycles)"] == 2.0
     assert negative_rows[0]["Contribution (cycles)"] == -1.0
+    assert not page.exception
+
+
+def test_frozen_model_comparison_shows_raw_spread_and_lists_failures_separately(
+    monkeypatch, tmp_path
+):
+    page = _page(monkeypatch, tmp_path)
+    comparison_calls = []
+    comparison = SimpleNamespace(
+        dataset_partition="FD001/train",
+        unit_id=1,
+        observed_cycle=3,
+        predictions=(
+            SimpleNamespace(
+                model_name="decision-tree-rul",
+                model_version="decision-tree-rul-v1",
+                raw_rul_cycles=-2.5,
+            ),
+            SimpleNamespace(
+                model_name="random-forest-rul",
+                model_version="random-forest-rul-v1",
+                raw_rul_cycles=8.0,
+            ),
+        ),
+        failures=(
+            SimpleNamespace(
+                model_name="xgboost-rul",
+                code="artifact_unavailable",
+                reason="synthetic missing bundle",
+            ),
+        ),
+        raw_min_rul_cycles=-2.5,
+        raw_max_rul_cycles=8.0,
+        raw_spread_cycles=10.5,
+    )
+
+    def compare(history, **kwargs):
+        comparison_calls.append((history, kwargs))
+        return comparison
+
+    monkeypatch.setattr(
+        history_service,
+        "predict_rul_with_context",
+        lambda history, **kwargs: RULPrediction(
+            12.5,
+            12.5,
+            "dev-tree",
+            "dev-v1",
+            int(history[-1]["cycle"]),
+            len(history),
+            (),
+        ),
+    )
+    monkeypatch.setattr(services, "compare_final_models", compare)
+    page.run()
+    page.select_slider[0].set_value(2).run()
+    page.button[-1].click().run()
+
+    assert len(comparison_calls) == 1
+    assert [row["cycle"] for row in comparison_calls[0][0]] == [1, 2]
+    assert comparison_calls[0][1] == {
+        "dataset_partition": "FD001/train",
+        "unit_id": 1,
+        "artifact_root": tmp_path,
+    }
+    comparison_rows = page.dataframe[-2].value.to_dict("records")
+    failure_rows = page.dataframe[-1].value.to_dict("records")
+    assert comparison_rows == [
+        {
+            "Model": "decision-tree-rul",
+            "Version": "decision-tree-rul-v1",
+            "Raw estimate (cycles)": -2.5,
+        },
+        {
+            "Model": "random-forest-rul",
+            "Version": "random-forest-rul-v1",
+            "Raw estimate (cycles)": 8.0,
+        },
+    ]
+    assert failure_rows == [
+        {
+            "Model": "xgboost-rul",
+            "Status": "artifact_unavailable",
+            "Reason": "synthetic missing bundle",
+        }
+    ]
+    assert page.metric[-1].label == "Raw model disagreement (max − min)"
+    assert page.metric[-1].value == "10.50 cycles"
+    assert any("not a confidence interval" in item.value for item in page.caption)
+    assert not page.exception
+
+
+def test_frozen_model_comparison_reports_no_spread_when_all_models_fail(monkeypatch, tmp_path):
+    page = _page(monkeypatch, tmp_path)
+    result = SimpleNamespace(
+        dataset_partition="FD001/train",
+        unit_id=1,
+        observed_cycle=3,
+        predictions=(),
+        failures=(
+            SimpleNamespace(
+                model_name="decision-tree-rul",
+                code="artifact_unavailable",
+                reason="manifest missing",
+            ),
+        ),
+        raw_min_rul_cycles=None,
+        raw_max_rul_cycles=None,
+        raw_spread_cycles=None,
+    )
+    monkeypatch.setattr(
+        history_service,
+        "predict_rul_with_context",
+        lambda history, **kwargs: RULPrediction(
+            12.5,
+            12.5,
+            "dev-tree",
+            "dev-v1",
+            int(history[-1]["cycle"]),
+            len(history),
+            (),
+        ),
+    )
+    monkeypatch.setattr(services, "compare_final_models", lambda *args, **kwargs: result)
+    page.run()
+    page.button[-1].click().run()
+
+    assert any("no spread is available" in item.value for item in page.info)
+    assert not any("Raw model disagreement" in item.label for item in page.metric)
+    assert page.dataframe[-1].value.iloc[0]["Reason"] == "manifest missing"
     assert not page.exception
 
 
