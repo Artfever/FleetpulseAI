@@ -90,3 +90,12 @@ When supplied, run one same-history comparison over all five models, verify
 artifact hashes and source/config identity, inspect raw outputs with the owner,
 then finish #78 acceptance. Local Streamlit smoke is NOT RUN: no app change.
 Exact local/CI commands and results are recorded in the PR and owner handoff.
+
+## Executed checks (18 November)
+
+- `.venv/Scripts/python.exe -m ruff check .`: PASS after narrowing an exception handler.
+- `.venv/Scripts/python.exe -m pytest -q tests/test_final_comparison.py`: 17 passed in9.83s.
+- `.venv/Scripts/python.exe -m pytest -q`: initial 3 collection errors because torch was missing; after installing pinned CPU extras, **531 passed, 1 skipped in99.14s**.
+- `.venv/Scripts/python.exe -m pip check`: PASS; torch2.15.0+cpu tensor smoke PASS.
+- `git diff --check`: PASS. Local Streamlit launch NOT RUN:noappchange.
+- [PR #446](https://github.com/Artfever/FleetpulseAI/pull/446) targets dev and references78; all five initial CI checks passed. Actual P12 bundle/output verification remains pending and #78 remains open.
