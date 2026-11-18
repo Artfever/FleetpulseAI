@@ -1,5 +1,11 @@
 """Raw prediction and explicitly separate presentation/context services."""
 
+from fleetpulse.services.final_comparison import (
+    FinalHistoryComparison,
+    FinalModelFailure,
+    FinalModelPrediction,
+    compare_final_models,
+)
 from fleetpulse.services.fleet import (
     EngineIdentity,
     FleetEngineHistory,
@@ -31,6 +37,9 @@ __all__ = [
     "MAX_REPLAY_CACHE_POINTS",
     "MAX_REPLAY_POINTS",
     "EngineIdentity",
+    "FinalHistoryComparison",
+    "FinalModelFailure",
+    "FinalModelPrediction",
     "FleetEngineHistory",
     "FleetEngineHistoryError",
     "FleetHistories",
@@ -42,6 +51,7 @@ __all__ = [
     "RULPrediction",
     "RawRULPrediction",
     "clear_history_replay_cache",
+    "compare_final_models",
     "extract_latest_engine_histories",
     "predict_fleet",
     "predict_rul",
