@@ -46,6 +46,9 @@ def test_planner_compares_both_methods_on_the_same_reviewed_scenario():
     charts = page.get("plotly_chart")
     assert len(charts) == 3
     assert all(chart.proto.spec for chart in charts)
+    edd_timeline = json.loads(charts[0].proto.spec)
+    ga_timeline = json.loads(charts[1].proto.spec)
+    assert edd_timeline["layout"]["xaxis"]["range"] == ga_timeline["layout"]["xaxis"]["range"]
 
 
 def test_planner_keeps_ga_controls_bounded_and_uses_them_for_the_comparison():

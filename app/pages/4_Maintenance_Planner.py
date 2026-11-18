@@ -68,7 +68,7 @@ def _run_schedule_comparison(
 
 
 def _render_method_result(
-    column, scenario, schedule, method_name, labels, *, key_prefix, search=None
+    column, scenario, schedule, method_name, labels, *, key_prefix, time_axis_max, search=None
 ):
     report = build_schedule_report(scenario, schedule)
     summary = report["summary"]
@@ -126,7 +126,7 @@ def _render_method_result(
         xaxis_title="Relative cycles",
         yaxis_title=None,
         showlegend=False,
-        xaxis_range=[0, max(summary["makespan_cycles"], summary["horizon_cycles"])],
+        xaxis_range=[0, time_axis_max],
     )
     column.plotly_chart(timeline, width="stretch", key=f"{key_prefix}-timeline")
     if search is not None:
@@ -162,14 +162,19 @@ def _render_comparison(scenario, comparison, labels, *, heading):
     )
     columns = st.columns(2)
     key_prefix = heading.lower().replace(" ", "-")
+    time_axis_max = max(
+        comparison["edd"].makespan_cycles,
+        comparison["ga"].schedule.makespan_cycles,
+        scenario.horizon_cycles,
+    )
     _render_method_result(
         columns[0], scenario, comparison["edd"], "EDD", labels,
-        key_prefix=f"{key_prefix}-edd",
+        key_prefix=f"{key_prefix}-edd", time_axis_max=time_axis_max,
     )
     ga = comparison["ga"]
     _render_method_result(
         columns[1], scenario, ga.schedule, "Genetic Algorithm", labels,
-        key_prefix=f"{key_prefix}-ga", search=ga,
+        key_prefix=f"{key_prefix}-ga", time_axis_max=time_axis_max, search=ga,
     )
 
 
