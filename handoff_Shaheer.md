@@ -5,7 +5,7 @@
 - Defaults are 16 candidates, 20 generations, seed 42 and mutation rate 0.2. Bounds are 2?64 candidates, 0?100 generations and a nonnegative 32-bit integer seed. These are small project defaults and no tuning was performed. Abdullah authorized the takeover and received the operation explanation.
 - The previously reviewed synthetic Appendix B example yielded B/A/C, weighted tardiness 2 versus EDD 6, six distinct orders evaluated and about 0.00663 seconds of runtime. The initial population already contained the best order, so all 21 recorded best scores were 2.
 - Ruff and git diff --check passed. Focused pytest passed 23 in 0.61 seconds. Full pytest passed 619 in 58.05 seconds. Local Streamlit was not run because there were no app changes.
-- Publish to dev and check CI and unresolved conversations before merging and closing #219. The separate P19 verification and planner work remain. P17 #78 awaits human inspection and teammate discussion.
+- Work commit 5c4a4fa is in [PR #457](https://github.com/Artfever/FleetpulseAI/pull/457) to dev. Check CI and unresolved conversations before merging and closing #219. The separate P19 verification and planner work remain. P17 #78 awaits human inspection and teammate discussion.
 
 ## P19-S2 genetic operators, 18 November 2026
 
