@@ -1,3 +1,10 @@
+## P19-T3 planner edge cases
+
+- PR #462 merged at 33b7035982acd50d3ad6b294f4effa0c07db7dba and #163 closed. Work 803073f passed five checks in run 44302356493 and all 629 local tests. #220's native blocker #163 is closed.
+- The form supports selecting one or more synthetic engines, with stable labels and partition-qualified identity. Empty selections and invalid capacity get an inline error. Invalid submissions retain the last valid result. Tests cover a GA run with only B, tied-deadline EDD, zero team count and empty selection.
+- Ruff and diff checks passed. Focused pytest passed 13 in 12.03 seconds. Full pytest passed 632 in 59.16 seconds. Local Streamlit health returned ok on port 18588. Computer-use native pipe unavailable. Headless browser verification is in progress. Abdullah implemented this under the all-owner authorization.
+- After merging and closing #220, verify all nine children and the Phase 19 acceptance gate before closing #21.
+
 ## P19-T2 search history and method
 
 - #86 closed after PR #461 merged at 71dfd318f2e6a9c57edc15a1a14acb8e5c753022. Its head 87d5df6 passed all five checks in run 44301761521 and all 629 local tests. #163's blocker #86 is closed.

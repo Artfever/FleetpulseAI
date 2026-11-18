@@ -77,3 +77,42 @@ def test_planner_submits_bounded_ga_controls_and_can_return_to_edd():
     assert page.session_state[ui.P19_GENETIC_SEARCH_STATE_KEY] is None
     assert page.dataframe[1].value["Engine"].tolist() == ["A", "B", "C"]
     assert len(page.get("plotly_chart")) == 1
+
+
+def test_planner_can_run_ga_with_one_selected_engine():
+    page = AppTest.from_file(str(PROJECT_ROOT / "app/pages/4_Maintenance_Planner.py")).run()
+    page.multiselect[0].set_value(["B"]).run()
+    page.selectbox[0].select("Genetic Algorithm")
+    page.button[0].click().run()
+    assert not page.exception
+    assert page.dataframe[1].value["Engine"].tolist() == ["B"]
+    assert page.dataframe[1].value["Finish"].tolist() == [1]
+    result = page.session_state[ui.P19_GENETIC_SEARCH_STATE_KEY]
+    assert result.evaluations == 1 and result.best_penalties == (0.0,) * 21
+
+
+def test_planner_ties_follow_engine_id_and_invalid_capacity_keeps_previous_result():
+    page = AppTest.from_file(str(PROJECT_ROOT / "app/pages/4_Maintenance_Planner.py")).run()
+    page.multiselect[0].set_value(["C", "B", "A"]).run()
+    for field in page.number_input:
+        if field.label.endswith("assumed RUL (cycles)"):
+            field.set_value(4.0)
+    page.button[0].click().run()
+    assert not page.exception
+    assert page.dataframe[1].value["Engine"].tolist() == ["A", "B", "C"]
+    assert page.dataframe[1].value["Deadline"].tolist() == [2.0] * 3
+    saved = page.session_state[ui.P18_SYNTHETIC_SCENARIO_STATE_KEY]
+    page.number_input[0].set_value(0)
+    page.button[0].click().run()
+    assert not page.exception
+    assert [error.value for error in page.error] == ["Enter at least one maintenance team."]
+    assert page.session_state[ui.P18_SYNTHETIC_SCENARIO_STATE_KEY] == saved
+
+
+def test_planner_rejects_an_empty_job_selection():
+    page = AppTest.from_file(str(PROJECT_ROOT / "app/pages/4_Maintenance_Planner.py")).run()
+    page.multiselect[0].set_value([]).run()
+    page.button[0].click().run()
+    assert not page.exception
+    assert [error.value for error in page.error] == ["Select at least one engine."]
+    assert not page.dataframe

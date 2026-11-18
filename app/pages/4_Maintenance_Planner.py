@@ -38,24 +38,32 @@ else:
 st.subheader("Synthetic maintenance scenario")
 st.caption("RUL, durations, priorities, and planning limits are assumptions for this simulation.")
 
+examples = dict(zip(("A", "B", "C"), appendix_b_jobs(), strict=True))
+labels = {job.engine: label for label, job in examples.items()}
+selected_engines = st.multiselect("Scenario engines", tuple(examples), default=tuple(examples))
+
 with st.form("synthetic_scenario"):
     capacity, buffer, horizon = st.columns(3)
-    team_count = capacity.number_input("Maintenance teams", min_value=1, value=1)
+    team_count = capacity.number_input(
+        "Maintenance teams", min_value=0, value=1, help="At least one team is required."
+    )
     buffer_cycles = buffer.number_input("Buffer (cycles)", min_value=0.0, value=2.0)
     horizon_cycles = horizon.number_input("Soft horizon (cycles)", min_value=0.1, value=6.0)
-    jobs = []
-    for label, job in zip(("A", "B", "C"), appendix_b_jobs(), strict=True):
+    job_inputs = []
+    for label, job in examples.items():
+        if label not in selected_engines:
+            continue
         rul, duration, priority = st.columns(3)
-        jobs.append(
-            replace(
+        job_inputs.append(
+            (
                 job,
-                predicted_rul_cycles=rul.number_input(
+                rul.number_input(
                     f"{label} assumed RUL (cycles)", min_value=0.0, value=job.predicted_rul_cycles
                 ),
-                duration_cycles=duration.number_input(
+                duration.number_input(
                     f"{label} duration (cycles)", min_value=1, value=job.duration_cycles
                 ),
-                priority_weight=priority.number_input(
+                priority.number_input(
                     f"{label} priority weight", min_value=1, value=job.priority_weight
                 ),
             )
@@ -71,14 +79,28 @@ with st.form("synthetic_scenario"):
     submitted = st.form_submit_button("Save synthetic scenario")
 
 if submitted:
-    scenario = SchedulingScenario(tuple(jobs), team_count, buffer_cycles, horizon_cycles)
-    search_result = (
-        schedule_ga(scenario, population_size=population, generations=generations, seed=seed)
-        if method == "Genetic Algorithm"
-        else None
-    )
-    st.session_state[ui.P18_SYNTHETIC_SCENARIO_STATE_KEY] = scenario
-    st.session_state[ui.P19_GENETIC_SEARCH_STATE_KEY] = search_result
+    try:
+        if not job_inputs:
+            raise ValueError("Select at least one engine.")
+        if team_count < 1:
+            raise ValueError("Enter at least one maintenance team.")
+        jobs = tuple(
+            replace(
+                job, predicted_rul_cycles=rul, duration_cycles=duration, priority_weight=priority
+            )
+            for job, rul, duration, priority in job_inputs
+        )
+        scenario = SchedulingScenario(jobs, team_count, buffer_cycles, horizon_cycles)
+        search_result = (
+            schedule_ga(scenario, population_size=population, generations=generations, seed=seed)
+            if method == "Genetic Algorithm"
+            else None
+        )
+    except ValueError as error:
+        st.error(str(error))
+    else:
+        st.session_state[ui.P18_SYNTHETIC_SCENARIO_STATE_KEY] = scenario
+        st.session_state[ui.P19_GENETIC_SEARCH_STATE_KEY] = search_result
 
 saved_scenario = st.session_state.get(ui.P18_SYNTHETIC_SCENARIO_STATE_KEY)
 if saved_scenario is not None:
@@ -90,12 +112,12 @@ if saved_scenario is not None:
     st.dataframe(
         [
             {
-                "Engine": label,
+                "Engine": labels[job.engine],
                 "Assumed RUL (cycles)": job.predicted_rul_cycles,
                 "Duration (cycles)": job.duration_cycles,
                 "Priority weight": job.priority_weight,
             }
-            for label, job in zip(("A", "B", "C"), saved_scenario.jobs, strict=True)
+            for job in saved_scenario.jobs
         ],
         hide_index=True,
         width="stretch",
@@ -105,9 +127,8 @@ if saved_scenario is not None:
     schedule = saved_search.schedule if saved_search is not None else schedule_edd(saved_scenario)
     report = build_schedule_report(saved_scenario, schedule)
     summary = report["summary"]
-    labels = {
-        job.engine.unit_id: label
-        for label, job in zip(("A", "B", "C"), saved_scenario.jobs, strict=True)
+    row_labels = {
+        (engine.dataset_partition, engine.unit_id): label for engine, label in labels.items()
     }
     if saved_search is None:
         st.subheader("EDD baseline schedule")
@@ -122,7 +143,7 @@ if saved_scenario is not None:
     st.dataframe(
         [
             {
-                "Engine": labels[row["unit_id"]],
+                "Engine": row_labels[row["dataset_partition"], row["unit_id"]],
                 "Team": row["team_id"],
                 "Start": row["start_cycle"],
                 "Finish": row["completion_cycle"],
@@ -138,7 +159,7 @@ if saved_scenario is not None:
 
     timeline = go.Figure()
     for row in report["jobs"]:
-        label = labels[row["unit_id"]]
+        label = row_labels[row["dataset_partition"], row["unit_id"]]
         timeline.add_bar(
             name=label,
             y=[f"Team {row['team_id']}"],
@@ -170,7 +191,7 @@ if saved_scenario is not None:
             f"evaluated in {saved_search.runtime_seconds:.3f} s"
         )
         st.caption(
-            f"EDD starts the search at {saved_search.edd_penalty:g} weighted tardiness. "
+            f"EDD reference score is {saved_search.edd_penalty:g}. "
             "Each generation keeps the best order found so far. A larger search can sometimes "
             "find a better schedule."
         )
