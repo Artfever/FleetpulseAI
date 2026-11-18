@@ -79,10 +79,16 @@ def test_selected_fleet_snapshot_is_available_on_planner_page(monkeypatch, tmp_p
     assert scenario.jobs[0].predicted_rul_cycles == 42.0
     assert (scenario.jobs[0].duration_cycles, scenario.jobs[0].priority_weight) == (1, 1)
     assert (scenario.team_count, scenario.buffer_cycles, scenario.horizon_cycles) == (1, 2, 6)
+    comparison = planner.session_state[ui.P20_FLEET_COMPARISON_STATE_KEY]
+    assert comparison["edd"].weighted_tardiness_cycles == 0
+    assert comparison["ga"].schedule.weighted_tardiness_cycles == 0
     planning_table = planner.dataframe[1].value
     assert planning_table["Dataset"].tolist() == ["FD001/train"]
     assert planning_table["Engine ID"].tolist() == [5]
     assert planning_table["Planner RUL (cycles)"].tolist() == [42.0]
+    assert planner.dataframe[2].value["Engine"].tolist() == ["FD001/train engine 5"]
+    assert planner.dataframe[3].value["Engine"].tolist() == ["FD001/train engine 5"]
+    assert len(planner.get("plotly_chart")) == 3
 
 
 def test_planner_reports_saved_fleet_prediction_errors(monkeypatch, tmp_path):
