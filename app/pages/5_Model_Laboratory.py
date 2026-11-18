@@ -12,6 +12,11 @@ from fleetpulse.evaluation.final_test_display import (
     FINAL_TEST_REPORT_PATH,
     load_final_test_display,
 )
+from fleetpulse.evaluation.final_test_export import (
+    ENGINE_FILENAME,
+    SUMMARY_FILENAME,
+    build_final_test_csv_exports,
+)
 from fleetpulse.evaluation.model_comparison import (
     load_model_comparison,
     load_verified_forest_scores,
@@ -48,7 +53,7 @@ else:
             "Selection candidate": candidate["name"],
             "Selection MAE (cycles)": candidate["mae_cycles"],
             "Selection RMSE (cycles)": candidate["rmse_cycles"],
-            "Configuration": candidate["configuration"],
+            "Configuration": json.dumps(candidate["configuration"], sort_keys=True),
         }
         for candidate in selection["candidates"]
     ]
@@ -374,3 +379,27 @@ else:
         "Neither is an accuracy percentage or a guarantee about future engines. "
         "The figures come from the checksum-verified local P13 report and were not used for model selection."
     )
+    try:
+        csv_exports = build_final_test_csv_exports(official_results_path)
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        st.warning(f"CSV exports are unavailable because the saved per-engine results failed verification: {error}")
+    else:
+        st.download_button(
+            "Download summary CSV",
+            data=csv_exports.summary_csv,
+            file_name=SUMMARY_FILENAME,
+            mime="text/csv",
+            key="p13_test_summary_csv",
+        )
+        st.download_button(
+            "Download per-engine CSV",
+            data=csv_exports.per_engine_csv,
+            file_name=ENGINE_FILENAME,
+            mime="text/csv",
+            key="p13_test_per_engine_csv",
+        )
+        st.caption(
+            f"Exports contain {csv_exports.summary_row_count} model summary rows and "
+            f"{csv_exports.per_engine_row_count} per-engine rows. The values are copied from the "
+            "verified report; missing or inconsistent fields make the exports unavailable."
+        )

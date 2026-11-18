@@ -161,6 +161,7 @@ def test_model_laboratory_displays_verified_forest_validation_scores(monkeypatch
     ]
     assert len(selection_tables) == 1
     assert len(selection_tables[0]) == 6
+    assert isinstance(selection_tables[0].iloc[0]["Configuration"], str)
     assert any("Owner-delegated P11-T3 selection" in item.value for item in page.markdown)
     assert any("Candidate 6" in item.value for item in page.markdown)
     assert any("exactly 8 epochs" in item.value for item in page.caption)
@@ -274,6 +275,7 @@ def test_model_laboratory_separates_official_test_scores_from_development(monkey
         "prediction_source": {
             "test_history_sha256": "3cda7109ce17bafb5443f2ac926cfcf88154b941b8c4cf95eb55d1ddd6f52851",
             "rul_answer_file_sha256": "a19c8ec94931949d0485bdc35118206e9c81c4547b422efb9cf86f4ceddbceca",
+            "pairing_payload_sha256": "a" * 64,
         },
         "models": [
             {
@@ -282,7 +284,21 @@ def test_model_laboratory_separates_official_test_scores_from_development(monkey
                 "version": version,
                 "sample_count": 100,
                 "metrics": {"mae_cycles": 20.0, "rmse_cycles": 25.0},
-                "rows": [{} for _ in range(100)],
+                "rows": [
+                    {
+                        "unit_id": unit_id,
+                        "observed_cycle": unit_id + 20,
+                        "answer_line": unit_id,
+                        "true_rul_cycles": 100,
+                        "raw_prediction_cycles": 100.0 + (5.0 if unit_id <= 50 else 35.0),
+                        "residual_prediction_minus_true_cycles": 5.0
+                        if unit_id <= 50
+                        else 35.0,
+                        "absolute_error_cycles": 5.0 if unit_id <= 50 else 35.0,
+                        "squared_error_cycles_squared": (5.0 if unit_id <= 50 else 35.0) ** 2,
+                    }
+                    for unit_id in range(1, 101)
+                ],
             }
             for name, (display, version) in names.items()
         ],
@@ -334,6 +350,9 @@ def test_model_laboratory_separates_official_test_scores_from_development(monkey
     assert all(official_tables[0]["MAE (cycles)"] == 20.0)
     assert any("MAE is mean absolute error" in item.value for item in page.caption)
     assert any("Neither is an accuracy percentage" in item.value for item in page.caption)
+    assert any(item.label == "Download summary CSV" for item in page.get("download_button"))
+    assert any(item.label == "Download per-engine CSV" for item in page.get("download_button"))
+    assert any("500 per-engine rows" in item.value for item in page.caption)
 
 
 def test_model_laboratory_labels_missing_official_report(monkeypatch, tmp_path):
