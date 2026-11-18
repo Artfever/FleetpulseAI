@@ -4,6 +4,15 @@ from fleetpulse.services.comparison_artifact import (
     build_paired_comparison_artifact,
     model_provenance_from_manifest,
 )
+from fleetpulse.services.explanations import (
+    BACKGROUND_SELECTION_POLICY,
+    FeatureContribution,
+    FinalTreeExplanation,
+    GlobalFeatureImportance,
+    TrainingFeatureBackground,
+    build_fd001_training_background,
+    explain_final_tree_prediction,
+)
 from fleetpulse.services.final_comparison import (
     FinalHistoryComparison,
     FinalModelFailure,
@@ -44,16 +53,20 @@ from fleetpulse.services.schedule_comparison import (
 from fleetpulse.services.uploaded_history import predict_uploaded_csv
 
 __all__ = [
+    "BACKGROUND_SELECTION_POLICY",
     "MAX_REPLAY_CACHE_POINTS",
     "MAX_REPLAY_POINTS",
     "EngineIdentity",
+    "FeatureContribution",
     "FinalHistoryComparison",
     "FinalModelFailure",
     "FinalModelPrediction",
+    "FinalTreeExplanation",
     "FleetEngineHistory",
     "FleetEngineHistoryError",
     "FleetHistories",
     "FleetPredictionResult",
+    "GlobalFeatureImportance",
     "HistoryReplay",
     "HistoryReplayPoint",
     "PlannerJobAssumption",
@@ -63,11 +76,14 @@ __all__ = [
     "RawRULPrediction",
     "ScheduleComparisonResult",
     "ScheduleMethodResult",
+    "TrainingFeatureBackground",
+    "build_fd001_training_background",
     "build_paired_comparison_artifact",
     "build_planning_scenario",
     "clear_history_replay_cache",
     "compare_final_models",
     "compare_schedules",
+    "explain_final_tree_prediction",
     "extract_latest_engine_histories",
     "model_provenance_from_manifest",
     "predict_fleet",
