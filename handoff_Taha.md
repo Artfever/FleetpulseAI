@@ -1,3 +1,10 @@
+## P18-T1 synthetic scenario form, 18 November 2026
+
+- Issue #83 has no native blockers. Abdullah took over implementation from Taha under the all-owner authorization. Existing issue assignment remains. #216 closed after PR #451 merged to dev at f4eeb1027bf10e7fe8e0cca5cea4deb1b60d12a5. All five CI checks passed on fd7ed7e in run 44252082705. Schedule report implementation dbe30a6 and follow-up fd7ed7e are included.
+- The Maintenance Planner now accepts and saves the synthetic A/B/C scenario, including team count, buffer, soft horizon, assumed RUL, duration and priority. It uses the existing immutable scenario and Appendix B defaults. The form saves to session state for #160 and displays assumptions separately from fleet estimates. Abdullah already reviewed and accepted the underlying Appendix B example and synthetic timing assumptions.
+- Changed the planner page, UI state key and one Streamlit regression test. Ruff and git diff --check passed. Focused planner tests passed 8 in 9.12 seconds. Full pytest passed 595 in 53.30 seconds. Local Streamlit startup returned HTTP 200 ok at port 18583.
+- Work commit 98ad6e1 is in [PR #452](https://github.com/Artfever/FleetpulseAI/pull/452) to dev. Verify five checks and resolved conversations before merging and closing #83. Next #160 will show the verified EDD table and timeline. P17 #78 real evidence is available and awaits the recorded human check. The artifact source transfer folder remains after recursive removal was blocked by the command tool.
+
 ## P10-T1 PR opened (2026-11-17)
 
 - Implementation commit `bcf365562f29be2899e33b9882d5c30f64a9cc1f` is pushed in [PR #387](https://github.com/Artfever/FleetpulseAI/pull/387) to `dev`, `Refs #59`. This PR-status update is in the same task PR. Required CI and conversations are pending; issue #59 is still open.
