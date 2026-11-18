@@ -1,0 +1,66 @@
+{
+  "source": "FleetPulse plan Appendix B, synthetic simulation assumptions",
+  "dataset_partition": "synthetic/appendix-b-v1",
+  "team_count": 1,
+  "buffer_cycles": 2,
+  "horizon_cycles": 6,
+  "jobs": [
+    {
+      "unit_id": 1,
+      "predicted_rul_cycles": 4,
+      "duration_cycles": 3,
+      "priority_weight": 1
+    },
+    {
+      "unit_id": 2,
+      "predicted_rul_cycles": 5,
+      "duration_cycles": 1,
+      "priority_weight": 5
+    },
+    {
+      "unit_id": 3,
+      "predicted_rul_cycles": 8,
+      "duration_cycles": 2,
+      "priority_weight": 1
+    }
+  ],
+  "expected_edd": {
+    "jobs": [
+      {
+        "unit_id": 1,
+        "team_id": 1,
+        "start_cycle": 0,
+        "completion_cycle": 3,
+        "due_completion_cycle": 2,
+        "tardiness_cycles": 1,
+        "horizon_overflow_cycles": 0
+      },
+      {
+        "unit_id": 2,
+        "team_id": 1,
+        "start_cycle": 3,
+        "completion_cycle": 4,
+        "due_completion_cycle": 3,
+        "tardiness_cycles": 1,
+        "horizon_overflow_cycles": 0
+      },
+      {
+        "unit_id": 3,
+        "team_id": 1,
+        "start_cycle": 4,
+        "completion_cycle": 6,
+        "due_completion_cycle": 6,
+        "tardiness_cycles": 0,
+        "horizon_overflow_cycles": 0
+      }
+    ],
+    "summary": {
+      "weighted_tardiness_cycles": 6,
+      "total_tardiness_cycles": 2,
+      "late_job_count": 2,
+      "makespan_cycles": 6,
+      "horizon_overflow_cycles": 0,
+      "overflow_job_count": 0
+    }
+  }
+}

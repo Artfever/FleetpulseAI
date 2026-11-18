@@ -1,3 +1,11 @@
+## P18-T3 saved Appendix B reference, 18 November 2026
+
+- PR #453 merged and #160 closed. The merge is bb45b05a066f9e62b0fc70c13e0ee84f154d3796 and all five CI checks passed on b14b4d0 in run 44253507606. Work commit 19ec3eb and handoff commit b14b4d0 are included. #218's native blocker #160 is closed.
+- Saved the reviewed synthetic Appendix B scenario and the hand-calculated EDD timetable in tests/fixtures/p18_appendix_b.json. An integration test loads it and checks the shared report, exact rows, schedule feasibility, repeatability and the match to planner defaults. One team, buffer 2, horizon 6 gives completions 3/4/6 and weighted tardiness 6. The scenario assumptions and example were reviewed with Abdullah earlier in P18.
+- Ruff and git diff --check passed. Focused tests passed 25 in 2.73 seconds. Full pytest passed 597 in 85.61 seconds. Local Streamlit launch was not repeated for this fixture-only change.
+- Recycled the source transfer folder after verification. Rechecked all 94 installed files against the preserved manifest after recycling. #78 has real comparison evidence and awaits the recorded human check.
+- Publish the task PR to dev, then verify CI and merge before closing #218. Afterward verify all nine child issues and the P18 worked-example gate before closing #19.
+
 ## P18-T2 EDD baseline timeline, 18 November 2026
 
 - #83 closed after PR #452 merged as 5fe893801c82797b67ae0f2140874d79d0d78b22. All five checks passed on 927aedf in run 44252734598. Form commit 98ad6e1 and handoff commit 927aedf are included. #160's native dependency #83 is closed.
