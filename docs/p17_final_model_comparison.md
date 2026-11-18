@@ -118,7 +118,23 @@ selection-manifest SHA-256
 feature-config SHA-256
 `19dd0331ee3e0c3a90217446a4481507b7da94fe1424b1c251c4605a6b168dfe`.
 Per-prefix history hashes and per-model manifest/weight hashes are in the JSON
-record. These are point outputs on three small packaged histories, not an
+record. To retain provenance even when the ignored JSON report is unavailable,
+the observed digests are:
+
+| Bundle | Manifest payload SHA-256 | Weights SHA-256 |
+| --- | --- | --- |
+| Decision Tree | `ed434d11ce7ae22cd6445aa18fc4fb7e5db5f3438dded681b596ef54d6d37e89` | `c33021cb9cf5931aba545b6a327d0547f14be1363cbd0c24d57f0ad923dd7bb3` |
+| Random Forest | `f52ff4dbcb9c3876ff045bebfaef791652d996a151e987815cf37a6afed69b1a` | `712a8313271565091fb3a7c9b4fce5e5d8bf2caf64b77e8da9c942a477605d81` |
+| XGBoost | `e40f4a9142caf5dc6d8c4880a2b0e526ef0e9e097e472ab70d44aa79169c2e11` | `719a5553ba938fb40dd4196d081d7d07f6c7490be0dbbd4d0cf653e776a4816e` |
+| Constant mean | `dff249bdfef9426b731a4d8fb8f74bd298571d38e86eb277f0a2a8b27d724c96` | None (no estimator weights) |
+| Dense MLP | `7a3e56ff80df0ba194067956842dab1e9d4148f85f5dc1ad9378bca0b234549c` | `fcbd5a67ca8bf307f049c7131fee08ee484f8f35e6cb4e8966aa3c45839b4650` |
+
+History SHA-256 values are engine 4: `3e1219d1c416c7c8c8bc770e86515aaa4f0c263ed3ab0ab987e1b7b275c853b8`,
+engine 5: `56c88f47d4b18b476213258e891864646675b1c46638b881c13d028555a19aad`,
+and engine 12: `08afebc54e155f306a8891adc2b1d97d485f6a5283dc2ea4153bd5edd0733f1d`.
+The ignored JSON report SHA-256 from this run is
+`9aca5e6df92cac25ba99ba1f3fe1b2033fa2e079c4aa87d97062b6964f697d1c`.
+These are point outputs on three small packaged histories, not an
 accuracy comparison, confidence estimates or maintenance recommendations.
 The frozen bundle files are ignored local artifacts and are not in Git; a clean
 checkout needs the trusted bundle directory to reproduce this run.
