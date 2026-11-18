@@ -158,7 +158,14 @@ def _render_comparison(scenario, comparison, labels, *, heading):
     st.subheader(heading)
     st.caption(
         "These results use one fixed scenario and one identical set of engine jobs. "
-        "Durations, priority weights, team count, buffer, and horizon are simulation assumptions."
+        "Fleet RUL values come from the saved model; synthetic-section RUL values are example inputs. "
+        "Durations, priority weights, team count, buffer, and horizon are scenario assumptions."
+    )
+    st.info(
+        "Due completion = max(0, planner RUL − buffer). A job is late when it finishes after its "
+        "due completion; weighted tardiness adds each job's late cycles times its assumed priority. "
+        "The horizon is a soft reporting limit: all selected jobs stay in both schedules, and work "
+        "finishing past the horizon is reported as overflow separately, not added to weighted tardiness."
     )
     columns = st.columns(2)
     key_prefix = heading.lower().replace(" ", "-")
