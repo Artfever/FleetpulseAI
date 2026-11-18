@@ -79,3 +79,31 @@ were `sensor_21_mean` 12.6610, `sensor_13_mean` 11.2342, `sensor_4_mean`
 7.2478, `sensor_9_mean` 5.0074 and `sensor_4_slope` 4.9970 cycles. This is a
 summary of this model's allocations on this selected reference sample, not
 feature importance for the physical engine or a general population claim.
+
+## Prediction/explanation consistency boundary (P17-A3)
+
+`check_final_explanation_consistency` binds a `FinalTreeExplanation` to the
+matching successful `FinalModelPrediction` in one `FinalHistoryComparison`.
+It checks engine/partition/cutoff and canonical input-history hash, model
+version, manifest and weight hashes, feature-config and training-source hashes,
+all ordered feature names and values, and raw RUL equality within `1e-12`
+cycles. It returns stable mismatch codes if any check fails. It requires the
+raw comparison object; a presentation-only/clamped prediction object is
+rejected, and raw explanations remain separate from display values.
+
+The actual local integration audit is:
+
+```powershell
+.venv/Scripts/python.exe scripts/check_p17_a3_explanation_consistency.py
+```
+
+It runs the final-model comparison and explanation on the same packaged
+engine-4/cycle-164 prefix, then records both outputs and the consistency
+result in ignored `reports/P17_A3_explanation_consistency.json`.
+
+Actual local run on 18 November 2026 returned `is_consistent=true` with no
+mismatch codes. Prediction and explanation both reported raw RUL
+29.794117647058822 cycles, model version `decision-tree-rul-v1`, identical
+manifest/weight/feature-config and input-history hashes, and matching 96
+ordered feature names and values. The explanation's SHAP additivity difference
+remained 0.00000453222900986816 cycles.

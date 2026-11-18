@@ -6,11 +6,13 @@ from fleetpulse.services.comparison_artifact import (
 )
 from fleetpulse.services.explanations import (
     BACKGROUND_SELECTION_POLICY,
+    ExplanationConsistency,
     FeatureContribution,
     FinalTreeExplanation,
     GlobalFeatureImportance,
     TrainingFeatureBackground,
     build_fd001_training_background,
+    check_final_explanation_consistency,
     explain_final_tree_prediction,
 )
 from fleetpulse.services.final_comparison import (
@@ -57,6 +59,7 @@ __all__ = [
     "MAX_REPLAY_CACHE_POINTS",
     "MAX_REPLAY_POINTS",
     "EngineIdentity",
+    "ExplanationConsistency",
     "FeatureContribution",
     "FinalHistoryComparison",
     "FinalModelFailure",
@@ -80,6 +83,7 @@ __all__ = [
     "build_fd001_training_background",
     "build_paired_comparison_artifact",
     "build_planning_scenario",
+    "check_final_explanation_consistency",
     "clear_history_replay_cache",
     "compare_final_models",
     "compare_schedules",
