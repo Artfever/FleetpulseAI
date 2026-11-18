@@ -1,3 +1,13 @@
+## P20-S2 #165 scheduler edge-case checks (active, 2026-11-18)
+
+- #165 is unblocked by closed P20-S1 #88 and predecessor phase gates #22, #17, and #21. Work is being performed by this session under the user's all-task takeover; the GitHub assignee remains Shaheer. Branch: `feat/P20-S2-urgent-capacity-tests`, from current `dev` after P20-A2 PR #467 merged at `3d43bc81e91d5d36abe065a233a88a23785dbbed`.
+- Added shared synthetic fixture `tests/fixtures/p20_s2_capacity_pressure.json`, reproducible script `scripts/check_p20_s2_scheduler_cases.py`, three focused checks in `tests/test_p20_s2_scheduler_cases.py`, and `docs/p20_s2_scheduler_edge_cases.md`.
+- On the same one-team, two-cycle-buffer, six-cycle-soft-horizon scenario, EDD orders 1/2/3/4 and scores weighted tardiness 23 cycles; seeded GA (16 members, 20 generations, seed 42) orders 2/4/1/3 and scores 12. Both schedule all four jobs, finish at cycle 10, and report four cycles of horizon overflow. These are synthetic illustrative inputs, not model-quality evidence or maintenance recommendations.
+- The case covers an engine with a zero due completion, insufficient single-team near-term capacity, durations 3/1/4/2, tied priorities for engines 3 and 4, and explicit preservation/reporting of late and overflow work.
+- Checks: `.venv/Scripts/python.exe -m ruff check .` PASS; `.venv/Scripts/python.exe -m pytest -q tests/test_p20_s2_scheduler_cases.py` PASS (3 passed in 0.40s); `.venv/Scripts/python.exe -m pytest -q` PASS (653 passed in 88.10s); `.venv/Scripts/python.exe scripts/check_p20_s2_scheduler_cases.py` PASS with values above; `git diff --check` PASS. Streamlit smoke is NOT RUN because app code did not change. The first focused run exposed an invalid repeatability assertion that included measured runtime; it was corrected to compare deterministic schedule outputs and rerun successfully.
+- Changed files: the four task artifacts above plus `handoff_Shaheer.md`, `handoff_Abdullah.md`, and `handoff_Taha.md` for current P20 state. No scheduler implementation, app code, real data, or model artifact changed.
+- No human inspection of the #165 example is recorded yet. Next: commit and open `Refs #165` PR to `dev`, resolve CI and review threads, then record a teammate's inspection of the synthetic example before closing #165. #222 consumes saved paired scheduler comparisons after #165.
+
 ## Phase 19 complete on dev
 
 - PR #463 merged at 56578c56fbf871ef135fb307cd39c46ce18b9e9e. Head 04d904c542b79b1afd273bf9c2ddd9c84ff158bf passed all five required checks in run 44303190378 with resolved conversations. #220 and Phase 19 gate #21 are closed. All nine child issues were verified closed. No main promotion was made.

@@ -71,6 +71,12 @@
 - Checks: `.venv/Scripts/python.exe -m ruff check .` PASS; `.venv/Scripts/python.exe -m pytest -q tests/test_planner_selection.py tests/test_planner_scenario.py` PASS (9 passed, 27.97s); `.venv/Scripts/python.exe -m pytest -q` PASS (644 passed, 178.05s); local Streamlit smoke PASS at port 18589 (`/_stcore/health` returned `ok`); `git diff --check` PASS.
 - Work commit `0e06e6a51abb5ebc00bfcda7851221c690fc8153` is in [PR #465](https://github.com/Artfever/FleetpulseAI/pull/465), merged to `dev` at `6df44b2860765dccf068f8906a37cef9a8450d78`. All five required checks passed in run 44313482250; zero unresolved conversations. Issue #89 remains open until the affected screen/output is checked by a human. P20-S1 #88 is merged in PR #466 at `043cd7f016f83f5c50e66c175a55506ad0972f88`; #88 awaits a teammate check. See `handoff_Shaheer.md` for the report/current status.
 
+## P20 root outputs reviewed; P20-T2 readiness (2026-11-18)
+
+- User confirmed Shaheer or Taha independently checked all three P20 root-task outputs, so #87, #88, and #89 are closed. Their implementations are merged to `dev` in PRs #464, #466, and #465 respectively.
+- P20-T2 #166 is ready after #89 closed. It remains assigned to Taha; work may be taken over under the user's all-task instruction without changing assignee. Its requirement is to render comparable timelines and metrics for both methods from one fixed scenario. Preserve one common scenario for EDD and GA and keep display assumptions explicit.
+- P20-T3 #260 also has its #89/#221 dependency chain; it must wait for #221 as well. P20 parent #25 stays open until all child tasks and the shared user-flow gate have evidence.
+
 # Taha handoff
 
 ## Owner-directed takeover update: P09-T2/T3 and P09-A2/A3 complete; P09-S1 active (2026-11-16)
