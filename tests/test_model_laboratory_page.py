@@ -249,3 +249,89 @@ def test_model_laboratory_displays_verified_mlp_results_and_checkpoint_selection
     mlp_row = tables[0].loc[tables[0]["Model"].str.startswith("Dense MLP")]
     assert mlp_row.iloc[0]["MAE (cycles)"] == 22.5
     assert mlp_row.iloc[0]["RMSE (cycles)"] == 28.0
+
+
+def test_model_laboratory_separates_official_test_scores_from_development(monkeypatch, tmp_path):
+    _prepare_model_laboratory(
+        monkeypatch,
+        tmp_path,
+        forest_scores=ForestValidationScores(
+            "random-forest-rul", "random-forest-rul-v1", 1, 4.25, 6.5
+        ),
+    )
+    names = {
+        "decision-tree-rul": ("Decision Tree", "decision-tree-rul-v1"),
+        "random-forest-rul": ("Random Forest", "random-forest-rul-v1"),
+        "xgboost-rul": ("XGBoost", "xgboost-rul-v1"),
+        "constant-rul": ("Constant mean baseline", "constant-rul-v1"),
+        "dense-rul-mlp-final": ("Dense MLP", "dense-rul-mlp-final-v1"),
+    }
+    payload = {
+        "schema_version": "p13-final-test-results-v1",
+        "dataset_partition": "FD001/test",
+        "results_use": "final reporting only; not used to select, tune, or refit models",
+        "sample_count_per_model": 100,
+        "prediction_source": {
+            "test_history_sha256": "3cda7109ce17bafb5443f2ac926cfcf88154b941b8c4cf95eb55d1ddd6f52851",
+            "rul_answer_file_sha256": "a19c8ec94931949d0485bdc35118206e9c81c4547b422efb9cf86f4ceddbceca",
+        },
+        "models": [
+            {
+                "name": name,
+                "display_name": display,
+                "version": version,
+                "sample_count": 100,
+                "metrics": {"mae_cycles": 20.0, "rmse_cycles": 25.0},
+                "rows": [{} for _ in range(100)],
+            }
+            for name, (display, version) in names.items()
+        ],
+    }
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), allow_nan=False)
+    report_path = tmp_path / "artifacts/final/p13/final_test_results.json"
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(
+        json.dumps({"payload": payload, "sha256": hashlib.sha256(encoded.encode()).hexdigest()}),
+        encoding="utf-8",
+    )
+
+    page = AppTest.from_file(
+        str(PROJECT_ROOT / "app/pages/5_Model_Laboratory.py"), default_timeout=30
+    ).run()
+
+    assert not page.exception
+    assert any(
+        item.value == "Development validation and selection (FD001/train)"
+        for item in page.subheader
+    )
+    assert any(
+        item.value == "Official held-out test results (FD001/test)" for item in page.subheader
+    )
+    assert any("not used to fit, select, or tune" in item.value for item in page.caption)
+    official_tables = [
+        item.value
+        for item in page.dataframe
+        if hasattr(item.value, "columns")
+        and "MAE (cycles)" in item.value.columns
+        and len(item.value) == 5
+    ]
+    assert len(official_tables) == 1
+    assert list(official_tables[0]["Model"]) == [
+        "Decision Tree",
+        "Random Forest",
+        "XGBoost",
+        "Constant mean baseline",
+        "Dense MLP",
+    ]
+    assert all(official_tables[0]["MAE (cycles)"] == 20.0)
+
+
+def test_model_laboratory_labels_missing_official_report(monkeypatch, tmp_path):
+    _prepare_model_laboratory(monkeypatch, tmp_path, forest_scores=None)
+
+    page = AppTest.from_file(
+        str(PROJECT_ROOT / "app/pages/5_Model_Laboratory.py"), default_timeout=30
+    ).run()
+
+    assert not page.exception
+    assert any("Verified official test results are unavailable" in item.value for item in page.info)
