@@ -154,6 +154,30 @@ def test_final_tree_explanation_shows_signed_cycle_contributions(monkeypatch, tm
     assert not page.exception
 
 
+def test_missing_final_tree_explanation_fails_gracefully(monkeypatch, tmp_path):
+    page = _page(monkeypatch, tmp_path)
+
+    def predict(history, **kwargs):
+        cutoff = int(history[-1]["cycle"])
+        return RULPrediction(12.5, 12.5, "dev-tree", "dev-v1", cutoff, len(history), ())
+
+    def explain(history, **kwargs):
+        raise FileNotFoundError("saved model bundle is missing")
+
+    monkeypatch.setattr(history_service, "predict_rul_with_context", predict)
+    monkeypatch.setattr(services, "explain_final_tree_history", explain)
+    page.run()
+    page.button[0].click().run()
+
+    assert not page.exception
+    assert page.metric[0].value == "12.50"
+    assert any(
+        "Final Decision Tree explanation is unavailable" in item.value
+        and "saved model bundle is missing" in item.value
+        for item in page.info
+    )
+
+
 def test_frozen_model_comparison_shows_raw_spread_and_lists_failures_separately(
     monkeypatch, tmp_path
 ):
