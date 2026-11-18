@@ -4,7 +4,7 @@
 - Added tournament selection of up to three contestants, segment crossover preserving the remaining order of the second parent, swap mutation, and best-candidate carryover. Ties in choosing the elite preserve the earliest candidate. Penalties must be finite and nonnegative. The mutation rate is explicit.
 - Abdullah authorized takeover. The operations and the synthetic scenario assumptions were explained. The proposed 16 candidates, 20 generations and seed 42 apply to the later runner and controls. No tuning was performed.
 - Ruff and git diff --check passed. Focused pytest passed 14 in 0.45 seconds. Full pytest passed 610 in 53.35 seconds. Local Streamlit launch was not run because there were no app changes.
-- Publish this change to dev and verify the required CI and review conversations. #219 then connects these operators to the shared decoder, bounded run and best-score history.
+- Work commit 047cc18 is in [PR #456](https://github.com/Artfever/FleetpulseAI/pull/456) to dev. Required CI and review conversations are pending. #219 then connects these operators to the shared decoder, bounded run and best-score history.
 
 ## P19-S1 EDD-seeded initial population, 18 November 2026
 
