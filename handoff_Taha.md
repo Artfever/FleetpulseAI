@@ -1,3 +1,9 @@
+## P19-T1 bounded planner controls
+
+- #259 closed after PR #460 merged at 3a20aeff1486d38cf935a06b694de08244fdfce1 with all five checks on b3ad81e in run 44301169757. #86 has no native blockers and uses the bounded runner already on dev. Abdullah implemented it under the authorized all-owner takeover.
+- The planner form offers EDD and Genetic Algorithm with an advanced section for population, generations and seed. Defaults are 16, 20 and 42. The backend limits are also applied in the widgets. GA computation occurs on explicit submission and reruns reuse the saved result.
+- AppTest checked the search limits, score 2 with the 2/12/1 settings, and switching back to the EDD A/B/C order. Focused tests passed 10 in 12.13 seconds. Ruff and diff checks passed. Streamlit health returned HTTP 200 ok on port 18586. Full local pytest is running; required CI still applies. #163 will use the saved result to show the method and score history.
+
 ## P18-T3 saved Appendix B reference, 18 November 2026
 
 - PR #453 merged and #160 closed. The merge is bb45b05a066f9e62b0fc70c13e0ee84f154d3796 and all five CI checks passed on b14b4d0 in run 44253507606. Work commit 19ec3eb and handoff commit b14b4d0 are included. #218's native blocker #160 is closed.

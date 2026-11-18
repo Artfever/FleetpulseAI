@@ -7,6 +7,15 @@ import streamlit as st
 
 from fleetpulse import ui
 from fleetpulse.optimization.edd import schedule_edd
+from fleetpulse.optimization.ga import (
+    DEFAULT_GENERATIONS,
+    DEFAULT_POPULATION_SIZE,
+    DEFAULT_SEED,
+    MAX_GENERATIONS,
+    MAX_POPULATION_SIZE,
+    MAX_SEED,
+    schedule_ga,
+)
 from fleetpulse.optimization.jobs import appendix_b_jobs
 from fleetpulse.optimization.reporting import build_schedule_report
 from fleetpulse.optimization.scoring import SchedulingScenario
@@ -51,12 +60,25 @@ with st.form("synthetic_scenario"):
                 ),
             )
         )
+    method = st.selectbox("Scheduling method", ("EDD", "Genetic Algorithm"))
+    with st.expander("Advanced genetic algorithm settings"):
+        st.caption("These settings apply when Genetic Algorithm is selected.")
+        seed = st.number_input("Random seed", 0, MAX_SEED, DEFAULT_SEED)
+        population = st.number_input(
+            "Population size", 2, MAX_POPULATION_SIZE, DEFAULT_POPULATION_SIZE
+        )
+        generations = st.number_input("Generations", 0, MAX_GENERATIONS, DEFAULT_GENERATIONS)
     submitted = st.form_submit_button("Save synthetic scenario")
 
 if submitted:
-    st.session_state[ui.P18_SYNTHETIC_SCENARIO_STATE_KEY] = SchedulingScenario(
-        tuple(jobs), team_count, buffer_cycles, horizon_cycles
+    scenario = SchedulingScenario(tuple(jobs), team_count, buffer_cycles, horizon_cycles)
+    search_result = (
+        schedule_ga(scenario, population_size=population, generations=generations, seed=seed)
+        if method == "Genetic Algorithm"
+        else None
     )
+    st.session_state[ui.P18_SYNTHETIC_SCENARIO_STATE_KEY] = scenario
+    st.session_state[ui.P19_GENETIC_SEARCH_STATE_KEY] = search_result
 
 saved_scenario = st.session_state.get(ui.P18_SYNTHETIC_SCENARIO_STATE_KEY)
 if saved_scenario is not None:
@@ -79,14 +101,20 @@ if saved_scenario is not None:
         width="stretch",
     )
 
-    report = build_schedule_report(saved_scenario, schedule_edd(saved_scenario))
+    saved_search = st.session_state.get(ui.P19_GENETIC_SEARCH_STATE_KEY)
+    schedule = saved_search.schedule if saved_search is not None else schedule_edd(saved_scenario)
+    report = build_schedule_report(saved_scenario, schedule)
     summary = report["summary"]
     labels = {
         job.engine.unit_id: label
         for label, job in zip(("A", "B", "C"), saved_scenario.jobs, strict=True)
     }
-    st.subheader("EDD baseline schedule")
-    st.caption("Earliest completion deadline first. All timings are simulated relative cycles.")
+    if saved_search is None:
+        st.subheader("EDD baseline schedule")
+        st.caption("Earliest completion deadline first. All timings are simulated relative cycles.")
+    else:
+        st.subheader("Genetic algorithm schedule")
+        st.caption("Best schedule found within the selected budget. Timings are simulated cycles.")
     cost, makespan, overflow = st.columns(3)
     cost.metric("Weighted tardiness", f"{summary['weighted_tardiness_cycles']:g}")
     makespan.metric("Makespan (cycles)", f"{summary['makespan_cycles']:g}")

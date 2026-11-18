@@ -40,3 +40,30 @@ def test_planner_edd_shows_reviewed_schedule_and_keeps_overflow_visible():
     assert table["Past horizon"].tolist() == [1, 2, 4]
     assert [metric.value for metric in page.metric] == ["6", "6", "4"]
     assert len(page.get("plotly_chart")) == 1
+
+
+def test_planner_submits_bounded_ga_controls_and_can_return_to_edd():
+    from fleetpulse.optimization.ga import MAX_GENERATIONS, MAX_POPULATION_SIZE, MAX_SEED
+
+    page = AppTest.from_file(str(PROJECT_ROOT / "app/pages/4_Maintenance_Planner.py")).run()
+    fields = {widget.label: widget for widget in page.number_input}
+    assert fields["Population size"].max == MAX_POPULATION_SIZE
+    assert fields["Generations"].max == MAX_GENERATIONS
+    assert fields["Random seed"].max == MAX_SEED
+    page.selectbox[0].select("Genetic Algorithm")
+    fields["Population size"].set_value(2)
+    fields["Generations"].set_value(12)
+    fields["Random seed"].set_value(1)
+    page.button[0].click().run()
+    assert not page.exception
+    result = page.session_state[ui.P19_GENETIC_SEARCH_STATE_KEY]
+    assert (result.population_size, result.generations, result.seed) == (2, 12, 1)
+    assert page.dataframe[1].value["Engine"].tolist() == ["B", "A", "C"]
+    assert page.metric[0].value == "2"
+    page.run()
+    assert page.session_state[ui.P19_GENETIC_SEARCH_STATE_KEY] == result
+    page.selectbox[0].select("EDD")
+    page.button[0].click().run()
+    assert not page.exception
+    assert page.session_state[ui.P19_GENETIC_SEARCH_STATE_KEY] is None
+    assert page.dataframe[1].value["Engine"].tolist() == ["A", "B", "C"]
