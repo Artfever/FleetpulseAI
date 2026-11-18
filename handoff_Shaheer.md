@@ -1024,3 +1024,9 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Implementation commit `be3db3f7ccb3f5ed60651c68bd4ca12d55eaf4da` is in [PR #436](https://github.com/Artfever/FleetpulseAI/pull/436), targeting `dev` with `Refs #67`. Prior handoff commit `a5a8e8d` records the P12 merge/gate completion and P13 start.
 - The PR includes the official-history-only prediction generator, focused tests, task evidence doc, and this handoff. Locally verified: 100 official test engines × 5 frozen models, labels not read, 4 focused tests and full suite 488 passed, Ruff and diff check passed.
 - Required GitHub CI and review-thread status are pending. This is a task PR; no teammate approval is required or claimed. Next: confirm all required checks and zero unresolved conversations, merge to `dev`, add the merge record in this PR, wait 35 seconds, then close #67 with the output hash and limitations. P13-S2 #144 remains blocked until #67 is closed.
+
+## P13-S1 #67 merged and closed (2026-11-18)
+
+- PR #436 merged into `dev` at `779fd0e9ddf2a1ea2d4a8bb589674399c11f515a`; final head `673b71522b2709e6d4dc01b5a59aa1b1c1b1f5ff`. All five required CI checks passed; zero unresolved review threads. Same-PR merge record: https://github.com/Artfever/FleetpulseAI/pull/436#issuecomment-6964797561.
+- Issue #67 closed with owner-directed evidence: https://github.com/Artfever/FleetpulseAI/issues/67#issuecomment-6964814856. Local prediction payload hash `34a92a60d2a6af6d279f929210c29d52ef43172c2d2a7122bb249d35538ffc2d`; 100 engines × five final models, no labels read and no metrics. Focused tests 4 passed; full suite 488 passed; Ruff/diff check passed.
+- Next active task: P13-S2 #144, assigned to Shaheer, now unblocked by #67 and P12 gate #22. It is the only task in this next step permitted to read `RUL_FD001.txt`, and will explicitly map sorted test engine IDs to label file order and calculate scores without tuning.
