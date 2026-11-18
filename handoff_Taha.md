@@ -1,3 +1,9 @@
+## P20-T3 #260 planner assumptions and overflow (active, 2026-11-18)
+
+- Issue #260 remains assigned to Taha; implementation is by Abdullah under the user's explicit all-task takeover. Its declared predecessors #166 and #221 are closed. The task branch `feat/P20-T3-planner-assumptions-overflow` is based on `dev` at `2953db30b6c059a02f19c76b2d97c1ef16f25583`.
+- The Planner comparison now labels the source of RUL separately from scenario assumptions and explains completion deadlines, tardiness, and the soft horizon. AppTest with horizon 2 retained all three jobs for both methods and verified EDD/GA weighted tardiness 6/2 and overflow 4/4. `docs/p20_t3_assumptions_and_overflow.md` records the calculations and real saved-model example/limits. Ruff passes; targeted tests pass (6); full pytest passes (661); Streamlit health and the saved-model integration script pass. No code PR yet.
+- Feature commit `24c00329b3a077e36f07e72479666239b906cef5` is in [PR #473](https://github.com/Artfever/FleetpulseAI/pull/473) to `dev` with `Refs #260`. CI run 44337074849 passed all five checks; no review threads remain. The required teammate output review is pending. Next: merge after current CI and keep #260 open until its output review is recorded. P20 parent #25 remains open for the shared end-to-end gate.
+
 ## Phase 19 complete on dev
 
 - PR #463 merged at 56578c56fbf871ef135fb307cd39c46ce18b9e9e. Head 04d904c542b79b1afd273bf9c2ddd9c84ff158bf passed all five required checks in run 44303190378 with resolved conversations. #220 and Phase 19 gate #21 are closed. All nine child issues were verified closed. No main promotion was made.

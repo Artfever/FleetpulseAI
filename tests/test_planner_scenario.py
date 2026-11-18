@@ -60,6 +60,35 @@ def test_planner_compares_both_methods_on_the_same_reviewed_scenario():
     assert edd_timeline["layout"]["xaxis"]["range"] == ga_timeline["layout"]["xaxis"]["range"]
 
 
+def test_planner_explains_lateness_and_keeps_horizon_overflow_visible():
+    page = _page()
+    fields = {widget.label: widget for widget in page.number_input}
+    fields["Soft horizon (cycles)"].set_value(2.0)
+    page.button[0].click().run()
+
+    assert not page.exception
+    explanation = " ".join(item.value for item in page.info)
+    assert "Due completion = max(0, planner RUL" in explanation
+    assert "all selected jobs stay in both schedules" in explanation
+    assert "reported as overflow separately" in explanation
+
+    scenario = page.session_state[ui.P18_SYNTHETIC_SCENARIO_STATE_KEY]
+    comparison = page.session_state[ui.P20_SYNTHETIC_COMPARISON_STATE_KEY]
+    edd_table, ga_table = page.dataframe[1].value, page.dataframe[2].value
+    assert scenario.horizon_cycles == 2
+    assert edd_table["Engine"].tolist() == ["A", "B", "C"]
+    assert ga_table["Engine"].tolist() == ["B", "A", "C"]
+    assert edd_table["Late by (cycles)"].tolist() == [1, 1, 0]
+    assert ga_table["Late by (cycles)"].tolist() == [0, 2, 0]
+    assert edd_table["Beyond horizon (cycles)"].tolist() == [1, 2, 4]
+    assert ga_table["Beyond horizon (cycles)"].tolist() == [0, 2, 4]
+    assert comparison.edd.weighted_tardiness_cycles == 6
+    assert comparison.ga.weighted_tardiness_cycles == 2
+    assert comparison.edd.horizon_overflow_cycles == 4
+    assert comparison.ga.horizon_overflow_cycles == 4
+    assert len(edd_table) == len(ga_table) == len(scenario.jobs) == 3
+
+
 def test_planner_keeps_ga_controls_bounded_and_uses_them_for_the_comparison():
     from fleetpulse.optimization.ga import MAX_GENERATIONS, MAX_POPULATION_SIZE, MAX_SEED
 
