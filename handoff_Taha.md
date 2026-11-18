@@ -84,6 +84,7 @@
 - Follow-up code commit `bc3e6ed6e0812d3c04876cd8f93f1bba8e8372ad` makes both timeline x-axis ranges identical and adds a regression assertion. It is the current PR #469 revision. In CI run 44325248035, branch-policy, quality and Streamlit smoke passed; unit-and-contract-tests is in progress. The independent user-reported review was recorded on #166 above; only close after all checks and review conversations pass.
 - P20-T3 #260 also has its #89/#221 dependency chain; it must wait for #221 as well. P20 parent #25 stays open until all child tasks and the shared user-flow gate have evidence.
 - P20-T2 #166 is complete and closed via [PR #469](https://github.com/Artfever/FleetpulseAI/pull/469), merged to `dev` at `db44055e884b26140e8880bf4228874dee5c118c`; final CI passed all five checks. Human output/provenance review and issue closure are recorded at https://github.com/Artfever/FleetpulseAI/issues/166#issuecomment-6981677382. The current active P20 work is #221, which #260 awaits.
+- P20-A3 #221 merged to `dev` via PR #470 at `123be8807ea82e0800e0e71395645eeebb1dde06`; its implementation/evidence comment is https://github.com/Artfever/FleetpulseAI/issues/221#issuecomment-6982040116. Its issue is still open pending the requested team check. P20-T3 #260's declared #221 dependency therefore remains open; P20-S3 #222 is being handled independently.
 
 # Taha handoff
 

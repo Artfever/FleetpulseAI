@@ -7,10 +7,12 @@ from fleetpulse.data.loader import FD001LoadError, load_engine_history
 from fleetpulse.data.quality import validate_engine_history
 
 P15_SELECTED_FLEET_STATE_KEY = "fleetpulse_p15_selected_fleet"
+P15_SELECTED_FLEET_PROVENANCE_STATE_KEY = "fleetpulse_p15_selected_fleet_provenance"
 P18_SYNTHETIC_SCENARIO_STATE_KEY = "fleetpulse_p18_synthetic_scenario"
 P19_GENETIC_SEARCH_STATE_KEY = "fleetpulse_p19_genetic_search"
 P20_FLEET_SCENARIO_STATE_KEY = "fleetpulse_p20_fleet_scenario"
 P20_FLEET_COMPARISON_STATE_KEY = "fleetpulse_p20_fleet_comparison"
+P20_FLEET_COMPARISON_ARTIFACT_STATE_KEY = "fleetpulse_p20_fleet_comparison_artifact"
 P20_SYNTHETIC_COMPARISON_STATE_KEY = "fleetpulse_p20_synthetic_comparison"
 
 
