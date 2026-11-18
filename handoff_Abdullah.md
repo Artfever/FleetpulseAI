@@ -1,3 +1,10 @@
+## P19-A1 permutation and capacity verification, 18 November 2026
+
+- #219 is closed after PR #457 merged to dev at 4528c7ce81adb7995779cdf4108b243da217f1d2. Work 5c4a4fa and handoff cd25e2b passed all five checks in run 44261917436. #84 has no native blocker and tests the available operators and decoder. Abdullah's reviewed P18 synthetic assumptions remain the reference.
+- tests/test_ga_feasibility.py independently checks 400 crossover/mutation candidates and decoded schedules across 50 seeds and four fleet/team combinations. It compares engine multiplicities, duration and team intervals, including a singleton, excess teams and equal numeric IDs across partitions. No runtime behavior changed.
+- Ruff and git diff --check passed. Focused pytest passed 24 in 0.42 seconds. Full pytest passed 623 in 53.10 seconds. Local Streamlit was not run because the app did not change.
+- Work commit f68b4a0 is in [PR #458](https://github.com/Artfever/FleetpulseAI/pull/458) to dev. Merge and close #84 after CI and conversation checks. #161 follows with independent checks on runtime results and best-score history.
+
 ## P19-S3 bounded genetic search, 18 November 2026
 
 - #162 closed after PR #456 merged to dev at 75445bf25c4643450b27ba2cbad46c0c65dacb29. Work 047cc18 and handoff 81d6cfd passed all five required checks on run 44261231565. #219's native blocker #162 is closed.
