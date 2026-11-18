@@ -26,8 +26,9 @@ predictions from the model or NASA observations.
 This task defines the input records only. Due dates, completion-time tardiness,
 the weighted objective, team capacity, and horizon behavior remain later P18
 tasks. The plan's worked example uses a buffer of two cycles and completion as
-the deadline event; teammate agreement on that scheduling convention is still
-required at phase acceptance. No real fleet maintenance durations or priorities
+the deadline event; Abdullah directly accepted that scheduling convention on 18 November 2026
+after inspecting the worked example and its explanation. The shared phase gate
+still requires the remaining scheduling outputs. No real fleet maintenance durations or priorities
 are inferred here.
 
 ## Completion deadline and tardiness
@@ -53,5 +54,30 @@ For Appendix B's one-team inputs and two-cycle buffer:
 | B/A/C | 3 | 6 | 4 | 6 | 0 |
 
 These are hand-calculated outputs for a synthetic example, not observed fleet
-outcomes. P18-S2's required teammate confirmation that the deadline event is
-completion rather than service start remains an acceptance check.
+outcomes. On 18 November 2026, Abdullah independently reviewed the executed example,
+requested a plain-English explanation, and explicitly confirmed: deadlines
+apply to completion; late and horizon-overflow work remains visible; duration
+and priority weights are labelled simulation assumptions. This is his direct
+confirmation, not a claimed GitHub approving review or a report of a private
+message. It supersedes the earlier pending inspection status for #159.
+
+
+## P18-S2 closeout verification (18 November 2026)
+
+The implementation was already merged by PR #372 as
+`1fa3895bda77d3a7bf06b937ae40f2fd9337f84f`, with all five required CI checks
+passing. Abdullah authorized taking over remaining team work, including this
+Shaheer-assigned closeout; original implementation authorship is preserved.
+No duplicate timing code or new model result was created.
+
+- `.venv/Scripts/python.exe -m pytest -q tests/test_scheduling_jobs.py`: **22 passed in0.31s**.
+- `.venv/Scripts/python.exe -m ruff check .`: PASS.
+- `git diff --check`: PASS.
+- Full pytest NOT RERUN for this documentation-only closeout; the unchanged
+  implementation tree passed 531 tests with one missing-P06-artifact skip in
+  P17 PR #446. Required PR CI still applies.
+- Local Streamlit smoke NOT RUN:no app change.
+
+This completes the timing convention/evidence for #159 after closeout merge.
+The weighted objective/hard feasibility rules (#217), decoder (#81), EDD
+(#158), scenario UI and shared P18 gate are separate remaining work.
