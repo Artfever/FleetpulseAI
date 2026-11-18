@@ -1,13 +1,12 @@
 """Build one immutable maintenance scenario from a fleet prediction snapshot.
 
-The planner consumes the nonnegative, unrounded display estimate already
-carried by each successful fleet result. The raw estimate remains on the
-original result for model evaluation and is never overwritten. Durations,
-weights, capacity, buffer, and horizon are separate user-supplied simulation
+The planner RUL is computed from the raw estimate as ``max(0.0, raw_rul)``
+without rounding. The display estimate is not used for deadlines and the raw
+estimate remains on the original result for evaluation. Durations, weights,
+capacity, buffer, and horizon are separate user-supplied simulation
 assumptions. Pass the returned scenario unchanged to each scheduling method.
 
-This interface is proposed for P20-A1 review with Shaheer and Taha; team
-agreement is not recorded in this module yet.
+The snapshot interface was agreed with Shaheer and Taha for P20-A1.
 """
 
 from __future__ import annotations
@@ -73,9 +72,16 @@ def build_planning_scenario(
             raise ValueError(f"Engine {identity} has no model version.")
         model_versions.add((result.model_name, result.model_version))
 
-        rul = result.displayed_rul_cycles
-        if isinstance(rul, bool) or not isinstance(rul, Real) or not math.isfinite(rul) or rul < 0:
-            raise ValueError(f"Engine {identity} needs a finite nonnegative planner RUL estimate.")
+        raw_rul = result.raw_rul_cycles
+        if (
+            isinstance(raw_rul, bool)
+            or not isinstance(raw_rul, Real)
+            or not math.isfinite(raw_rul)
+        ):
+            raise ValueError(f"Engine {identity} needs a finite raw RUL estimate.")
+        # Derive the scheduling value from raw output. A rounded or otherwise
+        # presentation-only displayed_rul_cycles value cannot change a deadline.
+        rul = max(0.0, float(raw_rul))
         if isinstance(result.observed_cycle, bool) or not isinstance(result.observed_cycle, Integral) or result.observed_cycle < 1:
             raise ValueError(f"Engine {identity} needs a positive observed cycle.")
         setting = assumptions.get(identity)
