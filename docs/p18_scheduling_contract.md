@@ -196,3 +196,19 @@ Verification: RuffPASS; focused
 **70passed in0.65s**; full `.venv/Scripts/python.exe -m pytest -q`
 **579passed,1skipped in114.78s** (absentP06developmentbundle integration).
 `git diff --check`PASS; localStreamlit NOT RUN:noappchange.
+
+## P18-A3 verified schedule report
+
+`build_schedule_report(scenario, schedule)` reconstructs the assignments and
+runs the shared feasibility checks before exposing rows for a table or chart.
+It also checks that the supplied timing, job inputs and summary still match
+the scenario. The report identifies the scenario by SHA-256 and includes
+dataset-qualified engine IDs, team, start, completion, deadline, duration,
+priority weight, tardiness and horizon overflow. All time fields use relative
+cycles. Engine IDs are normalized to JSON integers.
+
+For the reviewed synthetic one-team A/B/C schedule with buffer 2 and horizon
+2, all three jobs are kept. Weighted tardiness is 6, total tardiness is 2,
+makespan is 6 and overflow past the horizon is 4 cycles. The three per-job
+overflow amounts are 1, 2 and 4 cycles. These fields come from the shared
+scorer and preserve its definition of aggregate overflow.
