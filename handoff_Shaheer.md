@@ -4,7 +4,7 @@
 - Added initialize_population in optimization/ga.py. It returns immutable dataset-qualified orders, starts with the existing EDD ordering, and uses a caller-provided random generator for subsequent permutations. Repeats are allowed so tiny scenarios keep the requested population size. For the reviewed Appendix B assumptions, all 16 orders at seed 42 decoded successfully, and the first matched EDD weighted tardiness 6. Reordered inputs reproduced the identical population.
 - Explained seeding and planned GA operations to Abdullah. Proposed future defaults of 16 candidates and 20 generations with seed 42. The initializer takes an explicit size and this task involved no tuning.
 - Ruff and git diff --check passed. Focused pytest passed 7 in 0.47 seconds. Full pytest passed 603 in 53.67 seconds. Local Streamlit startup was not run because there were no app changes.
-- Publish the task PR to dev and verify five required checks and review conversations. #162 consumes the initialized orders for tournament selection, crossover, swap mutation and elitism. P17 #78 still awaits inspection and teammate discussion.
+- Work commit d6eb6f0 is in [PR #455](https://github.com/Artfever/FleetpulseAI/pull/455) to dev. Five required checks and review conversations are pending. #162 consumes the initialized orders for tournament selection, crossover, swap mutation and elitism. P17 #78 still awaits inspection and teammate discussion.
 
 ## P18-S3 merged closeout - 18 November 2026
 
