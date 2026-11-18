@@ -13,7 +13,7 @@ import hashlib
 import json
 import math
 from collections.abc import Iterable, Mapping
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from pathlib import Path
 
 import numpy as np
@@ -25,6 +25,7 @@ from fleetpulse.data.quality import validate_engine_history
 from fleetpulse.features import FeatureConfig, engineer_features
 from fleetpulse.models.final_tree_bundle import FinalTreeBundle, load_final_tree_bundle
 from fleetpulse.models.registry import FINAL_MODEL_REGISTRY
+from fleetpulse.services.final_comparison import FinalHistoryComparison
 from fleetpulse.services.predictor import PredictionInputError
 
 BACKGROUND_SELECTION_POLICY = "fd001-train-all-engines-observed-cycle-90-v1"
@@ -97,6 +98,21 @@ class FinalTreeExplanation:
                 key=lambda item: (-abs(item.contribution_cycles), order[item.feature_name]),
             )[:limit]
         )
+
+
+@dataclass(frozen=True)
+class ExplanationConsistency:
+    """Machine-readable agreement result for one comparison/explanation pair."""
+
+    is_consistent: bool
+    mismatch_codes: tuple[str, ...]
+    model_name: str
+    model_version: str
+    dataset_partition: str
+    unit_id: int
+    observed_cycle: int
+    raw_rul_cycles: float
+    input_history_sha256: str
 
 
 def _canonical_sha256(value: object) -> str:
@@ -204,6 +220,9 @@ def explain_final_tree_prediction(
         raise PredictionInputError(f"Invalid observed engine history: {codes}.")
     if {int(row["unit_id"]) for row in rows} != {unit_id}:
         raise PredictionInputError("History must contain only the requested engine's unit_id.")
+    normalized_rows = tuple(
+        {**row, "unit_id": int(row["unit_id"]), "cycle": int(row["cycle"])} for row in rows
+    )
     if not isinstance(dataset_partition, str) or not dataset_partition.strip():
         raise PredictionInputError("dataset_partition must be a nonempty string.")
 
@@ -218,7 +237,7 @@ def explain_final_tree_prediction(
 
     try:
         vector = engineer_features(
-            rows,
+            normalized_rows,
             dataset_partition=dataset_partition,
             unit_id=unit_id,
             config=bundle.feature_config,
@@ -283,11 +302,8 @@ def explain_final_tree_prediction(
         base_value_cycles=baseline,
         contributions=feature_contributions,
         global_summary=global_summary,
-        feature_config_sha256=_canonical_sha256(
-            {"channels": bundle.feature_config.channels, "window_cycles": bundle.feature_config.window_cycles,
-             "version": bundle.feature_config.version}
-        ),
-        input_history_sha256=_canonical_sha256(rows),
+        feature_config_sha256=_canonical_sha256(asdict(bundle.feature_config)),
+        input_history_sha256=_canonical_sha256(normalized_rows),
         manifest_payload_sha256=_canonical_sha256(bundle.payload),
         weights_sha256=bundle.payload["model"]["weights_sha256"],
         training_source_sha256=training_source_sha,
@@ -295,6 +311,83 @@ def explain_final_tree_prediction(
         background_selection_policy=background.selection_policy,
         background_row_count=len(background.values),
         additivity_error_cycles=error,
+    )
+
+
+def check_final_explanation_consistency(
+    comparison: FinalHistoryComparison,
+    explanation: FinalTreeExplanation,
+) -> ExplanationConsistency:
+    """Check that an explanation belongs to the unclipped prediction beside it.
+
+    A raw ``FinalHistoryComparison`` is required deliberately, so a display-
+    clamped value cannot be substituted for the model's evaluation output.
+    """
+    if not isinstance(comparison, FinalHistoryComparison):
+        raise TypeError("comparison must be a FinalHistoryComparison with raw model outputs.")
+    if not isinstance(explanation, FinalTreeExplanation):
+        raise TypeError("explanation must be a FinalTreeExplanation.")
+
+    mismatches: list[str] = []
+    if explanation.model_name != DECISION_TREE_KEY:
+        mismatches.append("unsupported_explanation_model")
+    candidates = [
+        item for item in comparison.predictions if item.model_name == explanation.model_name
+    ]
+    prediction = candidates[0] if len(candidates) == 1 else None
+    if prediction is None:
+        mismatches.append("prediction_missing_or_ambiguous")
+    if explanation.dataset_partition != comparison.dataset_partition:
+        mismatches.append("dataset_partition_mismatch")
+    if explanation.unit_id != comparison.unit_id:
+        mismatches.append("unit_id_mismatch")
+    if explanation.observed_cycle != comparison.observed_cycle:
+        mismatches.append("observed_cycle_mismatch")
+    if explanation.input_history_sha256 != comparison.input_history_sha256:
+        mismatches.append("input_history_mismatch")
+
+    if prediction is not None:
+        vector = prediction.vector
+        if prediction.stage != "final":
+            mismatches.append("prediction_not_final")
+        if prediction.model_version != explanation.model_version:
+            mismatches.append("model_version_mismatch")
+        if prediction.manifest_payload_sha256 != explanation.manifest_payload_sha256:
+            mismatches.append("manifest_mismatch")
+        if prediction.weights_sha256 != explanation.weights_sha256:
+            mismatches.append("weights_mismatch")
+        if prediction.feature_config_sha256 != explanation.feature_config_sha256:
+            mismatches.append("feature_config_mismatch")
+        if prediction.training_source_sha256 != explanation.training_source_sha256:
+            mismatches.append("training_source_mismatch")
+        if (
+            vector.dataset_partition != explanation.dataset_partition
+            or vector.unit_id != explanation.unit_id
+            or vector.selected_cycle != explanation.observed_cycle
+        ):
+            mismatches.append("feature_row_identity_mismatch")
+        if tuple(item.feature_name for item in explanation.contributions) != vector.config.output_schema:
+            mismatches.append("feature_schema_mismatch")
+        if tuple(item.feature_value for item in explanation.contributions) != vector.values:
+            mismatches.append("feature_values_mismatch")
+        if not math.isclose(
+            prediction.raw_rul_cycles,
+            explanation.raw_rul_cycles,
+            rel_tol=0.0,
+            abs_tol=1e-12,
+        ):
+            mismatches.append("raw_prediction_mismatch")
+
+    return ExplanationConsistency(
+        is_consistent=not mismatches,
+        mismatch_codes=tuple(mismatches),
+        model_name=explanation.model_name,
+        model_version=explanation.model_version,
+        dataset_partition=explanation.dataset_partition,
+        unit_id=explanation.unit_id,
+        observed_cycle=explanation.observed_cycle,
+        raw_rul_cycles=explanation.raw_rul_cycles,
+        input_history_sha256=explanation.input_history_sha256,
     )
 
 
