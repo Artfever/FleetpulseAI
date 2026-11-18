@@ -1,11 +1,11 @@
 ## Current P17 shared gate status (2026-11-18)
 
 - Current task: add direct regression evidence for the P17 shared-gate requirement that missing explanations fail gracefully. Branch `test/P17-gate-explanation-errors` starts from latest `dev` (`dc05f33e467192544264c78d4186aa02cae25b93`). Changed `tests/test_prediction_page.py`: a missing saved bundle leaves the prediction metric visible and presents a readable unavailable message, with no page exception. No app logic changed.
-- Verification: `.venv/Scripts/ruff.exe check .` PASS; `.venv/Scripts/python.exe -m pytest -q tests/test_prediction_page.py` PASS (15); `.venv/Scripts/python.exe -m pytest -q` PASS (676 in 84.38s). `git diff --check` is to be run before commit. Streamlit smoke NOT RUN because this change only adds an AppTest.
+- Verification: `.venv/Scripts/ruff.exe check .` PASS; `.venv/Scripts/python.exe -m pytest -q tests/test_prediction_page.py` PASS (15); `.venv/Scripts/python.exe -m pytest -q` PASS (676 in 84.38s); `git diff --check` PASS. Streamlit smoke NOT RUN because this change only adds an AppTest.
 - Post-merge handoff PR #483 for P17-T3 merged to `dev` at `dc05f33e467192544264c78d4186aa02cae25b93`; Development CI run `44371394356` passed branch-policy, quality, unit-and-contract-tests, streamlit-smoke, and ci-gate. Review threads: 0.
 - P17-A1/A2/A3, S1/S2/S3, T1/T2 are closed. P17-T3 #258 is implemented and merged in PR #482, but remains open pending the required peer inspection of one explanation’s units/provenance and discussion of the limits. User-confirmed T2 model-comparison review is recorded on #157; that does not substitute for #258’s explanation review.
 - P17 parent/gate #24 remains open. Its stated shared criteria include exact prediction/explanation version match, correct feature names, comparison on the same input prefix, and graceful handling when explanations are unavailable. The service consistency checks cover the first three; this task adds direct UI test coverage for the last.
-- Next: run `git diff --check`, update the handoff with its result, commit, and open a test-only PR to `dev` with `Refs #24`; merge after required CI and resolved conversations. Keep #24 open until #258’s human check and all gate evidence are recorded.
+- Implementation/handoff commit `aeb2b67` is in [PR #484](https://github.com/Artfever/FleetpulseAI/pull/484), targeting `dev` with `Refs #24`. PR CI and review conversations are pending. After merge, record its merge hash in the next substantive handoff update. Keep #24 open until #258’s human check and all gate evidence are recorded.
 
 ## P17-T3 #258 plain-language limits (merged; review pending, 2026-11-18)
 
