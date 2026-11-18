@@ -23,6 +23,7 @@ from fleetpulse.services.history import (
     clear_history_replay_cache,
     replay_engine_history,
 )
+from fleetpulse.services.planner import PlannerJobAssumption, build_planning_scenario
 from fleetpulse.services.predictor import (
     PredictionArtifactError,
     PredictionInputError,
@@ -46,10 +47,12 @@ __all__ = [
     "FleetPredictionResult",
     "HistoryReplay",
     "HistoryReplayPoint",
+    "PlannerJobAssumption",
     "PredictionArtifactError",
     "PredictionInputError",
     "RULPrediction",
     "RawRULPrediction",
+    "build_planning_scenario",
     "clear_history_replay_cache",
     "compare_final_models",
     "extract_latest_engine_histories",
