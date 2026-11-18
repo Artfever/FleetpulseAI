@@ -7,6 +7,7 @@
 - Changed files and evidence are detailed in `handoff_Abdullah.md`. Implementation and review evidence are on `dev`. P20-T3 #260 is unblocked and active under the all-task takeover.
 - The shared P20 flow now has an automated real saved-model AppTest at `tests/test_p20_workflow_gate.py`; it checks the selected engines flow from Fleet Overview into the paired planner. This demonstrates a small packaged training subset, not full-fleet performance or a human UI review. Details are in `docs/p20_workflow_gate_evidence.md` and Abdullah's handoff. PR #474 to `dev` tracks the gate evidence; #25 stays open pending its merge and completion of #260's separate human output check.
 - Initial CI run 44340100306 confirmed the ignored local model bundle is absent on a clean runner. The evidence test now conditionally skips there while preserving the locally run real-artifact result; check latest PR status before integration.
+- Updated PR head `dfcb5ef299382c9386da2fc3941e76c862d0adb6` passed all five required CI jobs in run 44340898418. The automated local run uses the actual bundle; clean CI cannot reproduce those artifact-specific values because that bundle is intentionally not tracked.
 
 ## P20-S2 #165 scheduler edge-case checks (active, 2026-11-18)
 
