@@ -1,3 +1,9 @@
+## P19-A2 seeded repeatability and score
+
+- PR #458 merged at 2980cb39b59a708bce4a265279e88bd8c9fc3527 on dev; #84 closed. Work f68b4a0 and handoff 5cb9b2c passed all five checks in run 44262533092. This cleared the native blocker of #161.
+- Added an independent check with one and two teams. It reconciles the returned weighted penalty with per-job arithmetic, validates capacity and confirms identical fixed-seed results. With one team and seed 1, the best score starts at 6 and drops to 2 after the first generation.
+- Ruff and diff checks passed. Focused pytest passed 15 in 0.51 seconds. Full pytest and Streamlit launch were not repeated locally for this test-only PR; required CI covers both. Next #259 needs #161 closed and #219, which is closed.
+
 ## P19-A1 permutation and capacity verification, 18 November 2026
 
 - #219 is closed after PR #457 merged to dev at 4528c7ce81adb7995779cdf4108b243da217f1d2. Work 5c4a4fa and handoff cd25e2b passed all five checks in run 44261917436. #84 has no native blocker and tests the available operators and decoder. Abdullah's reviewed P18 synthetic assumptions remain the reference.
