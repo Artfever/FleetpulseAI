@@ -1,3 +1,11 @@
+## P19-S2 genetic operators, 18 November 2026
+
+- #85 is closed after PR #455 merged into dev as d907fdd0bc2f7e3094ec876e7d12204d880d87e5. All five checks passed on 52364b3 in run 44260569016. Work d6eb6f0 and handoff 52364b3 are included. #162's only native blocker #85 is closed.
+- Added tournament selection of up to three contestants, segment crossover preserving the remaining order of the second parent, swap mutation, and best-candidate carryover. Ties in choosing the elite preserve the earliest candidate. Penalties must be finite and nonnegative. The mutation rate is explicit.
+- Abdullah authorized takeover. The operations and the synthetic scenario assumptions were explained. The proposed 16 candidates, 20 generations and seed 42 apply to the later runner and controls. No tuning was performed.
+- Ruff and git diff --check passed. Focused pytest passed 14 in 0.45 seconds. Full pytest passed 610 in 53.35 seconds. Local Streamlit launch was not run because there were no app changes.
+- Work commit 047cc18 is in [PR #456](https://github.com/Artfever/FleetpulseAI/pull/456) to dev. Required CI and review conversations are pending. #219 then connects these operators to the shared decoder, bounded run and best-score history.
+
 ## P19-S1 EDD-seeded initial population, 18 November 2026
 
 - Phase 18 gate #19 and all nine P18 tasks are closed on dev. #85 has no native task blocker. Abdullah implemented #85 under the all-owner authorization, preserving the original assignment.
