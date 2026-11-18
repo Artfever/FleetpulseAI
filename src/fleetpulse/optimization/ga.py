@@ -1,11 +1,14 @@
 """Permutation-based genetic scheduling on the shared scheduling contract."""
 
+from dataclasses import dataclass
 from math import isfinite
 from random import Random
+from time import perf_counter
 
 from fleetpulse.data.split import EngineIdentity
+from fleetpulse.optimization.decoder import decode_order
 from fleetpulse.optimization.edd import edd_order
-from fleetpulse.optimization.scoring import SchedulingScenario
+from fleetpulse.optimization.scoring import ScheduleEvaluation, SchedulingScenario
 
 EngineOrder = tuple[EngineIdentity, ...]
 
@@ -80,3 +83,81 @@ def breed_population(
             child = swap_mutation(child, rng)
         next_population.append(child)
     return tuple(next_population)
+
+
+DEFAULT_POPULATION_SIZE = 16
+DEFAULT_GENERATIONS = 20
+DEFAULT_SEED = 42
+MAX_POPULATION_SIZE = 64
+MAX_GENERATIONS = 100
+MAX_SEED = 2**32 - 1
+MUTATION_RATE = 0.2
+
+
+@dataclass(frozen=True)
+class GeneticSearchResult:
+    order: EngineOrder
+    schedule: ScheduleEvaluation
+    edd_penalty: float
+    best_penalties: tuple[float, ...]
+    runtime_seconds: float
+    evaluations: int
+    population_size: int
+    generations: int
+    seed: int
+
+
+def schedule_ga(
+    scenario: SchedulingScenario,
+    *,
+    population_size: int = DEFAULT_POPULATION_SIZE,
+    generations: int = DEFAULT_GENERATIONS,
+    seed: int = DEFAULT_SEED,
+) -> GeneticSearchResult:
+    """Run the seeded search, recording the initial best and each generation's best.
+
+    Repeated orders reuse their score within the call. Equal scores retain the
+    earliest candidate, so an equally good alternative cannot displace the EDD
+    seed unless the search first found an improvement.
+    """
+    for name, value, minimum, maximum in (
+        ("population_size", population_size, 2, MAX_POPULATION_SIZE),
+        ("generations", generations, 0, MAX_GENERATIONS),
+        ("seed", seed, 0, MAX_SEED),
+    ):
+        if type(value) is not int or not minimum <= value <= maximum:
+            raise ValueError(f"{name} must be an integer between {minimum} and {maximum}.")
+
+    start = perf_counter()
+    rng = Random(seed)
+    population = initialize_population(scenario, population_size=population_size, rng=rng)
+    scores: dict[EngineOrder, ScheduleEvaluation] = {}
+    best_order = population[0]
+    edd_schedule = scores[best_order] = decode_order(scenario, best_order)
+    best_schedule = edd_schedule
+    history = []
+    for generation in range(generations + 1):
+        penalties = []
+        for order in population:
+            if order not in scores:
+                scores[order] = decode_order(scenario, order)
+            candidate = scores[order]
+            penalties.append(candidate.weighted_tardiness_cycles)
+            if candidate.weighted_tardiness_cycles < best_schedule.weighted_tardiness_cycles:
+                best_order, best_schedule = order, candidate
+        history.append(best_schedule.weighted_tardiness_cycles)
+        if generation < generations:
+            population = breed_population(
+                population, tuple(penalties), rng=rng, mutation_rate=MUTATION_RATE
+            )
+    return GeneticSearchResult(
+        order=best_order,
+        schedule=best_schedule,
+        edd_penalty=edd_schedule.weighted_tardiness_cycles,
+        best_penalties=tuple(history),
+        runtime_seconds=perf_counter() - start,
+        evaluations=len(scores),
+        population_size=population_size,
+        generations=generations,
+        seed=seed,
+    )

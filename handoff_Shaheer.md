@@ -1,3 +1,12 @@
+## P19-S3 bounded genetic search, 18 November 2026
+
+- #162 closed after PR #456 merged to dev at 75445bf25c4643450b27ba2cbad46c0c65dacb29. Work 047cc18 and handoff 81d6cfd passed all five required checks on run 44261231565. #219's native blocker #162 is closed.
+- Added schedule_ga and GeneticSearchResult. The runner records its bounds, RNG seed, EDD score, verified best schedule, best-score history, number of distinct orders scored and measured runtime. The shared decoder scores all distinct candidates once per run. Strict improvements replace the best order and ties keep the earlier candidate.
+- Defaults are 16 candidates, 20 generations, seed 42 and mutation rate 0.2. Bounds are 2?64 candidates, 0?100 generations and a nonnegative 32-bit integer seed. These are small project defaults and no tuning was performed. Abdullah authorized the takeover and received the operation explanation.
+- The previously reviewed synthetic Appendix B example yielded B/A/C, weighted tardiness 2 versus EDD 6, six distinct orders evaluated and about 0.00663 seconds of runtime. The initial population already contained the best order, so all 21 recorded best scores were 2.
+- Ruff and git diff --check passed. Focused pytest passed 23 in 0.61 seconds. Full pytest passed 619 in 58.05 seconds. Local Streamlit was not run because there were no app changes.
+- Publish to dev and check CI and unresolved conversations before merging and closing #219. The separate P19 verification and planner work remain. P17 #78 awaits human inspection and teammate discussion.
+
 ## P19-S2 genetic operators, 18 November 2026
 
 - #85 is closed after PR #455 merged into dev as d907fdd0bc2f7e3094ec876e7d12204d880d87e5. All five checks passed on 52364b3 in run 44260569016. Work d6eb6f0 and handoff 52364b3 are included. #162's only native blocker #85 is closed.
