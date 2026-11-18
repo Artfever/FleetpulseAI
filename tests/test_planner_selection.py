@@ -80,8 +80,9 @@ def test_selected_fleet_snapshot_is_available_on_planner_page(monkeypatch, tmp_p
     assert (scenario.jobs[0].duration_cycles, scenario.jobs[0].priority_weight) == (1, 1)
     assert (scenario.team_count, scenario.buffer_cycles, scenario.horizon_cycles) == (1, 2, 6)
     comparison = planner.session_state[ui.P20_FLEET_COMPARISON_STATE_KEY]
-    assert comparison["edd"].weighted_tardiness_cycles == 0
-    assert comparison["ga"].schedule.weighted_tardiness_cycles == 0
+    assert comparison.edd.weighted_tardiness_cycles == 0
+    assert comparison.ga.weighted_tardiness_cycles == 0
+    assert comparison.edd.feasible and comparison.ga.feasible
     planning_table = planner.dataframe[1].value
     assert planning_table["Dataset"].tolist() == ["FD001/train"]
     assert planning_table["Engine ID"].tolist() == [5]

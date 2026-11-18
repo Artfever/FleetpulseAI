@@ -32,6 +32,11 @@ from fleetpulse.services.predictor import (
     predict_rul,
     predict_rul_with_context,
 )
+from fleetpulse.services.schedule_comparison import (
+    ScheduleComparisonResult,
+    ScheduleMethodResult,
+    compare_schedules,
+)
 from fleetpulse.services.uploaded_history import predict_uploaded_csv
 
 __all__ = [
@@ -52,9 +57,12 @@ __all__ = [
     "PredictionInputError",
     "RULPrediction",
     "RawRULPrediction",
+    "ScheduleComparisonResult",
+    "ScheduleMethodResult",
     "build_planning_scenario",
     "clear_history_replay_cache",
     "compare_final_models",
+    "compare_schedules",
     "extract_latest_engine_histories",
     "predict_fleet",
     "predict_rul",
