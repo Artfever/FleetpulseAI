@@ -161,3 +161,33 @@ if saved_scenario is not None:
         showlegend=False,
     )
     st.plotly_chart(timeline, width="stretch")
+
+    if saved_search is not None:
+        st.subheader("Search progress")
+        st.write(
+            f"Seed {saved_search.seed} ? Population {saved_search.population_size} ? "
+            f"{saved_search.generations} generations ? {saved_search.evaluations} distinct orders "
+            f"evaluated in {saved_search.runtime_seconds:.3f} s"
+        )
+        st.caption(
+            f"EDD starts the search at {saved_search.edd_penalty:g} weighted tardiness. "
+            "Each generation keeps the best order found so far. A larger search can sometimes "
+            "find a better schedule."
+        )
+        history = go.Figure(
+            go.Scatter(
+                x=list(range(len(saved_search.best_penalties))),
+                y=list(saved_search.best_penalties),
+                mode="lines+markers",
+                line_shape="hv",
+                name="Best so far",
+                hovertemplate="Generation %{x}<br>Weighted tardiness %{y:g}<extra></extra>",
+            )
+        )
+        history.add_hline(y=saved_search.edd_penalty, line_dash="dash", annotation_text="EDD")
+        history.update_layout(
+            xaxis_title="Generation (0 = initial population)",
+            yaxis_title="Best weighted tardiness",
+            showlegend=False,
+        )
+        st.plotly_chart(history, width="stretch")

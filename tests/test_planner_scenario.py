@@ -1,5 +1,7 @@
 """Exercise the planner's synthetic scenario form through Streamlit."""
 
+import json
+
 from streamlit.testing.v1 import AppTest
 
 from fleetpulse import PROJECT_ROOT, ui
@@ -60,6 +62,13 @@ def test_planner_submits_bounded_ga_controls_and_can_return_to_edd():
     assert (result.population_size, result.generations, result.seed) == (2, 12, 1)
     assert page.dataframe[1].value["Engine"].tolist() == ["B", "A", "C"]
     assert page.metric[0].value == "2"
+    timeline, history = page.get("plotly_chart")
+    assert timeline.proto.spec
+    chart = json.loads(history.proto.spec)
+    assert chart["data"][0]["x"] == list(range(13))
+    assert chart["data"][0]["y"] == [6.0] + [2.0] * 12
+    assert chart["layout"]["shapes"][0]["y0"] == 6
+    assert any("Seed 1 ? Population 2 ? 12 generations" in item.value for item in page.markdown)
     page.run()
     assert page.session_state[ui.P19_GENETIC_SEARCH_STATE_KEY] == result
     page.selectbox[0].select("EDD")
@@ -67,3 +76,4 @@ def test_planner_submits_bounded_ga_controls_and_can_return_to_edd():
     assert not page.exception
     assert page.session_state[ui.P19_GENETIC_SEARCH_STATE_KEY] is None
     assert page.dataframe[1].value["Engine"].tolist() == ["A", "B", "C"]
+    assert len(page.get("plotly_chart")) == 1
