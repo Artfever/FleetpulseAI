@@ -2,10 +2,13 @@
 
 from dataclasses import replace
 
+import plotly.graph_objects as go
 import streamlit as st
 
 from fleetpulse import ui
+from fleetpulse.optimization.edd import schedule_edd
 from fleetpulse.optimization.jobs import appendix_b_jobs
+from fleetpulse.optimization.reporting import build_schedule_report
 from fleetpulse.optimization.scoring import SchedulingScenario
 
 st.title("Maintenance Planner")
@@ -75,3 +78,58 @@ if saved_scenario is not None:
         hide_index=True,
         width="stretch",
     )
+
+    report = build_schedule_report(saved_scenario, schedule_edd(saved_scenario))
+    summary = report["summary"]
+    labels = {
+        job.engine.unit_id: label
+        for label, job in zip(("A", "B", "C"), saved_scenario.jobs, strict=True)
+    }
+    st.subheader("EDD baseline schedule")
+    st.caption("Earliest completion deadline first. All timings are simulated relative cycles.")
+    cost, makespan, overflow = st.columns(3)
+    cost.metric("Weighted tardiness", f"{summary['weighted_tardiness_cycles']:g}")
+    makespan.metric("Makespan (cycles)", f"{summary['makespan_cycles']:g}")
+    overflow.metric("Horizon overflow (cycles)", f"{summary['horizon_overflow_cycles']:g}")
+    st.dataframe(
+        [
+            {
+                "Engine": labels[row["unit_id"]],
+                "Team": row["team_id"],
+                "Start": row["start_cycle"],
+                "Finish": row["completion_cycle"],
+                "Deadline": row["due_completion_cycle"],
+                "Late by": row["tardiness_cycles"],
+                "Past horizon": row["horizon_overflow_cycles"],
+            }
+            for row in report["jobs"]
+        ],
+        hide_index=True,
+        width="stretch",
+    )
+
+    timeline = go.Figure()
+    for row in report["jobs"]:
+        label = labels[row["unit_id"]]
+        timeline.add_bar(
+            name=label,
+            y=[f"Team {row['team_id']}"],
+            x=[row["duration_cycles"]],
+            base=[row["start_cycle"]],
+            orientation="h",
+            text=[label],
+            hovertemplate=(
+                f"Engine {label}<br>Start {row['start_cycle']:g}<br>"
+                f"Finish {row['completion_cycle']:g}<extra></extra>"
+            ),
+        )
+    timeline.add_vline(
+        x=summary["horizon_cycles"], line_dash="dash", annotation_text="Soft horizon"
+    )
+    timeline.update_layout(
+        barmode="overlay",
+        xaxis_title="Relative cycles",
+        yaxis_title=None,
+        showlegend=False,
+    )
+    st.plotly_chart(timeline, width="stretch")

@@ -1,3 +1,10 @@
+## P18-T2 EDD baseline timeline, 18 November 2026
+
+- #83 closed after PR #452 merged as 5fe893801c82797b67ae0f2140874d79d0d78b22. All five checks passed on 927aedf in run 44252734598. Form commit 98ad6e1 and handoff commit 927aedf are included. #160's native dependency #83 is closed.
+- Abdullah took over #160 under the all-owner authorization. The planner uses its saved synthetic scenario, the EDD decoder, and the verified schedule report. It shows assignments, completion deadlines, tardiness and overflow in relative cycles, plus the team timeline with a soft-horizon marker.
+- The UI test exercised the reviewed A/B/C scenario with a two-cycle horizon. It rendered all three jobs and starts 0/3/4, finishes 3/4/6, deadlines 2/3/6 and per-job overflow 1/2/4. Weighted tardiness 6 and total horizon overflow 4 match the shared scorer. Ruff and diff checks passed. Focused planner tests passed 9 in 11.00 seconds. Full pytest passed 596 in 54.58 seconds. Local Streamlit health returned HTTP 200 ok on port 18584.
+- Work commit 19ec3eb is in [PR #453](https://github.com/Artfever/FleetpulseAI/pull/453) to dev. Required CI and merge are pending. #218 will save the scenario and its reviewed expected output. #78's real model comparison still awaits the recorded human check.
+
 ## P18-T1 synthetic scenario form, 18 November 2026
 
 - Issue #83 has no native blockers. Abdullah took over implementation from Taha under the all-owner authorization. Existing issue assignment remains. #216 closed after PR #451 merged to dev at f4eeb1027bf10e7fe8e0cca5cea4deb1b60d12a5. All five CI checks passed on fd7ed7e in run 44252082705. Schedule report implementation dbe30a6 and follow-up fd7ed7e are included.
