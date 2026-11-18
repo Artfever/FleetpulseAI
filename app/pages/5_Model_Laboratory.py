@@ -358,6 +358,8 @@ else:
         [
             {
                 "Model": result.display_name,
+                "Model version": result.version,
+                "Sample count (engines)": result.sample_count,
                 "MAE (cycles)": result.mae_cycles,
                 "RMSE (cycles)": result.rmse_cycles,
             }
@@ -367,6 +369,8 @@ else:
         width="stretch",
     )
     st.caption(
-        "The figures above come from the checksum-verified local P13 report. "
-        "Official test data is used only for this final evaluation, not model selection."
+        "MAE is mean absolute error; RMSE is the square root of mean squared error. "
+        "Both are error magnitudes in operating cycles; lower means smaller errors on this 100-engine test sample. "
+        "Neither is an accuracy percentage or a guarantee about future engines. "
+        "The figures come from the checksum-verified local P13 report and were not used for model selection."
     )
