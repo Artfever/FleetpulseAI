@@ -1148,3 +1148,10 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - Focused display/UI tests: 8 passed; full suite: 510 passed; Ruff and diff check passed. Actual AppTest showed all five versions and 100-engine counts. Local Streamlit health returned HTTP 200/`ok`.
 - The final report remains Git-ignored; the hosted clone therefore displays the explicit unavailable state until artifact provisioning. No teammate inspection or approval is claimed.
 - Next: commit current implementation and handoffs, open `Refs #145` PR to `dev`, verify checks/conversations, merge and record in the same PR, wait 35 seconds, close #145 with evidence, then take P13-T3 #254. Keep gate #23 open until its shared evidence is verified.
+
+## P13-T2 #145 PR opened (2026-11-18)
+
+- Implementation commit 78be675147a0ec84b31e79b2dc3b7aab4e9c424a is in [PR #443](https://github.com/Artfever/FleetpulseAI/pull/443), targeting `dev` with `Refs #145`. Current GitHub assignee remains Taha under Shaheer's takeover authorization.
+- The verified official table now shows all five model versions, 100-engine sample counts and MAE/RMSE cycles. The page explains each metric and states that these are not accuracy percentages or future guarantees. No test score is used for model selection.
+- Local evidence: 8 focused UI/reader tests passed; full suite 510 passed; Ruff/diff passed; actual AppTest showed all rows, versions and counts; Streamlit health HTTP 200/`ok`.
+- Required CI and PR conversation checks pending. The hosted clone still lacks the Git-ignored report; no public display is claimed. Next: verify checks/threads, merge and record in PR #443, wait 35 seconds, close #145 with evidence, then proceed to #254.
