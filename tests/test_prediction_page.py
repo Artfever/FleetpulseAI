@@ -76,6 +76,11 @@ def test_selected_engine_and_cutoff_reach_service_without_future_or_target(monke
     assert chart_calls[-1][0]["Estimated remaining cycles"] == [12.5, 12.5]
     assert len(page.dataframe[0].value) == 2
     assert any("chart ends at cycle 2" in item.value for item in page.caption)
+    assert any(
+        "does not identify an FD001 fault type" in item.value
+        and "FD001 is simulated" in item.value
+        for item in page.info
+    )
     assert page.metric[0].value == "12.50"
     assert any("test-model" in item.value and "test-v1" in item.value for item in page.markdown)
     assert any("short" in item.value for item in page.warning)
