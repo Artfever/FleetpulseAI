@@ -19,18 +19,122 @@ from fleetpulse.optimization.ga import (
 from fleetpulse.optimization.jobs import appendix_b_jobs
 from fleetpulse.optimization.reporting import build_schedule_report
 from fleetpulse.optimization.scoring import SchedulingScenario
+from fleetpulse.services import (
+    EngineIdentity,
+    FleetPredictionResult,
+    PlannerJobAssumption,
+    build_planning_scenario,
+)
 
 st.title("Maintenance Planner")
 st.caption("Review selected fleet estimates and configure a simulated maintenance scenario.")
+
+
+def _prediction_from_saved_row(row: dict) -> FleetPredictionResult:
+    """Restore a typed prediction record from Fleet Overview's saved snapshot."""
+    try:
+        identity = EngineIdentity(str(row["Dataset"]), int(row["Engine ID"]))
+        warning_text = str(row.get("Warnings") or "")
+        error_text = str(row.get("Error") or "")
+        return FleetPredictionResult(
+            identity=identity,
+            observed_cycle=row.get("Observed cycle"),
+            raw_rul_cycles=row.get("Raw RUL (cycles)"),
+            displayed_rul_cycles=row.get("Predicted RUL (cycles)"),
+            model_name=row.get("Model"),
+            model_version=row.get("Version"),
+            input_window_rows=row.get("Feature rows"),
+            warnings=tuple(value.strip() for value in warning_text.split(",") if value.strip()),
+            error_codes=("saved_fleet_prediction_error",) if error_text else (),
+            error=error_text or None,
+        )
+    except (KeyError, TypeError, ValueError) as error:
+        raise ValueError("A saved fleet row is missing valid engine prediction fields.") from error
+
 
 selected_fleet = st.session_state.get(ui.P15_SELECTED_FLEET_STATE_KEY, [])
 if selected_fleet:
     st.success(f"Loaded {len(selected_fleet)} selected engine records from Fleet Overview.")
     st.dataframe(selected_fleet, hide_index=True, width="stretch")
-    st.info(
-        "These saved estimates are context for a future planner. No maintenance schedule or "
-        "health percentage is generated from this selection."
+    st.caption(
+        "Fleet estimates come from the saved model. Durations and priority weights below are "
+        "positive synthetic planning assumptions, not FD001 measurements."
     )
+
+    with st.form("selected_fleet_scenario"):
+        settings = st.columns(3)
+        fleet_team_count = settings[0].number_input(
+            "Fleet planning teams", min_value=1, value=1
+        )
+        fleet_buffer_cycles = settings[1].number_input(
+            "Fleet RUL buffer (cycles)", min_value=0.0, value=2.0
+        )
+        fleet_horizon_cycles = settings[2].number_input(
+            "Fleet soft horizon (cycles)", min_value=0.1, value=6.0
+        )
+        per_engine_settings = []
+        for position, row in enumerate(selected_fleet):
+            label = f"{row.get('Dataset', 'unknown')} engine {row.get('Engine ID', position + 1)}"
+            duration = st.number_input(
+                f"{label} assumed service duration (cycles)",
+                min_value=1,
+                value=1,
+                key=f"p20_duration_{position}_{row.get('Dataset')}_{row.get('Engine ID')}",
+            )
+            weight = st.number_input(
+                f"{label} assumed priority weight",
+                min_value=1,
+                value=1,
+                key=f"p20_weight_{position}_{row.get('Dataset')}_{row.get('Engine ID')}",
+            )
+            per_engine_settings.append((duration, weight))
+        use_selected_fleet = st.form_submit_button("Build selected-fleet planning inputs")
+
+    if use_selected_fleet:
+        try:
+            fleet_predictions = tuple(_prediction_from_saved_row(row) for row in selected_fleet)
+            assumptions = {
+                prediction.identity: PlannerJobAssumption(duration, weight)
+                for prediction, (duration, weight) in zip(
+                    fleet_predictions, per_engine_settings, strict=True
+                )
+            }
+            fleet_scenario = build_planning_scenario(
+                fleet_predictions,
+                assumptions,
+                team_count=fleet_team_count,
+                buffer_cycles=fleet_buffer_cycles,
+                horizon_cycles=fleet_horizon_cycles,
+            )
+        except (TypeError, ValueError) as error:
+            st.error(f"Selected fleet cannot be planned: {error}")
+        else:
+            st.session_state[ui.P20_FLEET_SCENARIO_STATE_KEY] = fleet_scenario
+            st.success("Selected fleet predictions and explicit assumptions are ready for scheduling.")
+
+    saved_fleet_scenario = st.session_state.get(ui.P20_FLEET_SCENARIO_STATE_KEY)
+    if saved_fleet_scenario is not None:
+        st.subheader("Selected fleet planning inputs")
+        st.caption(
+            f"{saved_fleet_scenario.team_count} teams; "
+            f"{saved_fleet_scenario.buffer_cycles:g}-cycle buffer; "
+            f"{saved_fleet_scenario.horizon_cycles:g}-cycle soft horizon. "
+            "One saved scenario can be shared by both scheduling methods."
+        )
+        st.dataframe(
+            [
+                {
+                    "Dataset": job.engine.dataset_partition,
+                    "Engine ID": job.engine.unit_id,
+                    "Planner RUL (cycles)": job.predicted_rul_cycles,
+                    "Assumed duration (cycles)": job.duration_cycles,
+                    "Assumed priority weight": job.priority_weight,
+                }
+                for job in saved_fleet_scenario.jobs
+            ],
+            hide_index=True,
+            width="stretch",
+        )
 else:
     st.info("No fleet is selected yet.")
     st.write("Select engines on Fleet Overview and save them for the planner.")
