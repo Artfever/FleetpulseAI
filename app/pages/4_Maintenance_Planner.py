@@ -6,7 +6,6 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from fleetpulse import ui
-from fleetpulse.optimization.edd import schedule_edd
 from fleetpulse.optimization.ga import (
     DEFAULT_GENERATIONS,
     DEFAULT_POPULATION_SIZE,
@@ -14,16 +13,15 @@ from fleetpulse.optimization.ga import (
     MAX_GENERATIONS,
     MAX_POPULATION_SIZE,
     MAX_SEED,
-    schedule_ga,
 )
 from fleetpulse.optimization.jobs import appendix_b_jobs
-from fleetpulse.optimization.reporting import build_schedule_report
 from fleetpulse.optimization.scoring import SchedulingScenario
 from fleetpulse.services import (
     EngineIdentity,
     FleetPredictionResult,
     PlannerJobAssumption,
     build_planning_scenario,
+    compare_schedules,
 )
 
 st.title("Maintenance Planner")
@@ -56,21 +54,18 @@ def _run_schedule_comparison(
     scenario: SchedulingScenario, *, population_size: int, generations: int, seed: int
 ):
     """Run both schedulers against the same immutable scenario value."""
-    return {
-        "edd": schedule_edd(scenario),
-        "ga": schedule_ga(
-            scenario,
-            population_size=population_size,
-            generations=generations,
-            seed=seed,
-        ),
-    }
+    return compare_schedules(
+        scenario,
+        population_size=population_size,
+        generations=generations,
+        seed=seed,
+    )
 
 
 def _render_method_result(
-    column, scenario, schedule, method_name, labels, *, key_prefix, time_axis_max, search=None
+    column, result, method_name, labels, *, key_prefix, time_axis_max
 ):
-    report = build_schedule_report(scenario, schedule)
+    report = result.report
     summary = report["summary"]
     column.subheader(method_name)
     column.caption("All times use relative cycles. Both methods use the same scenario.")
@@ -80,7 +75,9 @@ def _render_method_result(
     metrics = column.columns(2)
     metrics[0].metric("Makespan (cycles)", f"{summary['makespan_cycles']:g}")
     metrics[1].metric("Horizon overflow (cycles)", f"{summary['horizon_overflow_cycles']:g}")
-    column.metric("Late jobs", summary["late_job_count"])
+    metrics = column.columns(2)
+    metrics[0].metric("Late jobs", summary["late_job_count"])
+    metrics[1].metric("Runtime (seconds)", f"{result.runtime_seconds:.6f}")
     column.dataframe(
         [
             {
@@ -129,6 +126,7 @@ def _render_method_result(
         xaxis_range=[0, time_axis_max],
     )
     column.plotly_chart(timeline, width="stretch", key=f"{key_prefix}-timeline")
+    search = result.search
     if search is not None:
         column.caption(
             f"GA search: seed {search.seed}, population {search.population_size}, "
@@ -163,18 +161,17 @@ def _render_comparison(scenario, comparison, labels, *, heading):
     columns = st.columns(2)
     key_prefix = heading.lower().replace(" ", "-")
     time_axis_max = max(
-        comparison["edd"].makespan_cycles,
-        comparison["ga"].schedule.makespan_cycles,
+        comparison.edd.makespan_cycles,
+        comparison.ga.makespan_cycles,
         scenario.horizon_cycles,
     )
     _render_method_result(
-        columns[0], scenario, comparison["edd"], "EDD", labels,
+        columns[0], comparison.edd, "EDD", labels,
         key_prefix=f"{key_prefix}-edd", time_axis_max=time_axis_max,
     )
-    ga = comparison["ga"]
     _render_method_result(
-        columns[1], scenario, ga.schedule, "Genetic Algorithm", labels,
-        key_prefix=f"{key_prefix}-ga", time_axis_max=time_axis_max, search=ga,
+        columns[1], comparison.ga, "Genetic Algorithm", labels,
+        key_prefix=f"{key_prefix}-ga", time_axis_max=time_axis_max,
     )
 
 
@@ -343,7 +340,7 @@ if submitted:
         st.error(str(error))
     else:
         st.session_state[ui.P18_SYNTHETIC_SCENARIO_STATE_KEY] = scenario
-        st.session_state[ui.P19_GENETIC_SEARCH_STATE_KEY] = comparison["ga"]
+        st.session_state[ui.P19_GENETIC_SEARCH_STATE_KEY] = comparison.ga.search
         st.session_state[ui.P20_SYNTHETIC_COMPARISON_STATE_KEY] = comparison
 
 saved_scenario = st.session_state.get(ui.P18_SYNTHETIC_SCENARIO_STATE_KEY)

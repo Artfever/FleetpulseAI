@@ -34,14 +34,23 @@ def test_planner_compares_both_methods_on_the_same_reviewed_scenario():
     assert edd_table["Beyond horizon (cycles)"].tolist() == [0, 0, 0]
     assert ga_table["Beyond horizon (cycles)"].tolist() == [0, 0, 0]
     comparison = page.session_state[ui.P20_SYNTHETIC_COMPARISON_STATE_KEY]
-    assert comparison["edd"].weighted_tardiness_cycles == 6
-    assert comparison["ga"].schedule.weighted_tardiness_cycles == 2
+    assert comparison.edd.weighted_tardiness_cycles == 6
+    assert comparison.ga.weighted_tardiness_cycles == 2
+    assert comparison.edd.feasible and comparison.ga.feasible
+    assert comparison.edd.late_jobs == (
+        ("synthetic/appendix-b-v1", 1),
+        ("synthetic/appendix-b-v1", 2),
+    )
+    assert comparison.edd.makespan_cycles == 6
+    assert comparison.edd.horizon_overflow_cycles == 0
+    assert comparison.edd.runtime_seconds >= 0 and comparison.ga.runtime_seconds >= 0
     assert [metric.label for metric in page.metric] == [
         "Weighted tardiness (weighted cycles)",
         "Total tardiness (cycles)",
         "Makespan (cycles)",
         "Horizon overflow (cycles)",
         "Late jobs",
+        "Runtime (seconds)",
     ] * 2
     charts = page.get("plotly_chart")
     assert len(charts) == 3
@@ -100,6 +109,7 @@ def test_planner_ties_follow_engine_id_and_invalid_capacity_keeps_both_results()
     assert page.dataframe[2].value["Deadline (cycles)"].tolist() == [2.0] * 3
     saved = page.session_state[ui.P18_SYNTHETIC_SCENARIO_STATE_KEY]
     comparison = page.session_state[ui.P20_SYNTHETIC_COMPARISON_STATE_KEY]
+    assert comparison.scenario_sha256 == comparison.edd.report["scenario_sha256"]
     page.number_input[0].set_value(0)
     page.button[0].click().run()
     assert not page.exception
