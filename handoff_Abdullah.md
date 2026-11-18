@@ -532,3 +532,24 @@ Publish via local gh authenticated as Abdullah-SE-bit. Do not send teammate mess
 
 - P15-A2 #149 merged via [PR #402](https://github.com/Artfever/FleetpulseAI/pull/402) as `e9795a8bc9a6ee5e8eba4b9894cf482eb0246dcb`; all five checks passed, review threads 0, and issue evidence is [here](https://github.com/Artfever/FleetpulseAI/issues/149#issuecomment-6957248842).
 - P15-A3 #210 is now unblocked by #149. It remains open and assigned to Abdullah under Shaheer's all-task takeover. P15-S1 #73 parity checks are underway against the merged A2 output.
+
+## P13-A1 #66 takeover active (2026-11-18)
+
+- P13-A1 #66 remains assigned to Abdullah; Shaheer authorized takeover of all teammate tasks through P16. Work will be carried out by this session for Shaheer without changing the GitHub assignee or claiming Abdullah personally inspected or approved it.
+- P13 shared predecessor gate #22 is closed. P13-S1 #67 is merged/closed; its predictor artifact contains IDs 1–100 and 100 predictions per final model. P13-S2 #144 is merged/closed with an explicit line-to-sorted-ID map (1→1 … 100→100), verified against the pinned answer file and shuffled-ID tests. P13-S3 #207 is merged/closed with metrics/plots. This audit independently checks the mapping contract using shuffled toy IDs and the actual FD001 identities/answer-vector cardinality.
+- Relevant task output: P13-S2 paired artifact payload SHA-256 `2f5a05e3015602405857950824d71399f8b9352d1ab7012129208304b4f41730`; test-history SHA-256 `3cda7109ce17bafb5443f2ac926cfcf88154b941b8c4cf95eb55d1ddd6f52851`; RUL file SHA-256 `a19c8ec94931949d0485bdc35118206e9c81c4547b422efb9cf86f4ceddbceca`.
+- Next: add independent test fixtures/report, check exact engine ID ordering and answer count against the raw files, and verify paired rows; then open a `Refs #66` PR to `dev`. #143 consumes this audit; #206 follows #143. Do not retune using official test results.
+
+## P13-A1 #66 implementation ready for commit (2026-11-18)
+
+- Work on this Abdullah-assigned task is by this session under Shaheer's explicit takeover authorization; the GitHub assignee remains Abdullah. No teammate inspection or approval is claimed.
+- Added an independent audit in `scripts/audit_p13_label_alignment.py`, shuffled-ID/integrity tests and `docs/p13_a1_label_alignment_audit.md`. The audit does not import Shaheer's prediction or pairing code. It parses original FD001 test engine blocks, reads the separate RUL vector, and checks every saved P13-S2 row's answer line, label and observed cycle by ID.
+- Actual source hashes matched provenance. The test file's first-occurrence order is sorted IDs 1–100; there are 100 answer lines and 500 verified rows across five model tables. Mapping: line 1→engine 1 through line 100→engine 100. The answer vector has no ID field; the sorted-ID convention and this limit are explicit. No metrics were recalculated and no tuning occurred.
+- Tests: shuffled toy IDs, duplicate/missing coverage and cutoff/label mismatch (4 passed); full suite 498 passed; Ruff/diff passed. Local ignored audit payload hash `3f9a10ac187263d6113ed99cfc70b5700f84ebaacd41b7a54b8354ee6fcfa784`.
+- Next: commit and open `Refs #66` PR to `dev`, check CI and threads, then merge/close after recording same-PR merge and post-merge wait. P13-A2 #143 consumes this independent audit.
+
+## P13-A1 #66 PR opened (2026-11-18)
+
+- Audit commit `37299b10e85d3b5fb07e588c01ff66a3acae6204` is in [PR #439](https://github.com/Artfever/FleetpulseAI/pull/439), targeting `dev` with `Refs #66`. This session performs the work for Shaheer under the takeover instruction; GitHub assignee remains Abdullah.
+- The PR has an independent sorted-ID mapping audit, shuffled toy-ID tests, verified FD001 source/pair hashes and the actual 500-row audit. Four focused tests and full suite 498 passed; Ruff/diff passed. No teammate inspection or approval is claimed.
+- GitHub CI and review-thread checks are pending. After they pass, merge, record merge in this PR, wait 35 seconds, and then close #66 with evidence. #143 can proceed after closure.
