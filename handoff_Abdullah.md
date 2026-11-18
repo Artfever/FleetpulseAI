@@ -4,7 +4,7 @@
 - Saved the reviewed synthetic Appendix B scenario and the hand-calculated EDD timetable in tests/fixtures/p18_appendix_b.json. An integration test loads it and checks the shared report, exact rows, schedule feasibility, repeatability and the match to planner defaults. One team, buffer 2, horizon 6 gives completions 3/4/6 and weighted tardiness 6. The scenario assumptions and example were reviewed with Abdullah earlier in P18.
 - Ruff and git diff --check passed. Focused tests passed 25 in 2.73 seconds. Full pytest passed 597 in 85.61 seconds. Local Streamlit launch was not repeated for this fixture-only change.
 - Recycled the source transfer folder after verification. Rechecked all 94 installed files against the preserved manifest after recycling. #78 has real comparison evidence and awaits the recorded human check.
-- Publish the task PR to dev, then verify CI and merge before closing #218. Afterward verify all nine child issues and the P18 worked-example gate before closing #19.
+- Work commit 85e4d30 is in [PR #454](https://github.com/Artfever/FleetpulseAI/pull/454) to dev. Verify CI and merge before closing #218. Afterward verify all nine child issues and the P18 worked-example gate before closing #19.
 
 ## P18-T2 EDD baseline timeline, 18 November 2026
 
