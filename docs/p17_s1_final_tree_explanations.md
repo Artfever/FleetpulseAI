@@ -45,8 +45,8 @@ combinations that do not occur in real histories. Contributions are not
 causal effects, uncertainty, confidence, or model accuracy. This output is
 one engine at one cutoff, not fleet-wide behavior.
 
-The `explain` optional dependency pins `shap==0.54.1`; Streamlit does not load
-SHAP unless an explanation is requested. The TreeExplainer options and
+The base application pins `shap==0.54.1`, so the RUL page can show explanations
+after an explicit user action. The TreeExplainer options and
 background semantics follow the [SHAP TreeExplainer documentation](https://shap.readthedocs.io/en/stable/generated/shap.TreeExplainer.html).
 
 ## Verification

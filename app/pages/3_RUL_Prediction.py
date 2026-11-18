@@ -1,6 +1,7 @@
 """Predict remaining cycles for a selected simulated training-engine history."""
 
 import json
+import pickle
 
 import streamlit as st
 from streamlit.errors import StreamlitSecretNotFoundError
@@ -33,14 +34,15 @@ from fleetpulse.models.xgboost_artifact import (
 from fleetpulse.services import (
     PredictionArtifactError,
     PredictionInputError,
+    explain_final_tree_history,
     predict_uploaded_csv,
 )
 from fleetpulse.services.history import MAX_REPLAY_POINTS, replay_engine_history
 
 st.title("RUL Prediction")
 st.caption(
-    "Estimate remaining useful life in operating cycles using an available saved development model. "
-    "This page does not load a final refitted model."
+    "Estimate remaining useful life in operating cycles using a saved development model. "
+    "On request, the separate contribution panel explains the frozen final Decision Tree."
 )
 
 source = st.selectbox(
@@ -104,7 +106,8 @@ selected_model = st.selectbox(
 final_model_spec = FINAL_MODEL_REGISTRY[final_registry_names[selected_model]]
 st.caption(
     f"Selected: Development candidate `{development_versions[selected_model]}`. "
-    f"Final refit is registered separately as `{final_model_spec.version}`; this page does not load it."
+    f"Final refit `{final_model_spec.version}` is separate; the optional contribution panel uses "
+    "the frozen final Decision Tree without replacing this development estimate."
 )
 
 partition = "FD001/train"
@@ -360,5 +363,86 @@ if records is not None:
             st.warning(
                 "The displayed estimate is clipped to zero; the raw estimate is shown above."
             )
+        st.subheader("Frozen final Decision Tree feature contributions")
+        st.caption(
+            "This is a separate explanation from the development estimate above. "
+            "Positive SHAP contributions move the final tree estimate above its reference baseline; "
+            "negative contributions move it below. Values are in RUL cycles, not causal effects."
+        )
+        if st.button("Show feature contributions", key="show_final_tree_contributions"):
+            try:
+                with st.spinner("Checking the frozen model and calculating contributions..."):
+                    final_explanation = explain_final_tree_history(
+                        visible_history,
+                        dataset_partition=partition,
+                        unit_id=engine,
+                        artifact_root=ui.PROJECT_ROOT,
+                        training_path=ui.PROJECT_ROOT / "data" / "raw" / "train_FD001.txt",
+                    )
+            except (
+                OSError,
+                ValueError,
+                TypeError,
+                RuntimeError,
+                KeyError,
+                EOFError,
+                ImportError,
+                pickle.UnpicklingError,
+            ) as error:
+                st.info(f"Final Decision Tree explanation is unavailable: {error}")
+            else:
+                st.write(
+                    f"Frozen model: `{final_explanation.model_name}` "
+                    f"({final_explanation.model_version}); engine {engine}, "
+                    f"observed cycle {final_explanation.observed_cycle}."
+                )
+                st.metric("Final raw RUL estimate", f"{final_explanation.raw_rul_cycles:.2f} cycles")
+                st.metric("SHAP reference baseline", f"{final_explanation.base_value_cycles:.2f} cycles")
+                positive = sorted(
+                    (item for item in final_explanation.contributions if item.contribution_cycles > 0),
+                    key=lambda item: -item.contribution_cycles,
+                )[:5]
+                negative = sorted(
+                    (item for item in final_explanation.contributions if item.contribution_cycles < 0),
+                    key=lambda item: item.contribution_cycles,
+                )[:5]
+                if positive:
+                    st.write("Largest positive contributions")
+                    st.dataframe(
+                        [
+                            {
+                                "Feature": item.feature_name,
+                                "Feature value": item.feature_value,
+                                "Contribution (cycles)": item.contribution_cycles,
+                            }
+                            for item in positive
+                        ],
+                        hide_index=True,
+                        width="stretch",
+                    )
+                else:
+                    st.info("No positive feature contributions for this explanation.")
+                if negative:
+                    st.write("Largest negative contributions")
+                    st.dataframe(
+                        [
+                            {
+                                "Feature": item.feature_name,
+                                "Feature value": item.feature_value,
+                                "Contribution (cycles)": item.contribution_cycles,
+                            }
+                            for item in negative
+                        ],
+                        hide_index=True,
+                        width="stretch",
+                    )
+                else:
+                    st.info("No negative feature contributions for this explanation.")
+                st.caption(
+                    "Baseline plus all signed contributions reconstructs the raw estimate within "
+                    f"{final_explanation.additivity_error_cycles:.2g} cycles. "
+                    "The result depends on the documented FD001/train reference sample and does not "
+                    "measure model accuracy or confidence."
+                )
 else:
     st.write("Choose an engine once the selected history is available.")

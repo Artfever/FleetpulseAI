@@ -6,11 +6,13 @@ import math
 import streamlit as st
 from streamlit.testing.v1 import AppTest
 
-from fleetpulse import PROJECT_ROOT, ui
+from fleetpulse import PROJECT_ROOT, services, ui
 from fleetpulse.data.loader import HISTORY_COLUMNS
 from fleetpulse.data.quality import READING_COLUMNS
+from fleetpulse.features import FeatureConfig
 from fleetpulse.services import RULPrediction
 from fleetpulse.services import history as history_service
+from fleetpulse.services.explanations import FeatureContribution, FinalTreeExplanation
 
 TREE_OPTION = "Decision Tree · Development · decision-tree-rul-v1"
 FOREST_OPTION = "Random Forest · Development · random-forest-rul-v1"
@@ -82,6 +84,70 @@ def test_selected_engine_and_cutoff_reach_service_without_future_or_target(monke
     assert chart_calls[-1][0]["Observed cycle"] == [1]
 
 
+def test_final_tree_explanation_shows_signed_cycle_contributions(monkeypatch, tmp_path):
+    page = _page(monkeypatch, tmp_path)
+    history_calls = []
+
+    def predict(history, **kwargs):
+        cutoff = int(history[-1]["cycle"])
+        return RULPrediction(12.5, 12.5, "dev-tree", "dev-v1", cutoff, len(history), ())
+
+    config = FeatureConfig()
+    contributions = tuple(
+        FeatureContribution(
+            name,
+            0.5,
+            2.0 if index == 0 else -1.0 if index == 1 else 0.0,
+        )
+        for index, name in enumerate(config.output_schema)
+    )
+    explanation = FinalTreeExplanation(
+        model_name="decision-tree-rul",
+        model_version="decision-tree-rul-v1",
+        dataset_partition="FD001/train",
+        unit_id=1,
+        observed_cycle=3,
+        raw_rul_cycles=21.0,
+        base_value_cycles=20.0,
+        contributions=contributions,
+        global_summary=(),
+        feature_config_sha256="a" * 64,
+        input_history_sha256="b" * 64,
+        manifest_payload_sha256="c" * 64,
+        weights_sha256="d" * 64,
+        training_source_sha256="e" * 64,
+        background_sha256="f" * 64,
+        background_selection_policy="fd001-train-all-engines-observed-cycle-90-v1",
+        background_row_count=100,
+        additivity_error_cycles=0.0,
+    )
+
+    def explain(history, **kwargs):
+        history_calls.append((history, kwargs))
+        return explanation
+
+    monkeypatch.setattr(history_service, "predict_rul_with_context", predict)
+    monkeypatch.setattr(services, "explain_final_tree_history", explain)
+    page.run()
+    assert not history_calls
+    page.button[0].click().run()
+
+    assert len(history_calls) == 1
+    assert [row["cycle"] for row in history_calls[0][0]] == [1, 2, 3]
+    assert history_calls[0][1]["dataset_partition"] == "FD001/train"
+    assert history_calls[0][1]["unit_id"] == 1
+    assert history_calls[0][1]["artifact_root"] == tmp_path
+    assert page.metric[-2].label == "Final raw RUL estimate"
+    assert page.metric[-2].value == "21.00 cycles"
+    assert page.metric[-1].label == "SHAP reference baseline"
+    assert page.metric[-1].value == "20.00 cycles"
+    positive_rows = page.dataframe[-2].value.to_dict("records")
+    negative_rows = page.dataframe[-1].value.to_dict("records")
+    assert positive_rows[0]["Contribution (cycles)"] == 2.0
+    assert negative_rows[0]["Contribution (cycles)"] == -1.0
+    assert not page.exception
+
+
 def test_training_replay_is_labeled_by_saved_model_fit_membership(monkeypatch, tmp_path):
     page = _page(monkeypatch, tmp_path)
     split_path = tmp_path / "artifacts/split_manifest.json"
@@ -118,7 +184,10 @@ def test_training_replay_is_labeled_by_saved_model_fit_membership(monkeypatch, t
 
     page.selectbox[2].select(2).run()
     assert any("Held-out development engine" in item.value for item in page.info)
-    assert any("does not load a final refitted model" in item.value for item in page.caption)
+    assert any(
+        "optional contribution panel uses the frozen final Decision Tree" in item.value
+        for item in page.caption
+    )
     assert any(
         "Engine fit membership: Not seen during fitting (development validation engine)"
         in item.value
@@ -232,8 +301,8 @@ def test_model_selector_discloses_selected_development_and_registered_final_vers
     assert not page.exception
     assert any(
         "Selected: Development candidate `decision-tree-rul-v1`" in item.value
-        and "Final refit is registered separately as `decision-tree-rul-v1`" in item.value
-        and "this page does not load it" in item.value
+        and "Final refit `decision-tree-rul-v1` is separate" in item.value
+        and "frozen final Decision Tree" in item.value
         for item in page.caption
     )
 
@@ -266,7 +335,10 @@ def test_switching_models_keeps_engine_and_cycle_and_uses_matching_manifest(
     page.selectbox[1].select(FOREST_OPTION).run()
     assert page.selectbox[2].value == 2
     assert page.select_slider[0].value == 2
-    assert any("available saved development model" in item.value for item in page.caption)
+    assert any(
+        "Selected: Development candidate `random-forest-rul-v1`" in item.value
+        for item in page.caption
+    )
     assert not page.exception
     assert calls[-1][1]["manifest_path"] == artifact_dir / "random_forest_validation.json"
     assert [row["cycle"] for row in calls[-1][0]] == [1, 2]
