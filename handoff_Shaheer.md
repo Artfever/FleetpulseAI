@@ -1,3 +1,11 @@
+## P18-S2 closeout reviewed by Abdullah - 18 November 2026
+
+- Abdullah explicitly authorized takeover of remaining team tasks. This is Abdullah's closeout review of Shaheer's already merged timing implementation; original authorship and GitHub assignee remain unchanged. Live159/native82 CLOSED/P07gate12 CLOSED inspected. No prior withdrawn WhatsApp-inspection claim is used.
+- PR372 merged as1fa3895bda77d3a7bf06b937ae40f2fd9337f84f; all5checksPASS on047691a36beef39f839f227b7fc4516bef4d3ee9/run43887358673. Executed synthetic one-team/buffer2: ABC deadlines2/3/6, completions3/4/6,tardiness1/1/0; BAC completions1/4/6,tardiness0/2/0. No realfleet/model metric.
+- Abdullah asked for a plain-English explanation, then explicitly confirmed understanding/acceptance18Nov: deadlines apply to completion, late/overflow work remains visible, durations/priorityweights are simulation assumptions. This direct human confirmation is supplied; no GitHub approving review/another person's consent invented.
+- Updated docs/p18_scheduling_contract.md and original/takeover owner handoffs only. No duplicate code/test/score. `.venv/Scripts/python.exe -m pytest -q tests/test_scheduling_jobs.py`22PASS/0.31s; RuffPASS; diffcheckPASS. Fullpytest NOT RERUN docs-only; unchanged code justpassed531/1skip99.14s (missing P06integrationartifact). Streamlit NOT RUN:noappchange. RequiredCI remains.
+- First documentation script hit a Windows cp1252 UnicodeDecodeError before handoff writes; contract-only90b92e3 committed/pushed. Corrected explicit UTF-8 and recorded actual handoffs in follow-up; no source content lost or history rewritten. Work90b92e3/followup7b69080 published in [PR #447](https://github.com/Artfever/FleetpulseAI/pull/447), targeting dev with Refs159. Pending finalCI/conversations thenclose159. Next217score/hardrules,81decoder/158EDD. No teammate messages or phase18completion claim.
+
 ## P10-T1 PR opened (2026-11-17)
 
 - Implementation commit `bcf365562f29be2899e33b9882d5c30f64a9cc1f` is pushed in [PR #387](https://github.com/Artfever/FleetpulseAI/pull/387), targeting `dev` with `Refs #59`. This PR-status handoff update is included in the same PR. Required CI and review threads are pending.
