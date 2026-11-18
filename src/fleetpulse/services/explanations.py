@@ -223,6 +223,7 @@ def explain_final_tree_prediction(
     normalized_rows = tuple(
         {**row, "unit_id": int(row["unit_id"]), "cycle": int(row["cycle"])} for row in rows
     )
+
     if not isinstance(dataset_partition, str) or not dataset_partition.strip():
         raise PredictionInputError("dataset_partition must be a nonempty string.")
 
@@ -254,7 +255,7 @@ def explain_final_tree_prediction(
         import shap
     except ImportError as error:  # pragma: no cover - covered by dependency contract in CI
         raise RuntimeError(
-            "SHAP is required for this service; install the project 'explain' extra."
+            "SHAP is required for explanations; reinstall the project dependencies."
         ) from error
     explainer = shap.TreeExplainer(
         bundle.model,
@@ -311,6 +312,37 @@ def explain_final_tree_prediction(
         background_selection_policy=background.selection_policy,
         background_row_count=len(background.values),
         additivity_error_cycles=error,
+    )
+
+
+def explain_final_tree_history(
+    history: Iterable[Mapping[str, object]],
+    *,
+    dataset_partition: str,
+    unit_id: int,
+    artifact_root: str | Path = PROJECT_ROOT,
+    training_path: str | Path = PROJECT_ROOT / "data" / "raw" / "train_FD001.txt",
+) -> FinalTreeExplanation:
+    """Explain a prefix using the registered final tree and its train reference.
+
+    This convenience entry point loads the frozen Decision Tree, verifies the
+    original train-source hash, builds the documented fixed background, then
+    delegates to the strict single-prefix explanation service.
+    """
+    rows = tuple(history)
+    spec = FINAL_MODEL_REGISTRY[DECISION_TREE_KEY]
+    bundle = load_final_tree_bundle(Path(artifact_root) / spec.manifest_path)
+    background = build_fd001_training_background(
+        training_path,
+        expected_training_source_sha256=bundle.payload["training"]["training_source_sha256"],
+        feature_config=bundle.feature_config,
+    )
+    return explain_final_tree_prediction(
+        rows,
+        dataset_partition=dataset_partition,
+        unit_id=unit_id,
+        background=background,
+        artifact_root=artifact_root,
     )
 
 

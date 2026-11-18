@@ -13,6 +13,7 @@ from fleetpulse.services.explanations import (
     TrainingFeatureBackground,
     build_fd001_training_background,
     check_final_explanation_consistency,
+    explain_final_tree_history,
     explain_final_tree_prediction,
 )
 from fleetpulse.services.final_comparison import (
@@ -87,6 +88,7 @@ __all__ = [
     "clear_history_replay_cache",
     "compare_final_models",
     "compare_schedules",
+    "explain_final_tree_history",
     "explain_final_tree_prediction",
     "extract_latest_engine_histories",
     "model_provenance_from_manifest",
