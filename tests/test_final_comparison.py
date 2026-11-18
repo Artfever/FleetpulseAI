@@ -95,6 +95,9 @@ def test_real_tree_loader_preserves_raw_output_and_exact_input_features(
     assert len(result.predictions) == 1 and len(result.failures) == 4
     value = result.predictions[0]
     assert value.raw_rul_cycles == -2.5  # No display clipping.
+    assert result.raw_min_rul_cycles == -2.5
+    assert result.raw_max_rul_cycles == -2.5
+    assert result.raw_spread_cycles == 0.0
     assert value.stage == "final" and value.model_version == "decision-tree-rul-v1"
     assert value.vector == engineer_features(history, dataset_partition="synthetic/P17", unit_id=99)
     assert len(value.vector.values) == 96
@@ -140,10 +143,83 @@ def test_all_models_missing_is_explicit_and_has_no_fake_estimates(tmp_path):
     result = compare([row(1)], tmp_path)
     assert result.predictions == ()
     assert tuple(f.model_name for f in result.failures) == tuple(FINAL_MODEL_REGISTRY)
+    assert result.raw_min_rul_cycles is None
+    assert result.raw_max_rul_cycles is None
+    assert result.raw_spread_cycles is None
     assert all(
         f.code == "artifact_unavailable" and "manifest unavailable" in f.reason
         for f in result.failures
     )
+
+
+def test_raw_range_excludes_failed_models_and_preserves_negative_estimates(tmp_path, monkeypatch):
+    import fleetpulse.services.final_comparison as service
+    from fleetpulse.services.final_comparison import FinalModelPrediction
+
+    estimates = {
+        "decision-tree-rul": -4.0,
+        "random-forest-rul": 8.0,
+        "xgboost-rul": 2.5,
+        "constant-rul": None,
+        "dense-rul-mlp-final": 3.0,
+    }
+
+    def fake_bundle(path, spec, rows, partition, unit):
+        value = estimates[spec.name]
+        if value is None:
+            raise FileNotFoundError("synthetic missing bundle")
+        vector = engineer_features(rows, dataset_partition=partition, unit_id=unit)
+        return FinalModelPrediction(
+            spec.name,
+            spec.version,
+            spec.stage,
+            value,
+            "a" * 64,
+            None,
+            "b" * 64,
+            "c" * 64,
+            "d" * 64,
+            vector,
+        )
+
+    monkeypatch.setattr(service, "_predict_bundle", fake_bundle)
+    result = compare([row(1), row(2)], tmp_path)
+    assert [item.raw_rul_cycles for item in result.predictions] == [-4.0, 8.0, 2.5, 3.0]
+    assert result.raw_min_rul_cycles == -4.0
+    assert result.raw_max_rul_cycles == 8.0
+    assert result.raw_spread_cycles == 12.0
+    assert [(item.model_name, item.code) for item in result.failures] == [
+        ("constant-rul", "artifact_unavailable")
+    ]
+
+
+def test_raw_spread_overflow_is_explicit(tmp_path, monkeypatch):
+    import fleetpulse.services.final_comparison as service
+    from fleetpulse.services.final_comparison import FinalModelPrediction
+
+    estimates = {"decision-tree-rul": -1e308, "random-forest-rul": 1e308}
+
+    def fake_bundle(path, spec, rows, partition, unit):
+        if spec.name not in estimates:
+            raise FileNotFoundError("synthetic missing bundle")
+        vector = engineer_features(rows, dataset_partition=partition, unit_id=unit)
+        return FinalModelPrediction(
+            spec.name,
+            spec.version,
+            spec.stage,
+            estimates[spec.name],
+            "a" * 64,
+            None,
+            "b" * 64,
+            "c" * 64,
+            "d" * 64,
+            vector,
+        )
+
+    monkeypatch.setattr(service, "_predict_bundle", fake_bundle)
+    result = compare([row(1)], tmp_path)
+    with pytest.raises(OverflowError, match="finite cycle range"):
+        _ = result.raw_spread_cycles
 
 
 @pytest.mark.parametrize("case", ["hash", "development", "version", "feature_order", "weights"])

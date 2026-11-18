@@ -50,6 +50,34 @@ class FinalHistoryComparison:
     predictions: tuple[FinalModelPrediction, ...]
     failures: tuple[FinalModelFailure, ...]
 
+    @property
+    def raw_min_rul_cycles(self) -> float | None:
+        """Smallest successful raw estimate, or None when every model failed."""
+        return min((item.raw_rul_cycles for item in self.predictions), default=None)
+
+    @property
+    def raw_max_rul_cycles(self) -> float | None:
+        """Largest successful raw estimate, or None when every model failed."""
+        return max((item.raw_rul_cycles for item in self.predictions), default=None)
+
+    @property
+    def raw_spread_cycles(self) -> float | None:
+        """Return max(raw)-min(raw) across successes; failed models are excluded.
+
+        This is model disagreement in cycles, not a probability or confidence
+        interval. With one successful model the spread is zero; with none it is
+        undefined and returned as None. An unrepresentable finite-float range
+        raises OverflowError instead of returning infinity.
+        """
+        minimum = self.raw_min_rul_cycles
+        maximum = self.raw_max_rul_cycles
+        if minimum is None or maximum is None:
+            return None
+        spread = maximum - minimum
+        if not math.isfinite(spread):
+            raise OverflowError("Raw model spread exceeds the finite cycle range.")
+        return spread
+
 
 def _digest(value: object) -> str:
     content = json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()

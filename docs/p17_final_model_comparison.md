@@ -139,6 +139,28 @@ accuracy comparison, confidence estimates or maintenance recommendations.
 The frozen bundle files are ignored local artifacts and are not in Git; a clean
 checkout needs the trusted bundle directory to reproduce this run.
 
+## P17-A2 raw disagreement summary
+
+The returned `FinalHistoryComparison` also exposes `raw_min_rul_cycles`,
+`raw_max_rul_cycles`, and `raw_spread_cycles = max(raw)-min(raw)`. The range is
+computed only from successful models' raw estimates; any failed model remains
+in `failures` with its reason and is omitted from the extrema. No successful
+models yields `None` for all three summary values; one success yields spread
+zero. Estimates are not clipped before calculating the range. The spread is a
+model-disagreement measure in cycles, not a probability or confidence interval.
+
+Applied to the actual outputs above:
+
+| FD001/train engine | Raw minimum (model) | Raw maximum (model) | Raw spread (cycles) |
+| ---: | ---: | ---: | ---: |
+| 4 | 17.241766 (Dense MLP) | 107.807862 (constant mean) | 90.566096 |
+| 5 | 107.807862 (constant mean) | 206.979684 (Random Forest) | 99.171822 |
+| 12 | 107.807862 (constant mean) | 185.114754 (Decision Tree) | 77.306892 |
+
+Focused synthetic tests cover partial failures, negative raw estimates,
+single/no successful model, and finite-range overflow. Human inspection of the
+spread values and their meaning is pending before closing issue #155.
+
 The named teammate inspection of the actual output is still pending. Keep #78
 open until that check is recorded. Local Streamlit smoke is NOT RUN because no
 application code changed.
@@ -154,8 +176,8 @@ application code changed.
 
 Follow-up verification in the workspace containing the frozen bundles:
 
-- `.venv/Scripts/python.exe scripts/check_p17_a1_final_model_comparison.py`: PASS; 5 final models x 3 histories, 0 bundle failures, and equal feature values/config per history.
-- `.venv/Scripts/python.exe -m pytest -q tests/test_final_comparison.py`: PASS (17 passed in 2.35s).
-- `.venv/Scripts/python.exe -m pytest -q`: PASS (662 passed in 72.97s).
+- `.venv/Scripts/python.exe scripts/check_p17_a1_final_model_comparison.py`: PASS; 5 final models x 3 histories, 0 bundle failures, identical feature values/config per history, and the raw min/max/spread fields above.
+- `.venv/Scripts/python.exe -m pytest -q tests/test_final_comparison.py`: PASS (19 passed in 2.27s).
+- `.venv/Scripts/python.exe -m pytest -q`: PASS (664 passed in 31.78s).
 - `.venv/Scripts/python.exe -m ruff check .`: PASS. `git diff --check`: PASS.
 - Streamlit smoke NOT RUN: no app code changed.
