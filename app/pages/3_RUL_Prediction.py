@@ -1,5 +1,6 @@
 """Predict remaining cycles for a selected simulated training-engine history."""
 
+import hashlib
 import json
 import pickle
 
@@ -36,6 +37,7 @@ from fleetpulse.services import (
     PredictionInputError,
     compare_final_models,
     explain_final_tree_history,
+    model_provenance_from_manifest,
     predict_uploaded_csv,
 )
 from fleetpulse.services.history import MAX_REPLAY_POINTS, replay_engine_history
@@ -111,7 +113,23 @@ st.caption(
     "the frozen final Decision Tree without replacing this development estimate."
 )
 
+
+def _clear_saved_upload_from_planner() -> None:
+    """Invalidate an uploaded planner snapshot and its derived comparisons."""
+    selected_rows = st.session_state.get(ui.P15_SELECTED_FLEET_STATE_KEY, [])
+    if not any(row.get("Dataset") == "user/upload" for row in selected_rows):
+        return
+    st.session_state.pop(ui.P15_SELECTED_FLEET_STATE_KEY, None)
+    st.session_state.pop(ui.P15_SELECTED_FLEET_PROVENANCE_STATE_KEY, None)
+    st.session_state.pop(ui.P20_FLEET_SCENARIO_STATE_KEY, None)
+    st.session_state.pop(ui.P20_FLEET_COMPARISON_STATE_KEY, None)
+    st.session_state.pop(ui.P20_FLEET_COMPARISON_ARTIFACT_STATE_KEY, None)
+
+
 partition = "FD001/train"
+if source != "Upload CSV":
+    st.session_state.pop(ui.P21_UPLOADED_PREDICTION_STATE_KEY, None)
+    _clear_saved_upload_from_planner()
 if source == "Local FD001 training data":
     records = ui.render_training_data()
 elif source == "Packaged FD001/train parity subset":
@@ -124,9 +142,12 @@ elif source == "Upload CSV":
     )
     uploaded_file = st.file_uploader("Engine history CSV", type=["csv"])
     if uploaded_file is not None:
+        upload_bytes = uploaded_file.getvalue()
         try:
-            uploaded_records = parse_fd001_csv_upload(uploaded_file.getvalue())
+            uploaded_records = parse_fd001_csv_upload(upload_bytes)
         except UploadValidationError as error:
+            st.session_state.pop(ui.P21_UPLOADED_PREDICTION_STATE_KEY, None)
+            _clear_saved_upload_from_planner()
             st.error(f"CSV upload rejected ({error.code}): {error}")
         else:
             engine_ids = sorted({int(row["unit_id"]) for row in uploaded_records})
@@ -134,6 +155,45 @@ elif source == "Upload CSV":
             selected_history = [
                 row for row in uploaded_records if int(row["unit_id"]) == selected_engine
             ]
+            configured_manifest = {
+                "Decision Tree": tree_manifest,
+                "Random Forest": forest_manifest,
+                "XGBoost": xgboost_manifest,
+                "Dense MLP (CPU)": mlp_manifest,
+            }[selected_model]
+            configured_artifact = {
+                "Decision Tree": artifact_dir / "decision_tree_model.joblib",
+                "Random Forest": artifact_dir / FOREST_MODEL_FILENAME,
+                "XGBoost": artifact_dir / XGBOOST_MODEL_FILENAME,
+                "Dense MLP (CPU)": mlp_weights,
+            }[selected_model]
+            manifest_identity = (
+                hashlib.sha256(configured_manifest.read_bytes()).hexdigest()
+                if configured_manifest.is_file()
+                else None
+            )
+            artifact_identity = (
+                hashlib.sha256(configured_artifact.read_bytes()).hexdigest()
+                if configured_artifact.is_file()
+                else None
+            )
+            upload_identity = {
+                "upload_sha256": hashlib.sha256(upload_bytes).hexdigest(),
+                "engine_id": selected_engine,
+                "model": selected_model,
+                "configured_manifest_sha256": manifest_identity,
+                "configured_artifact_sha256": artifact_identity,
+            }
+            saved_upload_prediction = st.session_state.get(
+                ui.P21_UPLOADED_PREDICTION_STATE_KEY
+            )
+            if (
+                not isinstance(saved_upload_prediction, dict)
+                or saved_upload_prediction.get("identity") != upload_identity
+            ):
+                _clear_saved_upload_from_planner()
+                st.session_state.pop(ui.P21_UPLOADED_PREDICTION_STATE_KEY, None)
+                saved_upload_prediction = None
             st.success(
                 f"CSV passed validation. Showing engine {selected_engine} "
                 f"({len(selected_history)} of {len(uploaded_records)} rows)."
@@ -154,47 +214,113 @@ elif source == "Upload CSV":
                 "This is a software estimate, not maintenance advice."
             )
             if st.button("Predict remaining cycles", key="predict_uploaded_csv"):
-                manifest = {
-                    "Decision Tree": tree_manifest,
-                    "Random Forest": forest_manifest,
-                    "XGBoost": xgboost_manifest,
-                    "Dense MLP (CPU)": mlp_manifest,
-                }[selected_model]
                 try:
                     supplied = None
-                    if selected_model == "Decision Tree" and not manifest.exists():
+                    if selected_model == "Decision Tree" and not configured_manifest.exists():
                         try:
                             supplied = st.secrets.get("deployment_model")
                         except StreamlitSecretNotFoundError:
                             pass
-                    with prediction_manifest(manifest, supplied) as active_manifest:
+                    with prediction_manifest(configured_manifest, supplied) as active_manifest:
                         result = predict_uploaded_csv(
-                            uploaded_file.getvalue(),
+                            upload_bytes,
                             dataset_partition="user/upload",
                             unit_id=selected_engine,
                             manifest_path=active_manifest,
                         )
+                        try:
+                            model_provenance = model_provenance_from_manifest(active_manifest)
+                        except ValueError as error:
+                            model_provenance = None
+                            provenance_error = str(error)
+                        else:
+                            provenance_error = None
                 except (PredictionArtifactError, PredictionInputError) as error:
                     st.warning(f"Prediction is unavailable: {error}")
                     st.write("Check the saved development model bundle and selected upload.")
                 else:
-                    st.metric("Estimated remaining cycles", f"{result.displayed_rul_cycles:.2f}")
-                    st.write(f"Model: {result.model_name} ({result.model_version})")
-                    st.caption(
-                        f"Uploaded engine {selected_engine}, observed cycle {result.observed_cycle}; "
-                        f"{result.input_window_rows} observed rows in the feature window. "
-                        f"Raw estimate: {result.raw_rul_cycles:.2f} cycles."
+                    if provenance_error:
+                        st.warning(f"Planner handoff is unavailable: {provenance_error}")
+                    canonical_selected = json.dumps(
+                        selected_history, sort_keys=True, separators=(",", ":"), allow_nan=False
+                    ).encode("utf-8")
+                    source_provenance = {
+                        "source_name": "Uploaded FD001 sensor history",
+                        "source_path": uploaded_file.name,
+                        "dataset_partition": "user/upload",
+                        "source_records_sha256": hashlib.sha256(canonical_selected).hexdigest(),
+                        "source_record_count": len(selected_history),
+                        "source_file_sha256": upload_identity["upload_sha256"],
+                    }
+                    st.session_state[ui.P21_UPLOADED_PREDICTION_STATE_KEY] = {
+                        "identity": upload_identity,
+                        "prediction": {
+                            "dataset": "user/upload",
+                            "engine_id": selected_engine,
+                            "observed_cycle": result.observed_cycle,
+                            "displayed_rul_cycles": result.displayed_rul_cycles,
+                            "raw_rul_cycles": result.raw_rul_cycles,
+                            "model_name": result.model_name,
+                            "model_version": result.model_version,
+                            "input_window_rows": result.input_window_rows,
+                            "warnings": result.warnings,
+                        },
+                        "source_provenance": source_provenance,
+                        "model_provenance": model_provenance,
+                    }
+                    saved_upload_prediction = st.session_state[
+                        ui.P21_UPLOADED_PREDICTION_STATE_KEY
+                    ]
+
+            if saved_upload_prediction is not None:
+                result = saved_upload_prediction["prediction"]
+                st.metric("Estimated remaining cycles", f"{result['displayed_rul_cycles']:.2f}")
+                st.write(f"Model: {result['model_name']} ({result['model_version']})")
+                st.caption(
+                    f"Uploaded engine {selected_engine}, observed cycle {result['observed_cycle']}; "
+                    f"{result['input_window_rows']} observed rows in the feature window. "
+                    f"Raw estimate: {result['raw_rul_cycles']:.2f} cycles."
+                )
+                if "short_window" in result["warnings"]:
+                    st.warning(
+                        "The available feature window is short; the estimate uses fewer observations."
                     )
-                    if "short_window" in result.warnings:
-                        st.warning(
-                            "The available feature window is short; the estimate uses fewer observations."
-                        )
-                    if "cycle_gaps" in result.warnings:
-                        st.warning("The observed history contains gaps between cycles.")
-                    if "display_clipped_at_zero" in result.warnings:
-                        st.warning(
-                            "The displayed estimate is clipped to zero; the raw estimate is shown above."
-                        )
+                if "cycle_gaps" in result["warnings"]:
+                    st.warning("The observed history contains gaps between cycles.")
+                if "display_clipped_at_zero" in result["warnings"]:
+                    st.warning(
+                        "The displayed estimate is clipped to zero; the raw estimate is shown above."
+                    )
+                if st.button(
+                    "Save this prediction for Maintenance Planner",
+                    disabled=saved_upload_prediction["model_provenance"] is None,
+                ):
+                    st.session_state[ui.P15_SELECTED_FLEET_STATE_KEY] = [
+                        {
+                            "Dataset": result["dataset"],
+                            "Engine ID": result["engine_id"],
+                            "Observed cycle": result["observed_cycle"],
+                            "Predicted RUL (cycles)": result["displayed_rul_cycles"],
+                            "Raw RUL (cycles)": result["raw_rul_cycles"],
+                            "Model": result["model_name"],
+                            "Version": result["model_version"],
+                            "Feature rows": result["input_window_rows"],
+                            "Warnings": ", ".join(result["warnings"]),
+                            "Error": None,
+                        }
+                    ]
+                    st.session_state[ui.P15_SELECTED_FLEET_PROVENANCE_STATE_KEY] = {
+                        "source": saved_upload_prediction["source_provenance"],
+                        "model": saved_upload_prediction["model_provenance"],
+                    }
+                    st.session_state.pop(ui.P20_FLEET_SCENARIO_STATE_KEY, None)
+                    st.session_state.pop(ui.P20_FLEET_COMPARISON_STATE_KEY, None)
+                    st.session_state.pop(ui.P20_FLEET_COMPARISON_ARTIFACT_STATE_KEY, None)
+                    st.success("Saved the uploaded prediction for Maintenance Planner.")
+                    st.page_link("pages/4_Maintenance_Planner.py", label="Open Maintenance Planner")
+    else:
+        st.session_state.pop(ui.P21_UPLOADED_PREDICTION_STATE_KEY, None)
+        _clear_saved_upload_from_planner()
 else:
     partition = "illustrative/synthetic"
     st.warning(
