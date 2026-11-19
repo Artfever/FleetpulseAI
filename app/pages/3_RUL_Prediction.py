@@ -3,6 +3,7 @@
 import hashlib
 import json
 import pickle
+from pathlib import Path
 
 import streamlit as st
 from streamlit.errors import StreamlitSecretNotFoundError
@@ -47,6 +48,9 @@ st.caption(
     "Estimate remaining useful life in operating cycles using a saved development model. "
     "On request, the separate contribution panel explains the frozen final Decision Tree."
 )
+_app_dir = Path(__file__).resolve().parents[1]
+st.page_link(st.Page(_app_dir / "pages" / "1_Fleet_Overview.py"), label="Continue to Fleet Overview")
+st.page_link(st.Page(_app_dir / "pages" / "2_Engine_Explorer.py"), label="Return to Engine Explorer")
 
 source = st.selectbox(
     "History source",
@@ -318,7 +322,7 @@ elif source == "Upload CSV":
                     st.session_state.pop(ui.P20_FLEET_COMPARISON_STATE_KEY, None)
                     st.session_state.pop(ui.P20_FLEET_COMPARISON_ARTIFACT_STATE_KEY, None)
                     st.success("Saved the uploaded prediction for Maintenance Planner.")
-                    st.page_link("pages/4_Maintenance_Planner.py", label="Open Maintenance Planner")
+                    st.page_link(st.Page(_app_dir / "pages" / "4_Maintenance_Planner.py"), label="Open Maintenance Planner")
     else:
         st.session_state.pop(ui.P21_UPLOADED_PREDICTION_STATE_KEY, None)
         _clear_saved_upload_from_planner()

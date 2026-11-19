@@ -1,5 +1,7 @@
 """Explore the observed records for one FD001 training engine."""
 
+from pathlib import Path
+
 import streamlit as st
 
 from fleetpulse.data.quality import SENSOR_COLUMNS
@@ -10,6 +12,9 @@ from fleetpulse.visualization import sensor_figure
 
 st.title("Engine Explorer")
 st.caption("Explore an individual engine history.")
+_app_dir = Path(__file__).resolve().parents[1]
+st.page_link(st.Page(_app_dir / "pages" / "3_RUL_Prediction.py"), label="Continue to RUL Prediction")
+st.page_link(st.Page(_app_dir / "pages" / "1_Fleet_Overview.py"), label="Open Fleet Overview")
 records = render_training_data()
 if records is not None:
     engine_ids = sorted({int(record["unit_id"]) for record in records})

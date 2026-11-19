@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+from pathlib import Path
 
 import streamlit as st
 from streamlit.errors import StreamlitSecretNotFoundError
@@ -20,6 +21,9 @@ st.caption(
     "Review saved-model RUL estimates for observed engine histories. Estimates are in operating "
     "cycles and do not confirm physical faults or maintenance needs."
 )
+_app_dir = Path(__file__).resolve().parents[1]
+st.page_link(st.Page(_app_dir / "pages" / "2_Engine_Explorer.py"), label="Inspect an engine history")
+st.page_link(st.Page(_app_dir / "pages" / "3_RUL_Prediction.py"), label="Open RUL Prediction")
 
 
 def _fit_membership_label(split_manifest: dict | None, unit_id: int) -> str:
@@ -164,7 +168,7 @@ if records:
                 st.session_state.pop(ui.P20_FLEET_COMPARISON_STATE_KEY, None)
                 st.session_state.pop(ui.P20_FLEET_COMPARISON_ARTIFACT_STATE_KEY, None)
                 st.success(f"Saved {len(saved_selection)} selected engine records for the planner.")
-                st.page_link("pages/4_Maintenance_Planner.py", label="Open Maintenance Planner")
+                st.page_link(st.Page(_app_dir / "pages" / "4_Maintenance_Planner.py"), label="Open Maintenance Planner")
 
             visible_results = [
                 result
