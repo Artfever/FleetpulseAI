@@ -1,0 +1,213 @@
+{
+  "artifact_hashes": {
+    "bundle_audit_file_sha256": "90759a6811b281411b17e1d0d8945f74cd80c211791b3ef9f129c80637e2cd38",
+    "bundle_audit_payload_sha256": "fd4ab713fb8c0e03f7fea2c922cd38053e10d587a5f1d78ae2151b3e09ba82b8",
+    "final_results_file_sha256": "db420935dc14221c50f71f0ca3349b0667bea6b37df45b330026df3d3e8d40d4",
+    "final_results_payload_sha256": "2a0686eaa3d369c435938cf6bf6256b047b3265f8ac8893e08e040adc798a6a6",
+    "metric_audit_file_sha256": "b391728543a2dfbaaf3a8b1736d60f2449fb45da5d8d78a19e8889a1b72aa713",
+    "metric_audit_payload_sha256": "efb9683e8af70abe368242ba499b2b5c032eb932b08076ca7b9b6a80385abac8",
+    "pairings_file_sha256": "a07811927f729e6a92037288fac43aded185d58124204214a528bcf8a45f8519",
+    "pairings_payload_sha256": "2f5a05e3015602405857950824d71399f8b9352d1ab7012129208304b4f41730",
+    "predictions_file_sha256": "8bf55e2bb529f52a846a0187c65f0e1360d9bfca83920acb3278bcfd0afb0fbd",
+    "predictions_payload_sha256": "34a92a60d2a6af6d279f929210c29d52ef43172c2d2a7122bb249d35538ffc2d"
+  },
+  "dataset_partition": "FD001/test",
+  "engine_count_per_model": 100,
+  "evaluation_unit": "engine at greatest observed test cycle",
+  "limits": [
+    "Frozen P13 FD001/test results are descriptive only; these diagnostics did not select, tune, or refit models.",
+    "NASA C-MAPSS is simulated data. Engine counts and cycle errors are not fleet or maintenance evidence.",
+    "RUL-bin summaries describe these 100 engine-level test rows and are not individual prediction intervals."
+  ],
+  "model_count": 5,
+  "models": {
+    "constant-rul": {
+      "display_name": "Constant mean baseline",
+      "summary": {
+        "by_true_rul_bin": {
+          "high": {
+            "count": 33,
+            "mae_cycles": 13.266771245977292,
+            "mean_residual_cycles": -12.767895620447602,
+            "rmse_cycles": 17.045120904149893
+          },
+          "low": {
+            "count": 25,
+            "mae_cycles": 90.08786195530998,
+            "mean_residual_cycles": 90.08786195530998,
+            "rmse_cycles": 90.38287709339079
+          },
+          "medium": {
+            "count": 42,
+            "mae_cycles": 33.28405243150045,
+            "mean_residual_cycles": 33.28405243150045,
+            "rmse_cycles": 38.76770204985833
+          }
+        },
+        "overall": {
+          "count": 100,
+          "mae_cycles": 40.87930202123019,
+          "mean_residual_cycles": 32.28786195530997,
+          "rmse_cycles": 52.62485752612688
+        },
+        "sample_count": 100
+      },
+      "version": "constant-rul-v1"
+    },
+    "decision-tree-rul": {
+      "display_name": "Decision Tree",
+      "summary": {
+        "by_true_rul_bin": {
+          "high": {
+            "count": 33,
+            "mae_cycles": 28.648642604456665,
+            "mean_residual_cycles": 23.181234486093274,
+            "rmse_cycles": 39.042554220712795
+          },
+          "low": {
+            "count": 25,
+            "mae_cycles": 10.623832458144948,
+            "mean_residual_cycles": 8.528933496410165,
+            "rmse_cycles": 17.73225760676054
+          },
+          "medium": {
+            "count": 42,
+            "mae_cycles": 29.531657740432905,
+            "mean_residual_cycles": 23.003017757123217,
+            "rmse_cycles": 36.875509179623585
+          }
+        },
+        "overall": {
+          "count": 100,
+          "mae_cycles": 24.513306424988755,
+          "mean_residual_cycles": 19.443308212505073,
+          "rmse_cycles": 33.95219459227001
+        },
+        "sample_count": 100
+      },
+      "version": "decision-tree-rul-v1"
+    },
+    "dense-rul-mlp-final": {
+      "display_name": "Dense RUL MLP",
+      "summary": {
+        "by_true_rul_bin": {
+          "high": {
+            "count": 33,
+            "mae_cycles": 23.793058453184187,
+            "mean_residual_cycles": 16.002166285659328,
+            "rmse_cycles": 29.160147274762746
+          },
+          "low": {
+            "count": 25,
+            "mae_cycles": 3.960095443725586,
+            "mean_residual_cycles": 2.1220092010498046,
+            "rmse_cycles": 5.261849703861045
+          },
+          "medium": {
+            "count": 42,
+            "mae_cycles": 22.18761580330985,
+            "mean_residual_cycles": 17.843649637131463,
+            "rmse_cycles": 29.53933497294499
+          }
+        },
+        "overall": {
+          "count": 100,
+          "mae_cycles": 18.160531787872316,
+          "mean_residual_cycles": 13.305550022125244,
+          "rmse_cycles": 25.573537464442705
+        },
+        "sample_count": 100
+      },
+      "version": "dense-rul-mlp-final-v1"
+    },
+    "random-forest-rul": {
+      "display_name": "Random Forest",
+      "summary": {
+        "by_true_rul_bin": {
+          "high": {
+            "count": 33,
+            "mae_cycles": 23.299856304023653,
+            "mean_residual_cycles": 18.899079119572058,
+            "rmse_cycles": 29.715655613028314
+          },
+          "low": {
+            "count": 25,
+            "mae_cycles": 6.069761720498374,
+            "mean_residual_cycles": 5.182172562043948,
+            "rmse_cycles": 8.80424975506288
+          },
+          "medium": {
+            "count": 42,
+            "mae_cycles": 26.531702896828214,
+            "mean_residual_cycles": 21.50478974445521,
+            "rmse_cycles": 32.60780376466584
+          }
+        },
+        "overall": {
+          "count": 100,
+          "mae_cycles": 20.34970822712025,
+          "mean_residual_cycles": 16.564250942640953,
+          "rmse_cycles": 27.51996165541398
+        },
+        "sample_count": 100
+      },
+      "version": "random-forest-rul-v1"
+    },
+    "xgboost-rul": {
+      "display_name": "XGBoost",
+      "summary": {
+        "by_true_rul_bin": {
+          "high": {
+            "count": 33,
+            "mae_cycles": 20.978655497233074,
+            "mean_residual_cycles": 15.969311107288707,
+            "rmse_cycles": 25.560905658176566
+          },
+          "low": {
+            "count": 25,
+            "mae_cycles": 6.681945114135742,
+            "mean_residual_cycles": 3.9066446685791014,
+            "rmse_cycles": 10.0423945276952
+          },
+          "medium": {
+            "count": 42,
+            "mae_cycles": 23.465452602931432,
+            "mean_residual_cycles": 18.504294486272904,
+            "rmse_cycles": 28.585545260454523
+          }
+        },
+        "overall": {
+          "count": 100,
+          "mae_cycles": 18.44893268585205,
+          "mean_residual_cycles": 14.018337516784667,
+          "rmse_cycles": 24.16644813405696
+        },
+        "sample_count": 100
+      },
+      "version": "xgboost-rul-v1"
+    }
+  },
+  "residual_definition": "raw_prediction_cycles - true_rul_cycles; positive means over-prediction",
+  "rul_bins": [
+    {
+      "maximum_inclusive_cycles": 30,
+      "minimum_inclusive_cycles": 0,
+      "name": "low"
+    },
+    {
+      "maximum_inclusive_cycles": 100,
+      "minimum_inclusive_cycles": 31,
+      "name": "medium"
+    },
+    {
+      "maximum_inclusive_cycles": null,
+      "minimum_inclusive_cycles": 101,
+      "name": "high"
+    }
+  ],
+  "schema_version": "p22-s1-error-diagnostics-v1",
+  "source_hashes": {
+    "answer_file_sha256": "a19c8ec94931949d0485bdc35118206e9c81c4547b422efb9cf86f4ceddbceca",
+    "test_history_sha256": "3cda7109ce17bafb5443f2ac926cfcf88154b941b8c4cf95eb55d1ddd6f52851"
+  }
+}

@@ -1,0 +1,649 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1560" height="900" viewBox="0 0 1560 900">
+<rect width="100%" height="100%" fill="white"/>
+<text x="780.0" y="34.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="23" fill="#172033">FD001/test residuals by true RUL</text>
+<text x="260.0" y="58.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" fill="#172033">Decision Tree — decision-tree-rul-v1</text>
+<line x1="72.0" y1="70.0" x2="72.0" y2="380.0" stroke="#e2e8f0"/>
+<text x="72.0" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">0</text>
+<line x1="140.3" y1="70.0" x2="140.3" y2="380.0" stroke="#e2e8f0"/>
+<text x="140.3" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">25</text>
+<line x1="208.7" y1="70.0" x2="208.7" y2="380.0" stroke="#e2e8f0"/>
+<text x="208.7" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">50</text>
+<line x1="277.0" y1="70.0" x2="277.0" y2="380.0" stroke="#e2e8f0"/>
+<text x="277.0" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">75</text>
+<line x1="345.3" y1="70.0" x2="345.3" y2="380.0" stroke="#e2e8f0"/>
+<text x="345.3" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">100</text>
+<line x1="413.7" y1="70.0" x2="413.7" y2="380.0" stroke="#e2e8f0"/>
+<text x="413.7" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">125</text>
+<line x1="482.0" y1="70.0" x2="482.0" y2="380.0" stroke="#e2e8f0"/>
+<text x="482.0" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">150</text>
+<line x1="72.0" y1="349.0" x2="482.0" y2="349.0" stroke="#e2e8f0"/>
+<text x="60.0" y="353.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">-100</text>
+<line x1="72.0" y1="287.0" x2="482.0" y2="287.0" stroke="#e2e8f0"/>
+<text x="60.0" y="291.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">-50</text>
+<line x1="72.0" y1="225.0" x2="482.0" y2="225.0" stroke="#e2e8f0"/>
+<text x="60.0" y="229.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">0</text>
+<line x1="72.0" y1="163.0" x2="482.0" y2="163.0" stroke="#e2e8f0"/>
+<text x="60.0" y="167.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">50</text>
+<line x1="72.0" y1="101.0" x2="482.0" y2="101.0" stroke="#e2e8f0"/>
+<text x="60.0" y="105.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">100</text>
+<line x1="72.0" y1="225.0" x2="482.0" y2="225.0" stroke="#0f172a" stroke-width="1.5"/>
+<circle cx="378.13" cy="159.32" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 1; true RUL 112; raw prediction 164.9663; residual 52.9663 cycles</title></circle>
+<circle cx="339.87" cy="183.21" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 2; true RUL 98; raw prediction 131.6998; residual 33.6998 cycles</title></circle>
+<circle cx="260.60" cy="273.62" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 3; true RUL 69; raw prediction 29.7941; residual -39.2059 cycles</title></circle>
+<circle cx="296.13" cy="182.96" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 4; true RUL 82; raw prediction 115.9046; residual 33.9046 cycles</title></circle>
+<circle cx="320.73" cy="222.98" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 5; true RUL 91; raw prediction 92.6310; residual 1.6310 cycles</title></circle>
+<circle cx="326.20" cy="142.68" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 6; true RUL 93; raw prediction 159.3894; residual 66.3894 cycles</title></circle>
+<circle cx="320.73" cy="190.27" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 7; true RUL 91; raw prediction 119.0102; residual 28.0102 cycles</title></circle>
+<circle cx="331.67" cy="179.49" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 8; true RUL 95; raw prediction 131.6998; residual 36.6998 cycles</title></circle>
+<circle cx="375.40" cy="184.62" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 9; true RUL 111; raw prediction 143.5684; residual 32.5684 cycles</title></circle>
+<circle cx="334.40" cy="229.18" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 10; true RUL 96; raw prediction 92.6310; residual -3.3690 cycles</title></circle>
+<circle cx="337.13" cy="226.44" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 11; true RUL 97; raw prediction 95.8421; residual -1.1579 cycles</title></circle>
+<circle cx="410.93" cy="110.33" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 12; true RUL 124; raw prediction 216.4776; residual 92.4776 cycles</title></circle>
+<circle cx="331.67" cy="237.22" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 13; true RUL 95; raw prediction 85.1452; residual -9.8548 cycles</title></circle>
+<circle cx="364.47" cy="212.59" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 14; true RUL 107; raw prediction 117.0042; residual 10.0042 cycles</title></circle>
+<circle cx="298.87" cy="123.36" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 15; true RUL 83; raw prediction 164.9663; residual 81.9663 cycles</title></circle>
+<circle cx="301.60" cy="165.85" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 16; true RUL 84; raw prediction 131.6998; residual 47.6998 cycles</title></circle>
+<circle cx="208.67" cy="212.24" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 17; true RUL 50; raw prediction 60.2912; residual 10.2912 cycles</title></circle>
+<circle cx="148.53" cy="144.86" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 18; true RUL 28; raw prediction 92.6310; residual 64.6310 cycles</title></circle>
+<circle cx="309.80" cy="192.76" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 19; true RUL 87; raw prediction 113.0000; residual 26.0000 cycles</title></circle>
+<circle cx="115.73" cy="227.83" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 20; true RUL 16; raw prediction 13.7143; residual -2.2857 cycles</title></circle>
+<circle cx="227.80" cy="177.63" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 21; true RUL 57; raw prediction 95.2000; residual 38.2000 cycles</title></circle>
+<circle cx="375.40" cy="199.33" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 22; true RUL 111; raw prediction 131.6998; residual 20.6998 cycles</title></circle>
+<circle cx="380.87" cy="96.69" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 23; true RUL 113; raw prediction 216.4776; residual 103.4776 cycles</title></circle>
+<circle cx="126.67" cy="218.27" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 24; true RUL 20; raw prediction 25.4286; residual 5.4286 cycles</title></circle>
+<circle cx="468.33" cy="260.04" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 25; true RUL 145; raw prediction 116.7399; residual -28.2601 cycles</title></circle>
+<circle cx="397.27" cy="224.99" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 26; true RUL 119; raw prediction 119.0102; residual 0.0102 cycles</title></circle>
+<circle cx="252.40" cy="201.26" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 27; true RUL 66; raw prediction 85.1452; residual 19.1452 cycles</title></circle>
+<circle cx="337.13" cy="169.24" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 28; true RUL 97; raw prediction 141.9686; residual 44.9686 cycles</title></circle>
+<circle cx="318.00" cy="243.46" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 29; true RUL 90; raw prediction 75.1096; residual -14.8904 cycles</title></circle>
+<circle cx="386.33" cy="222.51" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 30; true RUL 115; raw prediction 117.0042; residual 2.0042 cycles</title></circle>
+<circle cx="93.87" cy="225.38" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 31; true RUL 8; raw prediction 7.6932; residual -0.3068 cycles</title></circle>
+<circle cx="203.20" cy="220.69" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 32; true RUL 48; raw prediction 51.4730; residual 3.4730 cycles</title></circle>
+<circle cx="361.73" cy="158.80" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 33; true RUL 106; raw prediction 159.3894; residual 53.3894 cycles</title></circle>
+<circle cx="91.13" cy="230.53" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 34; true RUL 7; raw prediction 2.5385; residual -4.4615 cycles</title></circle>
+<circle cx="102.07" cy="223.27" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 35; true RUL 11; raw prediction 12.3982; residual 1.3982 cycles</title></circle>
+<circle cx="123.93" cy="225.93" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 36; true RUL 19; raw prediction 18.2500; residual -0.7500 cycles</title></circle>
+<circle cx="129.40" cy="190.16" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 37; true RUL 21; raw prediction 49.0948; residual 28.0948 cycles</title></circle>
+<circle cx="208.67" cy="222.37" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 38; true RUL 50; raw prediction 52.1224; residual 2.1224 cycles</title></circle>
+<circle cx="460.13" cy="253.51" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 39; true RUL 142; raw prediction 119.0102; residual -22.9898 cycles</title></circle>
+<circle cx="148.53" cy="203.60" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 40; true RUL 28; raw prediction 45.2545; residual 17.2545 cycles</title></circle>
+<circle cx="121.20" cy="186.44" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 41; true RUL 18; raw prediction 49.0948; residual 31.0948 cycles</title></circle>
+<circle cx="99.33" cy="223.66" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 42; true RUL 10; raw prediction 11.0833; residual 1.0833 cycles</title></circle>
+<circle cx="233.27" cy="183.30" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 43; true RUL 59; raw prediction 92.6310; residual 33.6310 cycles</title></circle>
+<circle cx="369.93" cy="176.66" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 44; true RUL 109; raw prediction 147.9847; residual 38.9847 cycles</title></circle>
+<circle cx="383.60" cy="235.63" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 45; true RUL 114; raw prediction 105.4310; residual -8.5690 cycles</title></circle>
+<circle cx="200.47" cy="209.69" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 46; true RUL 47; raw prediction 59.3429; residual 12.3429 cycles</title></circle>
+<circle cx="441.00" cy="214.38" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 47; true RUL 135; raw prediction 143.5684; residual 8.5684 cycles</title></circle>
+<circle cx="323.47" cy="141.44" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 48; true RUL 92; raw prediction 159.3894; residual 67.3894 cycles</title></circle>
+<circle cx="129.40" cy="236.70" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 49; true RUL 21; raw prediction 11.5641; residual -9.4359 cycles</title></circle>
+<circle cx="287.93" cy="144.94" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 50; true RUL 79; raw prediction 143.5684; residual 64.5684 cycles</title></circle>
+<circle cx="383.60" cy="239.13" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 51; true RUL 114; raw prediction 102.6024; residual -11.3976 cycles</title></circle>
+<circle cx="151.27" cy="222.60" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 52; true RUL 29; raw prediction 30.9355; residual 1.9355 cycles</title></circle>
+<circle cx="143.07" cy="216.06" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 53; true RUL 26; raw prediction 33.2069; residual 7.2069 cycles</title></circle>
+<circle cx="337.13" cy="178.52" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 54; true RUL 97; raw prediction 134.4858; residual 37.4858 cycles</title></circle>
+<circle cx="446.47" cy="216.86" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 55; true RUL 137; raw prediction 143.5684; residual 6.5684 cycles</title></circle>
+<circle cx="113.00" cy="218.02" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 56; true RUL 15; raw prediction 20.6278; residual 5.6278 cycles</title></circle>
+<circle cx="353.53" cy="207.63" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 57; true RUL 103; raw prediction 117.0042; residual 14.0042 cycles</title></circle>
+<circle cx="173.13" cy="215.65" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 58; true RUL 37; raw prediction 44.5417; residual 7.5417 cycles</title></circle>
+<circle cx="383.60" cy="136.31" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 59; true RUL 114; raw prediction 185.5217; residual 71.5217 cycles</title></circle>
+<circle cx="345.33" cy="203.91" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 60; true RUL 100; raw prediction 117.0042; residual 17.0042 cycles</title></circle>
+<circle cx="129.40" cy="228.41" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 61; true RUL 21; raw prediction 18.2537; residual -2.7463 cycles</title></circle>
+<circle cx="219.60" cy="217.20" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 62; true RUL 54; raw prediction 60.2912; residual 6.2912 cycles</title></circle>
+<circle cx="268.80" cy="169.19" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 63; true RUL 72; raw prediction 117.0042; residual 45.0042 cycles</title></circle>
+<circle cx="148.53" cy="204.49" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 64; true RUL 28; raw prediction 44.5417; residual 16.5417 cycles</title></circle>
+<circle cx="421.87" cy="159.67" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 65; true RUL 128; raw prediction 180.6849; residual 52.6849 cycles</title></circle>
+<circle cx="110.27" cy="220.72" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 66; true RUL 14; raw prediction 17.4545; residual 3.4545 cycles</title></circle>
+<circle cx="282.47" cy="144.44" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 67; true RUL 77; raw prediction 141.9686; residual 64.9686 cycles</title></circle>
+<circle cx="93.87" cy="223.72" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 68; true RUL 8; raw prediction 9.0333; residual 1.0333 cycles</title></circle>
+<circle cx="402.73" cy="211.73" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 69; true RUL 121; raw prediction 131.6998; residual 10.6998 cycles</title></circle>
+<circle cx="328.93" cy="143.92" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 70; true RUL 94; raw prediction 159.3894; residual 65.3894 cycles</title></circle>
+<circle cx="394.53" cy="223.75" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 71; true RUL 118; raw prediction 119.0102; residual 1.0102 cycles</title></circle>
+<circle cx="208.67" cy="243.83" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 72; true RUL 50; raw prediction 34.8143; residual -15.1857 cycles</title></circle>
+<circle cx="430.07" cy="177.99" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 73; true RUL 131; raw prediction 168.9099; residual 37.9099 cycles</title></circle>
+<circle cx="416.40" cy="217.93" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 74; true RUL 126; raw prediction 131.6998; residual 5.6998 cycles</title></circle>
+<circle cx="380.87" cy="221.40" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 75; true RUL 113; raw prediction 115.9046; residual 2.9046 cycles</title></circle>
+<circle cx="99.33" cy="223.69" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 76; true RUL 10; raw prediction 11.0541; residual 1.0541 cycles</title></circle>
+<circle cx="164.93" cy="237.03" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 77; true RUL 34; raw prediction 24.2986; residual -9.7014 cycles</title></circle>
+<circle cx="364.47" cy="133.63" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 78; true RUL 107; raw prediction 180.6849; residual 73.6849 cycles</title></circle>
+<circle cx="244.20" cy="188.26" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 79; true RUL 63; raw prediction 92.6310; residual 29.6310 cycles</title></circle>
+<circle cx="318.00" cy="230.44" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 80; true RUL 90; raw prediction 85.6139; residual -4.3861 cycles</title></circle>
+<circle cx="93.87" cy="230.08" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 81; true RUL 8; raw prediction 3.9000; residual -4.1000 cycles</title></circle>
+<circle cx="96.60" cy="227.60" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 82; true RUL 9; raw prediction 6.9000; residual -2.1000 cycles</title></circle>
+<circle cx="446.47" cy="185.43" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 83; true RUL 137; raw prediction 168.9099; residual 31.9099 cycles</title></circle>
+<circle cx="230.53" cy="195.37" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 84; true RUL 58; raw prediction 81.8980; residual 23.8980 cycles</title></circle>
+<circle cx="394.53" cy="193.30" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 85; true RUL 118; raw prediction 143.5684; residual 25.5684 cycles</title></circle>
+<circle cx="315.27" cy="137.72" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 86; true RUL 89; raw prediction 159.3894; residual 70.3894 cycles</title></circle>
+<circle cx="389.07" cy="221.27" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 87; true RUL 116; raw prediction 119.0102; residual 3.0102 cycles</title></circle>
+<circle cx="386.33" cy="222.51" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 88; true RUL 115; raw prediction 117.0042; residual 2.0042 cycles</title></circle>
+<circle cx="443.73" cy="248.55" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 89; true RUL 136; raw prediction 117.0042; residual -18.9958 cycles</title></circle>
+<circle cx="148.53" cy="193.02" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 90; true RUL 28; raw prediction 53.7931; residual 25.7931 cycles</title></circle>
+<circle cx="175.87" cy="234.69" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 91; true RUL 38; raw prediction 30.1892; residual -7.8108 cycles</title></circle>
+<circle cx="126.67" cy="212.37" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 92; true RUL 20; raw prediction 30.1892; residual 10.1892 cycles</title></circle>
+<circle cx="304.33" cy="264.11" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 93; true RUL 85; raw prediction 53.4605; residual -31.5395 cycles</title></circle>
+<circle cx="222.33" cy="209.07" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 94; true RUL 55; raw prediction 67.8506; residual 12.8506 cycles</title></circle>
+<circle cx="421.87" cy="174.27" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 95; true RUL 128; raw prediction 168.9099; residual 40.9099 cycles</title></circle>
+<circle cx="446.47" cy="187.62" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 96; true RUL 137; raw prediction 167.1448; residual 30.1448 cycles</title></circle>
+<circle cx="296.13" cy="179.11" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 97; true RUL 82; raw prediction 119.0102; residual 37.0102 cycles</title></circle>
+<circle cx="233.27" cy="183.30" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 98; true RUL 59; raw prediction 92.6310; residual 33.6310 cycles</title></circle>
+<circle cx="391.80" cy="188.04" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 99; true RUL 117; raw prediction 146.8064; residual 29.8064 cycles</title></circle>
+<circle cx="126.67" cy="203.19" r="3.4" fill="#2563eb" fill-opacity="0.7"><title>Engine 100; true RUL 20; raw prediction 37.5882; residual 17.5882 cycles</title></circle>
+<rect x="72.0" y="70.0" width="410.0" height="310.0" fill="none" stroke="#334155"/>
+<text x="277.0" y="427.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#172033">True RUL (cycles)</text>
+<text x="18.0" y="225.0" transform="rotate(-90 18.0 225.0)" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#172033">Residual: prediction − true RUL (cycles)</text>
+<text x="780.0" y="58.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" fill="#172033">Random Forest — random-forest-rul-v1</text>
+<line x1="592.0" y1="70.0" x2="592.0" y2="380.0" stroke="#e2e8f0"/>
+<text x="592.0" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">0</text>
+<line x1="660.3" y1="70.0" x2="660.3" y2="380.0" stroke="#e2e8f0"/>
+<text x="660.3" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">25</text>
+<line x1="728.7" y1="70.0" x2="728.7" y2="380.0" stroke="#e2e8f0"/>
+<text x="728.7" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">50</text>
+<line x1="797.0" y1="70.0" x2="797.0" y2="380.0" stroke="#e2e8f0"/>
+<text x="797.0" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">75</text>
+<line x1="865.3" y1="70.0" x2="865.3" y2="380.0" stroke="#e2e8f0"/>
+<text x="865.3" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">100</text>
+<line x1="933.7" y1="70.0" x2="933.7" y2="380.0" stroke="#e2e8f0"/>
+<text x="933.7" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">125</text>
+<line x1="1002.0" y1="70.0" x2="1002.0" y2="380.0" stroke="#e2e8f0"/>
+<text x="1002.0" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">150</text>
+<line x1="592.0" y1="349.0" x2="1002.0" y2="349.0" stroke="#e2e8f0"/>
+<text x="580.0" y="353.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">-100</text>
+<line x1="592.0" y1="287.0" x2="1002.0" y2="287.0" stroke="#e2e8f0"/>
+<text x="580.0" y="291.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">-50</text>
+<line x1="592.0" y1="225.0" x2="1002.0" y2="225.0" stroke="#e2e8f0"/>
+<text x="580.0" y="229.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">0</text>
+<line x1="592.0" y1="163.0" x2="1002.0" y2="163.0" stroke="#e2e8f0"/>
+<text x="580.0" y="167.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">50</text>
+<line x1="592.0" y1="101.0" x2="1002.0" y2="101.0" stroke="#e2e8f0"/>
+<text x="580.0" y="105.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">100</text>
+<line x1="592.0" y1="225.0" x2="1002.0" y2="225.0" stroke="#0f172a" stroke-width="1.5"/>
+<circle cx="898.13" cy="172.94" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 1; true RUL 112; raw prediction 153.9821; residual 41.9821 cycles</title></circle>
+<circle cx="859.87" cy="175.75" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 2; true RUL 98; raw prediction 137.7150; residual 39.7150 cycles</title></circle>
+<circle cx="780.60" cy="246.74" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 3; true RUL 69; raw prediction 51.4647; residual -17.5353 cycles</title></circle>
+<circle cx="816.13" cy="186.88" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 4; true RUL 82; raw prediction 112.7414; residual 30.7414 cycles</title></circle>
+<circle cx="840.73" cy="194.77" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 5; true RUL 91; raw prediction 115.3755; residual 24.3755 cycles</title></circle>
+<circle cx="846.20" cy="176.58" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 6; true RUL 93; raw prediction 132.0482; residual 39.0482 cycles</title></circle>
+<circle cx="840.73" cy="198.50" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 7; true RUL 91; raw prediction 112.3728; residual 21.3728 cycles</title></circle>
+<circle cx="851.67" cy="175.78" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 8; true RUL 95; raw prediction 134.6946; residual 39.6946 cycles</title></circle>
+<circle cx="895.40" cy="193.08" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 9; true RUL 111; raw prediction 136.7455; residual 25.7455 cycles</title></circle>
+<circle cx="854.40" cy="238.99" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 10; true RUL 96; raw prediction 84.7158; residual -11.2842 cycles</title></circle>
+<circle cx="857.13" cy="232.66" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 11; true RUL 97; raw prediction 90.8200; residual -6.1800 cycles</title></circle>
+<circle cx="930.93" cy="225.74" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 12; true RUL 124; raw prediction 123.4030; residual -0.5970 cycles</title></circle>
+<circle cx="851.67" cy="231.48" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 13; true RUL 95; raw prediction 89.7775; residual -5.2225 cycles</title></circle>
+<circle cx="884.47" cy="182.13" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 14; true RUL 107; raw prediction 141.5707; residual 34.5707 cycles</title></circle>
+<circle cx="818.87" cy="151.29" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 15; true RUL 83; raw prediction 142.4413; residual 59.4413 cycles</title></circle>
+<circle cx="821.60" cy="170.10" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 16; true RUL 84; raw prediction 128.2722; residual 44.2722 cycles</title></circle>
+<circle cx="728.67" cy="218.26" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 17; true RUL 50; raw prediction 55.4363; residual 5.4363 cycles</title></circle>
+<circle cx="668.53" cy="218.07" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 18; true RUL 28; raw prediction 33.5861; residual 5.5861 cycles</title></circle>
+<circle cx="829.80" cy="166.02" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 19; true RUL 87; raw prediction 134.5643; residual 47.5643 cycles</title></circle>
+<circle cx="635.73" cy="225.72" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 20; true RUL 16; raw prediction 15.4197; residual -0.5803 cycles</title></circle>
+<circle cx="747.80" cy="217.17" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 21; true RUL 57; raw prediction 63.3125; residual 6.3125 cycles</title></circle>
+<circle cx="895.40" cy="190.34" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 22; true RUL 111; raw prediction 138.9546; residual 27.9546 cycles</title></circle>
+<circle cx="900.87" cy="171.34" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 23; true RUL 113; raw prediction 156.2738; residual 43.2738 cycles</title></circle>
+<circle cx="646.67" cy="219.17" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 24; true RUL 20; raw prediction 24.6980; residual 4.6980 cycles</title></circle>
+<circle cx="988.33" cy="200.62" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 25; true RUL 145; raw prediction 164.6585; residual 19.6585 cycles</title></circle>
+<circle cx="917.27" cy="234.59" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 26; true RUL 119; raw prediction 111.2627; residual -7.7373 cycles</title></circle>
+<circle cx="772.40" cy="168.24" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 27; true RUL 66; raw prediction 111.7748; residual 45.7748 cycles</title></circle>
+<circle cx="857.13" cy="207.91" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 28; true RUL 97; raw prediction 110.7812; residual 13.7812 cycles</title></circle>
+<circle cx="838.00" cy="237.81" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 29; true RUL 90; raw prediction 79.6684; residual -10.3316 cycles</title></circle>
+<circle cx="906.33" cy="230.06" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 30; true RUL 115; raw prediction 110.9204; residual -4.0796 cycles</title></circle>
+<circle cx="613.87" cy="220.68" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 31; true RUL 8; raw prediction 11.4871; residual 3.4871 cycles</title></circle>
+<circle cx="723.20" cy="211.38" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 32; true RUL 48; raw prediction 58.9849; residual 10.9849 cycles</title></circle>
+<circle cx="881.73" cy="193.89" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 33; true RUL 106; raw prediction 131.0919; residual 25.0919 cycles</title></circle>
+<circle cx="611.13" cy="227.38" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 34; true RUL 7; raw prediction 5.0775; residual -1.9225 cycles</title></circle>
+<circle cx="622.07" cy="226.49" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 35; true RUL 11; raw prediction 9.7992; residual -1.2008 cycles</title></circle>
+<circle cx="643.93" cy="225.35" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 36; true RUL 19; raw prediction 18.7165; residual -0.2835 cycles</title></circle>
+<circle cx="649.40" cy="194.91" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 37; true RUL 21; raw prediction 45.2624; residual 24.2624 cycles</title></circle>
+<circle cx="728.67" cy="221.35" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 38; true RUL 50; raw prediction 52.9417; residual 2.9417 cycles</title></circle>
+<circle cx="980.13" cy="230.20" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 39; true RUL 142; raw prediction 137.8092; residual -4.1908 cycles</title></circle>
+<circle cx="668.53" cy="205.39" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 40; true RUL 28; raw prediction 43.8125; residual 15.8125 cycles</title></circle>
+<circle cx="641.20" cy="205.91" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 41; true RUL 18; raw prediction 33.3991; residual 15.3991 cycles</title></circle>
+<circle cx="619.33" cy="223.31" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 42; true RUL 10; raw prediction 11.3614; residual 1.3614 cycles</title></circle>
+<circle cx="753.27" cy="205.78" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 43; true RUL 59; raw prediction 74.4979; residual 15.4979 cycles</title></circle>
+<circle cx="889.93" cy="170.52" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 44; true RUL 109; raw prediction 152.9368; residual 43.9368 cycles</title></circle>
+<circle cx="903.60" cy="252.32" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 45; true RUL 114; raw prediction 91.9647; residual -22.0353 cycles</title></circle>
+<circle cx="720.47" cy="210.73" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 46; true RUL 47; raw prediction 58.5045; residual 11.5045 cycles</title></circle>
+<circle cx="961.00" cy="245.85" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 47; true RUL 135; raw prediction 118.1859; residual -16.8141 cycles</title></circle>
+<circle cx="843.47" cy="140.26" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 48; true RUL 92; raw prediction 160.3367; residual 68.3367 cycles</title></circle>
+<circle cx="649.40" cy="232.51" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 49; true RUL 21; raw prediction 14.9458; residual -6.0542 cycles</title></circle>
+<circle cx="807.93" cy="135.96" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 50; true RUL 79; raw prediction 150.8099; residual 71.8099 cycles</title></circle>
+<circle cx="903.60" cy="217.99" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 51; true RUL 114; raw prediction 119.6569; residual 5.6569 cycles</title></circle>
+<circle cx="671.27" cy="222.15" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 52; true RUL 29; raw prediction 31.3024; residual 2.3024 cycles</title></circle>
+<circle cx="663.07" cy="216.34" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 53; true RUL 26; raw prediction 32.9818; residual 6.9818 cycles</title></circle>
+<circle cx="857.13" cy="174.37" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 54; true RUL 97; raw prediction 137.8308; residual 40.8308 cycles</title></circle>
+<circle cx="966.47" cy="217.61" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 55; true RUL 137; raw prediction 142.9564; residual 5.9564 cycles</title></circle>
+<circle cx="633.00" cy="222.89" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 56; true RUL 15; raw prediction 16.7038; residual 1.7038 cycles</title></circle>
+<circle cx="873.53" cy="209.01" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 57; true RUL 103; raw prediction 115.8953; residual 12.8953 cycles</title></circle>
+<circle cx="693.13" cy="214.52" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 58; true RUL 37; raw prediction 45.4554; residual 8.4554 cycles</title></circle>
+<circle cx="903.60" cy="210.32" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 59; true RUL 114; raw prediction 125.8370; residual 11.8370 cycles</title></circle>
+<circle cx="865.33" cy="198.09" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 60; true RUL 100; raw prediction 121.7004; residual 21.7004 cycles</title></circle>
+<circle cx="649.40" cy="217.71" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 61; true RUL 21; raw prediction 26.8815; residual 5.8815 cycles</title></circle>
+<circle cx="739.60" cy="225.03" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 62; true RUL 54; raw prediction 53.9786; residual -0.0214 cycles</title></circle>
+<circle cx="788.80" cy="183.31" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 63; true RUL 72; raw prediction 105.6242; residual 33.6242 cycles</title></circle>
+<circle cx="668.53" cy="216.19" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 64; true RUL 28; raw prediction 35.1085; residual 7.1085 cycles</title></circle>
+<circle cx="941.87" cy="183.05" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 65; true RUL 128; raw prediction 161.8305; residual 33.8305 cycles</title></circle>
+<circle cx="630.27" cy="219.95" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 66; true RUL 14; raw prediction 18.0759; residual 4.0759 cycles</title></circle>
+<circle cx="802.47" cy="145.11" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 67; true RUL 77; raw prediction 141.4251; residual 64.4251 cycles</title></circle>
+<circle cx="613.87" cy="223.71" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 68; true RUL 8; raw prediction 9.0425; residual 1.0425 cycles</title></circle>
+<circle cx="922.73" cy="203.67" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 69; true RUL 121; raw prediction 138.2001; residual 17.2001 cycles</title></circle>
+<circle cx="848.93" cy="175.64" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 70; true RUL 94; raw prediction 133.8047; residual 39.8047 cycles</title></circle>
+<circle cx="914.53" cy="222.94" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 71; true RUL 118; raw prediction 119.6605; residual 1.6605 cycles</title></circle>
+<circle cx="728.67" cy="203.59" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 72; true RUL 50; raw prediction 67.2650; residual 17.2650 cycles</title></circle>
+<circle cx="950.07" cy="151.01" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 73; true RUL 131; raw prediction 190.6727; residual 59.6727 cycles</title></circle>
+<circle cx="936.40" cy="245.32" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 74; true RUL 126; raw prediction 109.6151; residual -16.3849 cycles</title></circle>
+<circle cx="900.87" cy="213.02" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 75; true RUL 113; raw prediction 122.6575; residual 9.6575 cycles</title></circle>
+<circle cx="619.33" cy="226.31" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 76; true RUL 10; raw prediction 8.9465; residual -1.0535 cycles</title></circle>
+<circle cx="684.93" cy="230.96" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 77; true RUL 34; raw prediction 29.1972; residual -4.8028 cycles</title></circle>
+<circle cx="884.47" cy="129.88" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 78; true RUL 107; raw prediction 183.7125; residual 76.7125 cycles</title></circle>
+<circle cx="764.20" cy="182.71" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 79; true RUL 63; raw prediction 97.1056; residual 34.1056 cycles</title></circle>
+<circle cx="838.00" cy="214.33" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 80; true RUL 90; raw prediction 98.6062; residual 8.6062 cycles</title></circle>
+<circle cx="613.87" cy="224.56" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 81; true RUL 8; raw prediction 8.3544; residual 0.3544 cycles</title></circle>
+<circle cx="616.60" cy="223.38" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 82; true RUL 9; raw prediction 10.3068; residual 1.3068 cycles</title></circle>
+<circle cx="966.47" cy="149.84" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 83; true RUL 137; raw prediction 197.6094; residual 60.6094 cycles</title></circle>
+<circle cx="750.53" cy="208.13" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 84; true RUL 58; raw prediction 71.6023; residual 13.6023 cycles</title></circle>
+<circle cx="914.53" cy="197.99" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 85; true RUL 118; raw prediction 139.7840; residual 21.7840 cycles</title></circle>
+<circle cx="835.27" cy="171.42" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 86; true RUL 89; raw prediction 132.2108; residual 43.2108 cycles</title></circle>
+<circle cx="909.07" cy="225.96" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 87; true RUL 116; raw prediction 115.2262; residual -0.7738 cycles</title></circle>
+<circle cx="906.33" cy="196.05" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 88; true RUL 115; raw prediction 138.3432; residual 23.3432 cycles</title></circle>
+<circle cx="963.73" cy="215.00" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 89; true RUL 136; raw prediction 144.0611; residual 8.0611 cycles</title></circle>
+<circle cx="668.53" cy="203.97" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 90; true RUL 28; raw prediction 44.9562; residual 16.9562 cycles</title></circle>
+<circle cx="695.87" cy="240.17" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 91; true RUL 38; raw prediction 25.7638; residual -12.2362 cycles</title></circle>
+<circle cx="646.67" cy="217.54" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 92; true RUL 20; raw prediction 26.0152; residual 6.0152 cycles</title></circle>
+<circle cx="824.33" cy="272.06" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 93; true RUL 85; raw prediction 47.0487; residual -37.9513 cycles</title></circle>
+<circle cx="742.33" cy="195.90" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 94; true RUL 55; raw prediction 78.4707; residual 23.4707 cycles</title></circle>
+<circle cx="941.87" cy="186.99" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 95; true RUL 128; raw prediction 158.6531; residual 30.6531 cycles</title></circle>
+<circle cx="966.47" cy="204.94" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 96; true RUL 137; raw prediction 153.1740; residual 16.1740 cycles</title></circle>
+<circle cx="816.13" cy="173.36" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 97; true RUL 82; raw prediction 123.6440; residual 41.6440 cycles</title></circle>
+<circle cx="753.27" cy="200.92" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 98; true RUL 59; raw prediction 78.4155; residual 19.4155 cycles</title></circle>
+<circle cx="911.80" cy="177.43" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 99; true RUL 117; raw prediction 155.3645; residual 38.3645 cycles</title></circle>
+<circle cx="646.67" cy="204.77" r="3.4" fill="#0f766e" fill-opacity="0.7"><title>Engine 100; true RUL 20; raw prediction 36.3135; residual 16.3135 cycles</title></circle>
+<rect x="592.0" y="70.0" width="410.0" height="310.0" fill="none" stroke="#334155"/>
+<text x="797.0" y="427.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#172033">True RUL (cycles)</text>
+<text x="538.0" y="225.0" transform="rotate(-90 538.0 225.0)" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#172033">Residual: prediction − true RUL (cycles)</text>
+<text x="1300.0" y="58.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" fill="#172033">XGBoost — xgboost-rul-v1</text>
+<line x1="1112.0" y1="70.0" x2="1112.0" y2="380.0" stroke="#e2e8f0"/>
+<text x="1112.0" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">0</text>
+<line x1="1180.3" y1="70.0" x2="1180.3" y2="380.0" stroke="#e2e8f0"/>
+<text x="1180.3" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">25</text>
+<line x1="1248.7" y1="70.0" x2="1248.7" y2="380.0" stroke="#e2e8f0"/>
+<text x="1248.7" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">50</text>
+<line x1="1317.0" y1="70.0" x2="1317.0" y2="380.0" stroke="#e2e8f0"/>
+<text x="1317.0" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">75</text>
+<line x1="1385.3" y1="70.0" x2="1385.3" y2="380.0" stroke="#e2e8f0"/>
+<text x="1385.3" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">100</text>
+<line x1="1453.7" y1="70.0" x2="1453.7" y2="380.0" stroke="#e2e8f0"/>
+<text x="1453.7" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">125</text>
+<line x1="1522.0" y1="70.0" x2="1522.0" y2="380.0" stroke="#e2e8f0"/>
+<text x="1522.0" y="400.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">150</text>
+<line x1="1112.0" y1="349.0" x2="1522.0" y2="349.0" stroke="#e2e8f0"/>
+<text x="1100.0" y="353.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">-100</text>
+<line x1="1112.0" y1="287.0" x2="1522.0" y2="287.0" stroke="#e2e8f0"/>
+<text x="1100.0" y="291.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">-50</text>
+<line x1="1112.0" y1="225.0" x2="1522.0" y2="225.0" stroke="#e2e8f0"/>
+<text x="1100.0" y="229.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">0</text>
+<line x1="1112.0" y1="163.0" x2="1522.0" y2="163.0" stroke="#e2e8f0"/>
+<text x="1100.0" y="167.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">50</text>
+<line x1="1112.0" y1="101.0" x2="1522.0" y2="101.0" stroke="#e2e8f0"/>
+<text x="1100.0" y="105.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">100</text>
+<line x1="1112.0" y1="225.0" x2="1522.0" y2="225.0" stroke="#0f172a" stroke-width="1.5"/>
+<circle cx="1418.13" cy="183.72" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 1; true RUL 112; raw prediction 145.2869; residual 33.2869 cycles</title></circle>
+<circle cx="1379.87" cy="167.72" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 2; true RUL 98; raw prediction 144.1970; residual 46.1970 cycles</title></circle>
+<circle cx="1300.60" cy="258.30" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 3; true RUL 69; raw prediction 42.1487; residual -26.8513 cycles</title></circle>
+<circle cx="1336.13" cy="201.05" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 4; true RUL 82; raw prediction 101.3171; residual 19.3171 cycles</title></circle>
+<circle cx="1360.73" cy="201.56" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 5; true RUL 91; raw prediction 109.9059; residual 18.9059 cycles</title></circle>
+<circle cx="1366.20" cy="181.64" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 6; true RUL 93; raw prediction 127.9653; residual 34.9653 cycles</title></circle>
+<circle cx="1360.73" cy="200.49" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 7; true RUL 91; raw prediction 110.7674; residual 19.7674 cycles</title></circle>
+<circle cx="1371.67" cy="171.72" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 8; true RUL 95; raw prediction 137.9680; residual 42.9680 cycles</title></circle>
+<circle cx="1415.40" cy="178.39" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 9; true RUL 111; raw prediction 148.5918; residual 37.5918 cycles</title></circle>
+<circle cx="1374.40" cy="232.20" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 10; true RUL 96; raw prediction 90.1921; residual -5.8079 cycles</title></circle>
+<circle cx="1377.13" cy="219.08" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 11; true RUL 97; raw prediction 101.7766; residual 4.7766 cycles</title></circle>
+<circle cx="1450.93" cy="234.84" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 12; true RUL 124; raw prediction 116.0639; residual -7.9361 cycles</title></circle>
+<circle cx="1371.67" cy="220.81" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 13; true RUL 95; raw prediction 98.3771; residual 3.3771 cycles</title></circle>
+<circle cx="1404.47" cy="190.09" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 14; true RUL 107; raw prediction 135.1507; residual 28.1507 cycles</title></circle>
+<circle cx="1338.87" cy="161.87" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 15; true RUL 83; raw prediction 133.9122; residual 50.9122 cycles</title></circle>
+<circle cx="1341.60" cy="173.93" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 16; true RUL 84; raw prediction 125.1834; residual 41.1834 cycles</title></circle>
+<circle cx="1248.67" cy="226.96" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 17; true RUL 50; raw prediction 48.4227; residual -1.5773 cycles</title></circle>
+<circle cx="1188.53" cy="201.30" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 18; true RUL 28; raw prediction 47.1156; residual 19.1156 cycles</title></circle>
+<circle cx="1349.80" cy="191.61" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 19; true RUL 87; raw prediction 113.9300; residual 26.9300 cycles</title></circle>
+<circle cx="1155.73" cy="232.60" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 20; true RUL 16; raw prediction 9.8705; residual -6.1295 cycles</title></circle>
+<circle cx="1267.80" cy="199.26" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 21; true RUL 57; raw prediction 77.7565; residual 20.7565 cycles</title></circle>
+<circle cx="1415.40" cy="185.75" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 22; true RUL 111; raw prediction 142.6548; residual 31.6548 cycles</title></circle>
+<circle cx="1420.87" cy="169.20" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 23; true RUL 113; raw prediction 157.9978; residual 44.9978 cycles</title></circle>
+<circle cx="1166.67" cy="223.45" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 24; true RUL 20; raw prediction 21.2478; residual 1.2478 cycles</title></circle>
+<circle cx="1508.33" cy="209.45" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 25; true RUL 145; raw prediction 157.5422; residual 12.5422 cycles</title></circle>
+<circle cx="1437.27" cy="220.48" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 26; true RUL 119; raw prediction 122.6478; residual 3.6478 cycles</title></circle>
+<circle cx="1292.40" cy="178.03" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 27; true RUL 66; raw prediction 103.8814; residual 37.8814 cycles</title></circle>
+<circle cx="1377.13" cy="190.87" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 28; true RUL 97; raw prediction 124.5233; residual 27.5233 cycles</title></circle>
+<circle cx="1358.00" cy="189.41" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 29; true RUL 90; raw prediction 118.7055; residual 28.7055 cycles</title></circle>
+<circle cx="1426.33" cy="216.20" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 30; true RUL 115; raw prediction 122.0959; residual 7.0959 cycles</title></circle>
+<circle cx="1133.87" cy="221.30" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 31; true RUL 8; raw prediction 10.9825; residual 2.9825 cycles</title></circle>
+<circle cx="1243.20" cy="213.54" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 32; true RUL 48; raw prediction 57.2434; residual 9.2434 cycles</title></circle>
+<circle cx="1401.73" cy="191.83" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 33; true RUL 106; raw prediction 132.7515; residual 26.7515 cycles</title></circle>
+<circle cx="1131.13" cy="223.40" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 34; true RUL 7; raw prediction 8.2925; residual 1.2925 cycles</title></circle>
+<circle cx="1142.07" cy="222.87" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 35; true RUL 11; raw prediction 12.7204; residual 1.7204 cycles</title></circle>
+<circle cx="1163.93" cy="233.30" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 36; true RUL 19; raw prediction 12.3038; residual -6.6962 cycles</title></circle>
+<circle cx="1169.40" cy="185.51" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 37; true RUL 21; raw prediction 52.8436; residual 31.8436 cycles</title></circle>
+<circle cx="1248.67" cy="214.63" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 38; true RUL 50; raw prediction 58.3654; residual 8.3654 cycles</title></circle>
+<circle cx="1500.13" cy="207.29" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 39; true RUL 142; raw prediction 156.2855; residual 14.2855 cycles</title></circle>
+<circle cx="1188.53" cy="216.87" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 40; true RUL 28; raw prediction 34.5577; residual 6.5577 cycles</title></circle>
+<circle cx="1161.20" cy="195.36" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 41; true RUL 18; raw prediction 41.8995; residual 23.8995 cycles</title></circle>
+<circle cx="1139.33" cy="221.37" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 42; true RUL 10; raw prediction 12.9254; residual 2.9254 cycles</title></circle>
+<circle cx="1273.27" cy="208.66" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 43; true RUL 59; raw prediction 72.1746; residual 13.1746 cycles</title></circle>
+<circle cx="1409.93" cy="188.37" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 44; true RUL 109; raw prediction 138.5376; residual 29.5376 cycles</title></circle>
+<circle cx="1423.60" cy="271.24" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 45; true RUL 114; raw prediction 76.7066; residual -37.2934 cycles</title></circle>
+<circle cx="1240.47" cy="232.64" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 46; true RUL 47; raw prediction 40.8412; residual -6.1588 cycles</title></circle>
+<circle cx="1481.00" cy="231.45" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 47; true RUL 135; raw prediction 129.8004; residual -5.1996 cycles</title></circle>
+<circle cx="1363.47" cy="172.21" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 48; true RUL 92; raw prediction 134.5699; residual 42.5699 cycles</title></circle>
+<circle cx="1169.40" cy="238.54" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 49; true RUL 21; raw prediction 10.0781; residual -10.9219 cycles</title></circle>
+<circle cx="1327.93" cy="163.07" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 50; true RUL 79; raw prediction 128.9412; residual 49.9412 cycles</title></circle>
+<circle cx="1423.60" cy="226.93" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 51; true RUL 114; raw prediction 112.4446; residual -1.5554 cycles</title></circle>
+<circle cx="1191.27" cy="217.67" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 52; true RUL 29; raw prediction 34.9128; residual 5.9128 cycles</title></circle>
+<circle cx="1183.07" cy="228.27" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 53; true RUL 26; raw prediction 23.3668; residual -2.6332 cycles</title></circle>
+<circle cx="1377.13" cy="179.70" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 54; true RUL 97; raw prediction 133.5303; residual 36.5303 cycles</title></circle>
+<circle cx="1486.47" cy="217.80" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 55; true RUL 137; raw prediction 142.8041; residual 5.8041 cycles</title></circle>
+<circle cx="1153.00" cy="220.74" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 56; true RUL 15; raw prediction 18.4386; residual 3.4386 cycles</title></circle>
+<circle cx="1393.53" cy="196.45" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 57; true RUL 103; raw prediction 126.0261; residual 23.0261 cycles</title></circle>
+<circle cx="1213.13" cy="234.68" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 58; true RUL 37; raw prediction 29.1905; residual -7.8095 cycles</title></circle>
+<circle cx="1423.60" cy="208.93" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 59; true RUL 114; raw prediction 126.9616; residual 12.9616 cycles</title></circle>
+<circle cx="1385.33" cy="188.29" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 60; true RUL 100; raw prediction 129.6047; residual 29.6047 cycles</title></circle>
+<circle cx="1169.40" cy="218.20" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 61; true RUL 21; raw prediction 26.4799; residual 5.4799 cycles</title></circle>
+<circle cx="1259.60" cy="234.05" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 62; true RUL 54; raw prediction 46.6981; residual -7.3019 cycles</title></circle>
+<circle cx="1308.80" cy="202.29" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 63; true RUL 72; raw prediction 90.3134; residual 18.3134 cycles</title></circle>
+<circle cx="1188.53" cy="235.30" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 64; true RUL 28; raw prediction 19.6895; residual -8.3105 cycles</title></circle>
+<circle cx="1461.87" cy="186.73" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 65; true RUL 128; raw prediction 158.8633; residual 30.8633 cycles</title></circle>
+<circle cx="1150.27" cy="213.30" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 66; true RUL 14; raw prediction 23.4339; residual 9.4339 cycles</title></circle>
+<circle cx="1322.47" cy="128.97" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 67; true RUL 77; raw prediction 154.4450; residual 77.4450 cycles</title></circle>
+<circle cx="1133.87" cy="223.50" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 68; true RUL 8; raw prediction 9.2061; residual 1.2061 cycles</title></circle>
+<circle cx="1442.73" cy="187.15" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 69; true RUL 121; raw prediction 151.5213; residual 30.5213 cycles</title></circle>
+<circle cx="1368.93" cy="197.88" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 70; true RUL 94; raw prediction 115.8698; residual 21.8698 cycles</title></circle>
+<circle cx="1434.53" cy="214.15" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 71; true RUL 118; raw prediction 126.7527; residual 8.7527 cycles</title></circle>
+<circle cx="1248.67" cy="207.10" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 72; true RUL 50; raw prediction 64.4386; residual 14.4386 cycles</title></circle>
+<circle cx="1470.07" cy="217.66" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 73; true RUL 131; raw prediction 136.9172; residual 5.9172 cycles</title></circle>
+<circle cx="1456.40" cy="233.98" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 74; true RUL 126; raw prediction 118.7575; residual -7.2425 cycles</title></circle>
+<circle cx="1420.87" cy="220.19" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 75; true RUL 113; raw prediction 116.8760; residual 3.8760 cycles</title></circle>
+<circle cx="1139.33" cy="224.91" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 76; true RUL 10; raw prediction 10.0763; residual 0.0763 cycles</title></circle>
+<circle cx="1204.93" cy="233.31" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 77; true RUL 34; raw prediction 27.2952; residual -6.7048 cycles</title></circle>
+<circle cx="1404.47" cy="163.77" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 78; true RUL 107; raw prediction 156.3795; residual 49.3795 cycles</title></circle>
+<circle cx="1284.20" cy="184.70" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 79; true RUL 63; raw prediction 95.5036; residual 32.5036 cycles</title></circle>
+<circle cx="1358.00" cy="210.64" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 80; true RUL 90; raw prediction 101.5814; residual 11.5814 cycles</title></circle>
+<circle cx="1133.87" cy="224.17" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 81; true RUL 8; raw prediction 8.6669; residual 0.6669 cycles</title></circle>
+<circle cx="1136.60" cy="220.13" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 82; true RUL 9; raw prediction 12.9254; residual 3.9254 cycles</title></circle>
+<circle cx="1486.47" cy="154.44" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 83; true RUL 137; raw prediction 193.9032; residual 56.9032 cycles</title></circle>
+<circle cx="1270.53" cy="205.46" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 84; true RUL 58; raw prediction 73.7618; residual 15.7618 cycles</title></circle>
+<circle cx="1434.53" cy="182.65" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 85; true RUL 118; raw prediction 152.1507; residual 34.1507 cycles</title></circle>
+<circle cx="1355.27" cy="184.32" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 86; true RUL 89; raw prediction 121.8055; residual 32.8055 cycles</title></circle>
+<circle cx="1429.07" cy="206.33" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 87; true RUL 116; raw prediction 131.0580; residual 15.0580 cycles</title></circle>
+<circle cx="1426.33" cy="200.40" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 88; true RUL 115; raw prediction 134.8411; residual 19.8411 cycles</title></circle>
+<circle cx="1483.73" cy="219.47" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 89; true RUL 136; raw prediction 140.4590; residual 4.4590 cycles</title></circle>
+<circle cx="1188.53" cy="219.48" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 90; true RUL 28; raw prediction 32.4478; residual 4.4478 cycles</title></circle>
+<circle cx="1215.87" cy="234.14" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 91; true RUL 38; raw prediction 30.6296; residual -7.3704 cycles</title></circle>
+<circle cx="1166.67" cy="222.97" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 92; true RUL 20; raw prediction 21.6333; residual 1.6333 cycles</title></circle>
+<circle cx="1344.33" cy="267.91" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 93; true RUL 85; raw prediction 50.3975; residual -34.6025 cycles</title></circle>
+<circle cx="1262.33" cy="201.82" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 94; true RUL 55; raw prediction 73.6973; residual 18.6973 cycles</title></circle>
+<circle cx="1461.87" cy="211.92" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 95; true RUL 128; raw prediction 138.5509; residual 10.5509 cycles</title></circle>
+<circle cx="1486.47" cy="254.05" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 96; true RUL 137; raw prediction 113.5727; residual -23.4273 cycles</title></circle>
+<circle cx="1336.13" cy="224.22" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 97; true RUL 82; raw prediction 82.6250; residual 0.6250 cycles</title></circle>
+<circle cx="1273.27" cy="195.58" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 98; true RUL 59; raw prediction 82.7268; residual 23.7268 cycles</title></circle>
+<circle cx="1431.80" cy="190.24" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 99; true RUL 117; raw prediction 145.0345; residual 28.0345 cycles</title></circle>
+<circle cx="1166.67" cy="219.36" r="3.4" fill="#ea580c" fill-opacity="0.7"><title>Engine 100; true RUL 20; raw prediction 24.5516; residual 4.5516 cycles</title></circle>
+<rect x="1112.0" y="70.0" width="410.0" height="310.0" fill="none" stroke="#334155"/>
+<text x="1317.0" y="427.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#172033">True RUL (cycles)</text>
+<text x="1058.0" y="225.0" transform="rotate(-90 1058.0 225.0)" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#172033">Residual: prediction − true RUL (cycles)</text>
+<text x="260.0" y="508.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" fill="#172033">Constant mean baseline — constant-rul-v1</text>
+<line x1="72.0" y1="520.0" x2="72.0" y2="830.0" stroke="#e2e8f0"/>
+<text x="72.0" y="850.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">0</text>
+<line x1="140.3" y1="520.0" x2="140.3" y2="830.0" stroke="#e2e8f0"/>
+<text x="140.3" y="850.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">25</text>
+<line x1="208.7" y1="520.0" x2="208.7" y2="830.0" stroke="#e2e8f0"/>
+<text x="208.7" y="850.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">50</text>
+<line x1="277.0" y1="520.0" x2="277.0" y2="830.0" stroke="#e2e8f0"/>
+<text x="277.0" y="850.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">75</text>
+<line x1="345.3" y1="520.0" x2="345.3" y2="830.0" stroke="#e2e8f0"/>
+<text x="345.3" y="850.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">100</text>
+<line x1="413.7" y1="520.0" x2="413.7" y2="830.0" stroke="#e2e8f0"/>
+<text x="413.7" y="850.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">125</text>
+<line x1="482.0" y1="520.0" x2="482.0" y2="830.0" stroke="#e2e8f0"/>
+<text x="482.0" y="850.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">150</text>
+<line x1="72.0" y1="799.0" x2="482.0" y2="799.0" stroke="#e2e8f0"/>
+<text x="60.0" y="803.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">-100</text>
+<line x1="72.0" y1="737.0" x2="482.0" y2="737.0" stroke="#e2e8f0"/>
+<text x="60.0" y="741.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">-50</text>
+<line x1="72.0" y1="675.0" x2="482.0" y2="675.0" stroke="#e2e8f0"/>
+<text x="60.0" y="679.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">0</text>
+<line x1="72.0" y1="613.0" x2="482.0" y2="613.0" stroke="#e2e8f0"/>
+<text x="60.0" y="617.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">50</text>
+<line x1="72.0" y1="551.0" x2="482.0" y2="551.0" stroke="#e2e8f0"/>
+<text x="60.0" y="555.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">100</text>
+<line x1="72.0" y1="675.0" x2="482.0" y2="675.0" stroke="#0f172a" stroke-width="1.5"/>
+<circle cx="378.13" cy="680.20" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 1; true RUL 112; raw prediction 107.8079; residual -4.1921 cycles</title></circle>
+<circle cx="339.87" cy="662.84" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 2; true RUL 98; raw prediction 107.8079; residual 9.8079 cycles</title></circle>
+<circle cx="260.60" cy="626.88" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 3; true RUL 69; raw prediction 107.8079; residual 38.8079 cycles</title></circle>
+<circle cx="296.13" cy="643.00" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 4; true RUL 82; raw prediction 107.8079; residual 25.8079 cycles</title></circle>
+<circle cx="320.73" cy="654.16" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 5; true RUL 91; raw prediction 107.8079; residual 16.8079 cycles</title></circle>
+<circle cx="326.20" cy="656.64" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 6; true RUL 93; raw prediction 107.8079; residual 14.8079 cycles</title></circle>
+<circle cx="320.73" cy="654.16" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 7; true RUL 91; raw prediction 107.8079; residual 16.8079 cycles</title></circle>
+<circle cx="331.67" cy="659.12" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 8; true RUL 95; raw prediction 107.8079; residual 12.8079 cycles</title></circle>
+<circle cx="375.40" cy="678.96" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 9; true RUL 111; raw prediction 107.8079; residual -3.1921 cycles</title></circle>
+<circle cx="334.40" cy="660.36" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 10; true RUL 96; raw prediction 107.8079; residual 11.8079 cycles</title></circle>
+<circle cx="337.13" cy="661.60" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 11; true RUL 97; raw prediction 107.8079; residual 10.8079 cycles</title></circle>
+<circle cx="410.93" cy="695.08" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 12; true RUL 124; raw prediction 107.8079; residual -16.1921 cycles</title></circle>
+<circle cx="331.67" cy="659.12" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 13; true RUL 95; raw prediction 107.8079; residual 12.8079 cycles</title></circle>
+<circle cx="364.47" cy="674.00" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 14; true RUL 107; raw prediction 107.8079; residual 0.8079 cycles</title></circle>
+<circle cx="298.87" cy="644.24" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 15; true RUL 83; raw prediction 107.8079; residual 24.8079 cycles</title></circle>
+<circle cx="301.60" cy="645.48" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 16; true RUL 84; raw prediction 107.8079; residual 23.8079 cycles</title></circle>
+<circle cx="208.67" cy="603.32" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 17; true RUL 50; raw prediction 107.8079; residual 57.8079 cycles</title></circle>
+<circle cx="148.53" cy="576.04" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 18; true RUL 28; raw prediction 107.8079; residual 79.8079 cycles</title></circle>
+<circle cx="309.80" cy="649.20" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 19; true RUL 87; raw prediction 107.8079; residual 20.8079 cycles</title></circle>
+<circle cx="115.73" cy="561.16" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 20; true RUL 16; raw prediction 107.8079; residual 91.8079 cycles</title></circle>
+<circle cx="227.80" cy="612.00" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 21; true RUL 57; raw prediction 107.8079; residual 50.8079 cycles</title></circle>
+<circle cx="375.40" cy="678.96" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 22; true RUL 111; raw prediction 107.8079; residual -3.1921 cycles</title></circle>
+<circle cx="380.87" cy="681.44" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 23; true RUL 113; raw prediction 107.8079; residual -5.1921 cycles</title></circle>
+<circle cx="126.67" cy="566.12" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 24; true RUL 20; raw prediction 107.8079; residual 87.8079 cycles</title></circle>
+<circle cx="468.33" cy="721.12" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 25; true RUL 145; raw prediction 107.8079; residual -37.1921 cycles</title></circle>
+<circle cx="397.27" cy="688.88" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 26; true RUL 119; raw prediction 107.8079; residual -11.1921 cycles</title></circle>
+<circle cx="252.40" cy="623.16" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 27; true RUL 66; raw prediction 107.8079; residual 41.8079 cycles</title></circle>
+<circle cx="337.13" cy="661.60" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 28; true RUL 97; raw prediction 107.8079; residual 10.8079 cycles</title></circle>
+<circle cx="318.00" cy="652.92" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 29; true RUL 90; raw prediction 107.8079; residual 17.8079 cycles</title></circle>
+<circle cx="386.33" cy="683.92" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 30; true RUL 115; raw prediction 107.8079; residual -7.1921 cycles</title></circle>
+<circle cx="93.87" cy="551.24" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 31; true RUL 8; raw prediction 107.8079; residual 99.8079 cycles</title></circle>
+<circle cx="203.20" cy="600.84" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 32; true RUL 48; raw prediction 107.8079; residual 59.8079 cycles</title></circle>
+<circle cx="361.73" cy="672.76" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 33; true RUL 106; raw prediction 107.8079; residual 1.8079 cycles</title></circle>
+<circle cx="91.13" cy="550.00" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 34; true RUL 7; raw prediction 107.8079; residual 100.8079 cycles</title></circle>
+<circle cx="102.07" cy="554.96" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 35; true RUL 11; raw prediction 107.8079; residual 96.8079 cycles</title></circle>
+<circle cx="123.93" cy="564.88" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 36; true RUL 19; raw prediction 107.8079; residual 88.8079 cycles</title></circle>
+<circle cx="129.40" cy="567.36" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 37; true RUL 21; raw prediction 107.8079; residual 86.8079 cycles</title></circle>
+<circle cx="208.67" cy="603.32" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 38; true RUL 50; raw prediction 107.8079; residual 57.8079 cycles</title></circle>
+<circle cx="460.13" cy="717.40" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 39; true RUL 142; raw prediction 107.8079; residual -34.1921 cycles</title></circle>
+<circle cx="148.53" cy="576.04" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 40; true RUL 28; raw prediction 107.8079; residual 79.8079 cycles</title></circle>
+<circle cx="121.20" cy="563.64" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 41; true RUL 18; raw prediction 107.8079; residual 89.8079 cycles</title></circle>
+<circle cx="99.33" cy="553.72" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 42; true RUL 10; raw prediction 107.8079; residual 97.8079 cycles</title></circle>
+<circle cx="233.27" cy="614.48" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 43; true RUL 59; raw prediction 107.8079; residual 48.8079 cycles</title></circle>
+<circle cx="369.93" cy="676.48" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 44; true RUL 109; raw prediction 107.8079; residual -1.1921 cycles</title></circle>
+<circle cx="383.60" cy="682.68" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 45; true RUL 114; raw prediction 107.8079; residual -6.1921 cycles</title></circle>
+<circle cx="200.47" cy="599.60" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 46; true RUL 47; raw prediction 107.8079; residual 60.8079 cycles</title></circle>
+<circle cx="441.00" cy="708.72" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 47; true RUL 135; raw prediction 107.8079; residual -27.1921 cycles</title></circle>
+<circle cx="323.47" cy="655.40" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 48; true RUL 92; raw prediction 107.8079; residual 15.8079 cycles</title></circle>
+<circle cx="129.40" cy="567.36" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 49; true RUL 21; raw prediction 107.8079; residual 86.8079 cycles</title></circle>
+<circle cx="287.93" cy="639.28" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 50; true RUL 79; raw prediction 107.8079; residual 28.8079 cycles</title></circle>
+<circle cx="383.60" cy="682.68" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 51; true RUL 114; raw prediction 107.8079; residual -6.1921 cycles</title></circle>
+<circle cx="151.27" cy="577.28" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 52; true RUL 29; raw prediction 107.8079; residual 78.8079 cycles</title></circle>
+<circle cx="143.07" cy="573.56" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 53; true RUL 26; raw prediction 107.8079; residual 81.8079 cycles</title></circle>
+<circle cx="337.13" cy="661.60" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 54; true RUL 97; raw prediction 107.8079; residual 10.8079 cycles</title></circle>
+<circle cx="446.47" cy="711.20" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 55; true RUL 137; raw prediction 107.8079; residual -29.1921 cycles</title></circle>
+<circle cx="113.00" cy="559.92" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 56; true RUL 15; raw prediction 107.8079; residual 92.8079 cycles</title></circle>
+<circle cx="353.53" cy="669.04" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 57; true RUL 103; raw prediction 107.8079; residual 4.8079 cycles</title></circle>
+<circle cx="173.13" cy="587.20" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 58; true RUL 37; raw prediction 107.8079; residual 70.8079 cycles</title></circle>
+<circle cx="383.60" cy="682.68" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 59; true RUL 114; raw prediction 107.8079; residual -6.1921 cycles</title></circle>
+<circle cx="345.33" cy="665.32" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 60; true RUL 100; raw prediction 107.8079; residual 7.8079 cycles</title></circle>
+<circle cx="129.40" cy="567.36" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 61; true RUL 21; raw prediction 107.8079; residual 86.8079 cycles</title></circle>
+<circle cx="219.60" cy="608.28" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 62; true RUL 54; raw prediction 107.8079; residual 53.8079 cycles</title></circle>
+<circle cx="268.80" cy="630.60" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 63; true RUL 72; raw prediction 107.8079; residual 35.8079 cycles</title></circle>
+<circle cx="148.53" cy="576.04" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 64; true RUL 28; raw prediction 107.8079; residual 79.8079 cycles</title></circle>
+<circle cx="421.87" cy="700.04" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 65; true RUL 128; raw prediction 107.8079; residual -20.1921 cycles</title></circle>
+<circle cx="110.27" cy="558.68" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 66; true RUL 14; raw prediction 107.8079; residual 93.8079 cycles</title></circle>
+<circle cx="282.47" cy="636.80" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 67; true RUL 77; raw prediction 107.8079; residual 30.8079 cycles</title></circle>
+<circle cx="93.87" cy="551.24" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 68; true RUL 8; raw prediction 107.8079; residual 99.8079 cycles</title></circle>
+<circle cx="402.73" cy="691.36" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 69; true RUL 121; raw prediction 107.8079; residual -13.1921 cycles</title></circle>
+<circle cx="328.93" cy="657.88" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 70; true RUL 94; raw prediction 107.8079; residual 13.8079 cycles</title></circle>
+<circle cx="394.53" cy="687.64" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 71; true RUL 118; raw prediction 107.8079; residual -10.1921 cycles</title></circle>
+<circle cx="208.67" cy="603.32" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 72; true RUL 50; raw prediction 107.8079; residual 57.8079 cycles</title></circle>
+<circle cx="430.07" cy="703.76" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 73; true RUL 131; raw prediction 107.8079; residual -23.1921 cycles</title></circle>
+<circle cx="416.40" cy="697.56" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 74; true RUL 126; raw prediction 107.8079; residual -18.1921 cycles</title></circle>
+<circle cx="380.87" cy="681.44" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 75; true RUL 113; raw prediction 107.8079; residual -5.1921 cycles</title></circle>
+<circle cx="99.33" cy="553.72" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 76; true RUL 10; raw prediction 107.8079; residual 97.8079 cycles</title></circle>
+<circle cx="164.93" cy="583.48" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 77; true RUL 34; raw prediction 107.8079; residual 73.8079 cycles</title></circle>
+<circle cx="364.47" cy="674.00" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 78; true RUL 107; raw prediction 107.8079; residual 0.8079 cycles</title></circle>
+<circle cx="244.20" cy="619.44" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 79; true RUL 63; raw prediction 107.8079; residual 44.8079 cycles</title></circle>
+<circle cx="318.00" cy="652.92" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 80; true RUL 90; raw prediction 107.8079; residual 17.8079 cycles</title></circle>
+<circle cx="93.87" cy="551.24" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 81; true RUL 8; raw prediction 107.8079; residual 99.8079 cycles</title></circle>
+<circle cx="96.60" cy="552.48" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 82; true RUL 9; raw prediction 107.8079; residual 98.8079 cycles</title></circle>
+<circle cx="446.47" cy="711.20" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 83; true RUL 137; raw prediction 107.8079; residual -29.1921 cycles</title></circle>
+<circle cx="230.53" cy="613.24" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 84; true RUL 58; raw prediction 107.8079; residual 49.8079 cycles</title></circle>
+<circle cx="394.53" cy="687.64" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 85; true RUL 118; raw prediction 107.8079; residual -10.1921 cycles</title></circle>
+<circle cx="315.27" cy="651.68" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 86; true RUL 89; raw prediction 107.8079; residual 18.8079 cycles</title></circle>
+<circle cx="389.07" cy="685.16" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 87; true RUL 116; raw prediction 107.8079; residual -8.1921 cycles</title></circle>
+<circle cx="386.33" cy="683.92" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 88; true RUL 115; raw prediction 107.8079; residual -7.1921 cycles</title></circle>
+<circle cx="443.73" cy="709.96" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 89; true RUL 136; raw prediction 107.8079; residual -28.1921 cycles</title></circle>
+<circle cx="148.53" cy="576.04" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 90; true RUL 28; raw prediction 107.8079; residual 79.8079 cycles</title></circle>
+<circle cx="175.87" cy="588.44" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 91; true RUL 38; raw prediction 107.8079; residual 69.8079 cycles</title></circle>
+<circle cx="126.67" cy="566.12" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 92; true RUL 20; raw prediction 107.8079; residual 87.8079 cycles</title></circle>
+<circle cx="304.33" cy="646.72" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 93; true RUL 85; raw prediction 107.8079; residual 22.8079 cycles</title></circle>
+<circle cx="222.33" cy="609.52" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 94; true RUL 55; raw prediction 107.8079; residual 52.8079 cycles</title></circle>
+<circle cx="421.87" cy="700.04" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 95; true RUL 128; raw prediction 107.8079; residual -20.1921 cycles</title></circle>
+<circle cx="446.47" cy="711.20" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 96; true RUL 137; raw prediction 107.8079; residual -29.1921 cycles</title></circle>
+<circle cx="296.13" cy="643.00" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 97; true RUL 82; raw prediction 107.8079; residual 25.8079 cycles</title></circle>
+<circle cx="233.27" cy="614.48" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 98; true RUL 59; raw prediction 107.8079; residual 48.8079 cycles</title></circle>
+<circle cx="391.80" cy="686.40" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 99; true RUL 117; raw prediction 107.8079; residual -9.1921 cycles</title></circle>
+<circle cx="126.67" cy="566.12" r="3.4" fill="#9333ea" fill-opacity="0.7"><title>Engine 100; true RUL 20; raw prediction 107.8079; residual 87.8079 cycles</title></circle>
+<rect x="72.0" y="520.0" width="410.0" height="310.0" fill="none" stroke="#334155"/>
+<text x="277.0" y="877.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#172033">True RUL (cycles)</text>
+<text x="18.0" y="675.0" transform="rotate(-90 18.0 675.0)" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#172033">Residual: prediction − true RUL (cycles)</text>
+<text x="780.0" y="508.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" fill="#172033">Dense RUL MLP — dense-rul-mlp-final-v1</text>
+<line x1="592.0" y1="520.0" x2="592.0" y2="830.0" stroke="#e2e8f0"/>
+<text x="592.0" y="850.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">0</text>
+<line x1="660.3" y1="520.0" x2="660.3" y2="830.0" stroke="#e2e8f0"/>
+<text x="660.3" y="850.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">25</text>
+<line x1="728.7" y1="520.0" x2="728.7" y2="830.0" stroke="#e2e8f0"/>
+<text x="728.7" y="850.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">50</text>
+<line x1="797.0" y1="520.0" x2="797.0" y2="830.0" stroke="#e2e8f0"/>
+<text x="797.0" y="850.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">75</text>
+<line x1="865.3" y1="520.0" x2="865.3" y2="830.0" stroke="#e2e8f0"/>
+<text x="865.3" y="850.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">100</text>
+<line x1="933.7" y1="520.0" x2="933.7" y2="830.0" stroke="#e2e8f0"/>
+<text x="933.7" y="850.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">125</text>
+<line x1="1002.0" y1="520.0" x2="1002.0" y2="830.0" stroke="#e2e8f0"/>
+<text x="1002.0" y="850.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#172033">150</text>
+<line x1="592.0" y1="799.0" x2="1002.0" y2="799.0" stroke="#e2e8f0"/>
+<text x="580.0" y="803.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">-100</text>
+<line x1="592.0" y1="737.0" x2="1002.0" y2="737.0" stroke="#e2e8f0"/>
+<text x="580.0" y="741.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">-50</text>
+<line x1="592.0" y1="675.0" x2="1002.0" y2="675.0" stroke="#e2e8f0"/>
+<text x="580.0" y="679.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">0</text>
+<line x1="592.0" y1="613.0" x2="1002.0" y2="613.0" stroke="#e2e8f0"/>
+<text x="580.0" y="617.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">50</text>
+<line x1="592.0" y1="551.0" x2="1002.0" y2="551.0" stroke="#e2e8f0"/>
+<text x="580.0" y="555.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#172033">100</text>
+<line x1="592.0" y1="675.0" x2="1002.0" y2="675.0" stroke="#0f172a" stroke-width="1.5"/>
+<circle cx="898.13" cy="616.87" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 1; true RUL 112; raw prediction 158.8824; residual 46.8824 cycles</title></circle>
+<circle cx="859.87" cy="611.62" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 2; true RUL 98; raw prediction 149.1151; residual 51.1151 cycles</title></circle>
+<circle cx="780.60" cy="679.04" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 3; true RUL 69; raw prediction 65.7425; residual -3.2575 cycles</title></circle>
+<circle cx="816.13" cy="661.35" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 4; true RUL 82; raw prediction 93.0089; residual 11.0089 cycles</title></circle>
+<circle cx="840.73" cy="647.47" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 5; true RUL 91; raw prediction 113.1977; residual 22.1977 cycles</title></circle>
+<circle cx="846.20" cy="625.52" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 6; true RUL 93; raw prediction 132.9017; residual 39.9017 cycles</title></circle>
+<circle cx="840.73" cy="658.52" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 7; true RUL 91; raw prediction 104.2907; residual 13.2907 cycles</title></circle>
+<circle cx="851.67" cy="679.53" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 8; true RUL 95; raw prediction 91.3429; residual -3.6571 cycles</title></circle>
+<circle cx="895.40" cy="654.89" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 9; true RUL 111; raw prediction 127.2197; residual 16.2197 cycles</title></circle>
+<circle cx="854.40" cy="688.68" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 10; true RUL 96; raw prediction 84.9657; residual -11.0343 cycles</title></circle>
+<circle cx="857.13" cy="672.57" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 11; true RUL 97; raw prediction 98.9634; residual 1.9634 cycles</title></circle>
+<circle cx="930.93" cy="713.40" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 12; true RUL 124; raw prediction 93.0301; residual -30.9699 cycles</title></circle>
+<circle cx="851.67" cy="705.98" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 13; true RUL 95; raw prediction 70.0150; residual -24.9850 cycles</title></circle>
+<circle cx="884.47" cy="647.21" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 14; true RUL 107; raw prediction 129.4132; residual 22.4132 cycles</title></circle>
+<circle cx="818.87" cy="580.85" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 15; true RUL 83; raw prediction 158.9236; residual 75.9236 cycles</title></circle>
+<circle cx="821.60" cy="610.01" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 16; true RUL 84; raw prediction 136.4089; residual 52.4089 cycles</title></circle>
+<circle cx="728.67" cy="674.65" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 17; true RUL 50; raw prediction 50.2813; residual 0.2813 cycles</title></circle>
+<circle cx="668.53" cy="675.21" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 18; true RUL 28; raw prediction 27.8300; residual -0.1700 cycles</title></circle>
+<circle cx="829.80" cy="645.03" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 19; true RUL 87; raw prediction 111.1703; residual 24.1703 cycles</title></circle>
+<circle cx="635.73" cy="672.56" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 20; true RUL 16; raw prediction 17.9657; residual 1.9657 cycles</title></circle>
+<circle cx="747.80" cy="659.20" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 21; true RUL 57; raw prediction 69.7399; residual 12.7399 cycles</title></circle>
+<circle cx="895.40" cy="633.26" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 22; true RUL 111; raw prediction 144.6645; residual 33.6645 cycles</title></circle>
+<circle cx="900.87" cy="613.68" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 23; true RUL 113; raw prediction 162.4552; residual 49.4552 cycles</title></circle>
+<circle cx="646.67" cy="674.04" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 24; true RUL 20; raw prediction 20.7781; residual 0.7781 cycles</title></circle>
+<circle cx="988.33" cy="657.13" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 25; true RUL 145; raw prediction 159.4087; residual 14.4087 cycles</title></circle>
+<circle cx="917.27" cy="638.94" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 26; true RUL 119; raw prediction 148.0784; residual 29.0784 cycles</title></circle>
+<circle cx="772.40" cy="605.43" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 27; true RUL 66; raw prediction 122.1080; residual 56.1080 cycles</title></circle>
+<circle cx="857.13" cy="666.00" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 28; true RUL 97; raw prediction 104.2611; residual 7.2611 cycles</title></circle>
+<circle cx="838.00" cy="657.96" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 29; true RUL 90; raw prediction 103.7441; residual 13.7441 cycles</title></circle>
+<circle cx="906.33" cy="708.33" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 30; true RUL 115; raw prediction 88.1183; residual -26.8817 cycles</title></circle>
+<circle cx="613.87" cy="667.52" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 31; true RUL 8; raw prediction 14.0285; residual 6.0285 cycles</title></circle>
+<circle cx="723.20" cy="667.94" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 32; true RUL 48; raw prediction 53.6953; residual 5.6953 cycles</title></circle>
+<circle cx="881.73" cy="675.14" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 33; true RUL 106; raw prediction 105.8882; residual -0.1118 cycles</title></circle>
+<circle cx="611.13" cy="678.19" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 34; true RUL 7; raw prediction 4.4289; residual -2.5711 cycles</title></circle>
+<circle cx="622.07" cy="667.74" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 35; true RUL 11; raw prediction 16.8575; residual 5.8575 cycles</title></circle>
+<circle cx="643.93" cy="673.29" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 36; true RUL 19; raw prediction 20.3829; residual 1.3829 cycles</title></circle>
+<circle cx="649.40" cy="671.64" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 37; true RUL 21; raw prediction 23.7132; residual 2.7132 cycles</title></circle>
+<circle cx="728.67" cy="668.22" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 38; true RUL 50; raw prediction 55.4675; residual 5.4675 cycles</title></circle>
+<circle cx="980.13" cy="663.99" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 39; true RUL 142; raw prediction 150.8755; residual 8.8755 cycles</title></circle>
+<circle cx="668.53" cy="660.54" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 40; true RUL 28; raw prediction 39.6635; residual 11.6635 cycles</title></circle>
+<circle cx="641.20" cy="665.16" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 41; true RUL 18; raw prediction 25.9374; residual 7.9374 cycles</title></circle>
+<circle cx="619.33" cy="675.91" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 42; true RUL 10; raw prediction 9.2669; residual -0.7331 cycles</title></circle>
+<circle cx="753.27" cy="651.68" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 43; true RUL 59; raw prediction 77.8055; residual 18.8055 cycles</title></circle>
+<circle cx="889.93" cy="666.14" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 44; true RUL 109; raw prediction 116.1414; residual 7.1414 cycles</title></circle>
+<circle cx="903.60" cy="715.99" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 45; true RUL 114; raw prediction 80.9449; residual -33.0551 cycles</title></circle>
+<circle cx="720.47" cy="674.82" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 46; true RUL 47; raw prediction 47.1468; residual 0.1468 cycles</title></circle>
+<circle cx="961.00" cy="676.25" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 47; true RUL 135; raw prediction 133.9888; residual -1.0112 cycles</title></circle>
+<circle cx="843.47" cy="619.46" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 48; true RUL 92; raw prediction 136.7908; residual 44.7908 cycles</title></circle>
+<circle cx="649.40" cy="685.06" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 49; true RUL 21; raw prediction 12.8833; residual -8.1167 cycles</title></circle>
+<circle cx="807.93" cy="618.14" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 50; true RUL 79; raw prediction 124.8586; residual 45.8586 cycles</title></circle>
+<circle cx="903.60" cy="658.03" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 51; true RUL 114; raw prediction 127.6866; residual 13.6866 cycles</title></circle>
+<circle cx="671.27" cy="676.31" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 52; true RUL 29; raw prediction 27.9465; residual -1.0535 cycles</title></circle>
+<circle cx="663.07" cy="675.48" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 53; true RUL 26; raw prediction 25.6106; residual -0.3894 cycles</title></circle>
+<circle cx="857.13" cy="618.26" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 54; true RUL 97; raw prediction 142.7592; residual 45.7592 cycles</title></circle>
+<circle cx="966.47" cy="696.28" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 55; true RUL 137; raw prediction 119.8349; residual -17.1651 cycles</title></circle>
+<circle cx="633.00" cy="670.37" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 56; true RUL 15; raw prediction 18.7349; residual 3.7349 cycles</title></circle>
+<circle cx="873.53" cy="679.70" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 57; true RUL 103; raw prediction 99.2086; residual -3.7914 cycles</title></circle>
+<circle cx="693.13" cy="679.01" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 58; true RUL 37; raw prediction 33.7644; residual -3.2356 cycles</title></circle>
+<circle cx="903.60" cy="609.79" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 59; true RUL 114; raw prediction 166.5876; residual 52.5876 cycles</title></circle>
+<circle cx="865.33" cy="648.39" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 60; true RUL 100; raw prediction 121.4613; residual 21.4613 cycles</title></circle>
+<circle cx="649.40" cy="659.41" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 61; true RUL 21; raw prediction 33.5701; residual 12.5701 cycles</title></circle>
+<circle cx="739.60" cy="673.44" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 62; true RUL 54; raw prediction 55.2566; residual 1.2566 cycles</title></circle>
+<circle cx="788.80" cy="662.99" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 63; true RUL 72; raw prediction 81.6866; residual 9.6866 cycles</title></circle>
+<circle cx="668.53" cy="667.86" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 64; true RUL 28; raw prediction 33.7605; residual 5.7605 cycles</title></circle>
+<circle cx="941.87" cy="621.10" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 65; true RUL 128; raw prediction 171.4686; residual 43.4686 cycles</title></circle>
+<circle cx="630.27" cy="674.42" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 66; true RUL 14; raw prediction 14.4666; residual 0.4666 cycles</title></circle>
+<circle cx="802.47" cy="614.48" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 67; true RUL 77; raw prediction 125.8086; residual 48.8086 cycles</title></circle>
+<circle cx="613.87" cy="671.60" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 68; true RUL 8; raw prediction 10.7410; residual 2.7410 cycles</title></circle>
+<circle cx="922.73" cy="644.16" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 69; true RUL 121; raw prediction 145.8745; residual 24.8745 cycles</title></circle>
+<circle cx="848.93" cy="658.31" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 70; true RUL 94; raw prediction 107.4591; residual 13.4591 cycles</title></circle>
+<circle cx="914.53" cy="662.30" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 71; true RUL 118; raw prediction 128.2457; residual 10.2457 cycles</title></circle>
+<circle cx="728.67" cy="639.56" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 72; true RUL 50; raw prediction 78.5785; residual 28.5785 cycles</title></circle>
+<circle cx="950.07" cy="645.21" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 73; true RUL 131; raw prediction 155.0272; residual 24.0272 cycles</title></circle>
+<circle cx="936.40" cy="694.30" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 74; true RUL 126; raw prediction 110.4366; residual -15.5634 cycles</title></circle>
+<circle cx="900.87" cy="638.83" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 75; true RUL 113; raw prediction 142.1728; residual 29.1728 cycles</title></circle>
+<circle cx="619.33" cy="674.65" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 76; true RUL 10; raw prediction 10.2797; residual 0.2797 cycles</title></circle>
+<circle cx="684.93" cy="686.22" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 77; true RUL 34; raw prediction 24.9556; residual -9.0444 cycles</title></circle>
+<circle cx="884.47" cy="583.50" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 78; true RUL 107; raw prediction 180.7884; residual 73.7884 cycles</title></circle>
+<circle cx="764.20" cy="604.54" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 79; true RUL 63; raw prediction 119.8213; residual 56.8213 cycles</title></circle>
+<circle cx="838.00" cy="675.91" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 80; true RUL 90; raw prediction 89.2646; residual -0.7354 cycles</title></circle>
+<circle cx="613.87" cy="666.87" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 81; true RUL 8; raw prediction 14.5547; residual 6.5547 cycles</title></circle>
+<circle cx="616.60" cy="682.65" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 82; true RUL 9; raw prediction 2.8331; residual -6.1669 cycles</title></circle>
+<circle cx="966.47" cy="647.35" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 83; true RUL 137; raw prediction 159.2979; residual 22.2979 cycles</title></circle>
+<circle cx="750.53" cy="682.86" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 84; true RUL 58; raw prediction 51.6576; residual -6.3424 cycles</title></circle>
+<circle cx="914.53" cy="626.19" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 85; true RUL 118; raw prediction 157.3614; residual 39.3614 cycles</title></circle>
+<circle cx="835.27" cy="639.75" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 86; true RUL 89; raw prediction 117.4254; residual 28.4254 cycles</title></circle>
+<circle cx="909.07" cy="642.76" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 87; true RUL 116; raw prediction 142.0017; residual 26.0017 cycles</title></circle>
+<circle cx="906.33" cy="628.01" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 88; true RUL 115; raw prediction 152.8912; residual 37.8912 cycles</title></circle>
+<circle cx="963.73" cy="674.74" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 89; true RUL 136; raw prediction 136.2119; residual 0.2119 cycles</title></circle>
+<circle cx="668.53" cy="668.07" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 90; true RUL 28; raw prediction 33.5920; residual 5.5920 cycles</title></circle>
+<circle cx="695.87" cy="669.60" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 91; true RUL 38; raw prediction 42.3509; residual 4.3509 cycles</title></circle>
+<circle cx="646.67" cy="676.08" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 92; true RUL 20; raw prediction 19.1326; residual -0.8674 cycles</title></circle>
+<circle cx="824.33" cy="710.88" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 93; true RUL 85; raw prediction 56.0684; residual -28.9316 cycles</title></circle>
+<circle cx="742.33" cy="650.61" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 94; true RUL 55; raw prediction 74.6720; residual 19.6720 cycles</title></circle>
+<circle cx="941.87" cy="665.48" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 95; true RUL 128; raw prediction 135.6802; residual 7.6802 cycles</title></circle>
+<circle cx="966.47" cy="668.61" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 96; true RUL 137; raw prediction 142.1526; residual 5.1526 cycles</title></circle>
+<circle cx="816.13" cy="657.59" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 97; true RUL 82; raw prediction 96.0426; residual 14.0426 cycles</title></circle>
+<circle cx="753.27" cy="618.64" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 98; true RUL 59; raw prediction 104.4551; residual 45.4551 cycles</title></circle>
+<circle cx="911.80" cy="652.64" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 99; true RUL 117; raw prediction 135.0340; residual 18.0340 cycles</title></circle>
+<circle cx="646.67" cy="678.61" r="3.4" fill="#475569" fill-opacity="0.7"><title>Engine 100; true RUL 20; raw prediction 17.0920; residual -2.9080 cycles</title></circle>
+<rect x="592.0" y="520.0" width="410.0" height="310.0" fill="none" stroke="#334155"/>
+<text x="797.0" y="877.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#172033">True RUL (cycles)</text>
+<text x="538.0" y="675.0" transform="rotate(-90 538.0 675.0)" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#172033">Residual: prediction − true RUL (cycles)</text>
+</svg>

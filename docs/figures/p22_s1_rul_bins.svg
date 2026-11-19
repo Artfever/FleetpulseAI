@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1560" height="650" viewBox="0 0 1560 650">
+<rect width="100%" height="100%" fill="white"/>
+<text x="780.0" y="36.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="23" fill="#172033">Mean absolute error by true RUL bin (FD001/test)</text>
+<line x1="105" y1="520.0" x2="1485" y2="520.0" stroke="#e2e8f0"/>
+<text x="91.0" y="524.0" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#172033">0</text>
+<line x1="105" y1="434.0" x2="1485" y2="434.0" stroke="#e2e8f0"/>
+<text x="91.0" y="438.0" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#172033">20</text>
+<line x1="105" y1="348.0" x2="1485" y2="348.0" stroke="#e2e8f0"/>
+<text x="91.0" y="352.0" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#172033">40</text>
+<line x1="105" y1="262.0" x2="1485" y2="262.0" stroke="#e2e8f0"/>
+<text x="91.0" y="266.0" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#172033">60</text>
+<line x1="105" y1="176.0" x2="1485" y2="176.0" stroke="#e2e8f0"/>
+<text x="91.0" y="180.0" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#172033">80</text>
+<line x1="105" y1="90.0" x2="1485" y2="90.0" stroke="#e2e8f0"/>
+<text x="91.0" y="94.0" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#172033">100</text>
+<rect x="155.6" y="474.3" width="57.4" height="45.7" fill="#2563eb"><title>Decision Tree; low bin; count 25; MAE 10.624 cycles</title></rect>
+<text x="184.3" y="469.3" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#172033">10.6</text>
+<text x="184.3" y="537.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#172033">n=25</text>
+<rect x="227.4" y="493.9" width="57.4" height="26.1" fill="#0f766e"><title>Random Forest; low bin; count 25; MAE 6.070 cycles</title></rect>
+<text x="256.1" y="488.9" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#172033">6.1</text>
+<text x="256.1" y="537.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#172033">n=25</text>
+<rect x="299.1" y="491.3" width="57.4" height="28.7" fill="#ea580c"><title>XGBoost; low bin; count 25; MAE 6.682 cycles</title></rect>
+<text x="327.8" y="486.3" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#172033">6.7</text>
+<text x="327.8" y="537.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#172033">n=25</text>
+<rect x="370.9" y="132.6" width="57.4" height="387.4" fill="#9333ea"><title>Constant mean baseline; low bin; count 25; MAE 90.088 cycles</title></rect>
+<text x="399.6" y="127.6" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#172033">90.1</text>
+<text x="399.6" y="537.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#172033">n=25</text>
+<rect x="442.6" y="503.0" width="57.4" height="17.0" fill="#475569"><title>Dense RUL MLP; low bin; count 25; MAE 3.960 cycles</title></rect>
+<text x="471.3" y="498.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#172033">4.0</text>
+<text x="471.3" y="537.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#172033">n=25</text>
+<text x="335.0" y="564.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" fill="#172033">Low (0–30)</text>
+<rect x="615.6" y="393.0" width="57.4" height="127.0" fill="#2563eb"><title>Decision Tree; medium bin; count 42; MAE 29.532 cycles</title></rect>
+<text x="644.3" y="388.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#172033">29.5</text>
+<text x="644.3" y="537.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#172033">n=42</text>
+<rect x="687.4" y="405.9" width="57.4" height="114.1" fill="#0f766e"><title>Random Forest; medium bin; count 42; MAE 26.532 cycles</title></rect>
+<text x="716.1" y="400.9" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#172033">26.5</text>
+<text x="716.1" y="537.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#172033">n=42</text>
+<rect x="759.1" y="419.1" width="57.4" height="100.9" fill="#ea580c"><title>XGBoost; medium bin; count 42; MAE 23.465 cycles</title></rect>
+<text x="787.8" y="414.1" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#172033">23.5</text>
+<text x="787.8" y="537.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#172033">n=42</text>
+<rect x="830.9" y="376.9" width="57.4" height="143.1" fill="#9333ea"><title>Constant mean baseline; medium bin; count 42; MAE 33.284 cycles</title></rect>
+<text x="859.6" y="371.9" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#172033">33.3</text>
+<text x="859.6" y="537.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#172033">n=42</text>
+<rect x="902.6" y="424.6" width="57.4" height="95.4" fill="#475569"><title>Dense RUL MLP; medium bin; count 42; MAE 22.188 cycles</title></rect>
+<text x="931.3" y="419.6" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#172033">22.2</text>
+<text x="931.3" y="537.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#172033">n=42</text>
+<text x="795.0" y="564.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" fill="#172033">Medium (31–100)</text>
+<rect x="1075.6" y="396.8" width="57.4" height="123.2" fill="#2563eb"><title>Decision Tree; high bin; count 33; MAE 28.649 cycles</title></rect>
+<text x="1104.3" y="391.8" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#172033">28.6</text>
+<text x="1104.3" y="537.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#172033">n=33</text>
+<rect x="1147.4" y="419.8" width="57.4" height="100.2" fill="#0f766e"><title>Random Forest; high bin; count 33; MAE 23.300 cycles</title></rect>
+<text x="1176.1" y="414.8" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#172033">23.3</text>
+<text x="1176.1" y="537.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#172033">n=33</text>
+<rect x="1219.1" y="429.8" width="57.4" height="90.2" fill="#ea580c"><title>XGBoost; high bin; count 33; MAE 20.979 cycles</title></rect>
+<text x="1247.8" y="424.8" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#172033">21.0</text>
+<text x="1247.8" y="537.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#172033">n=33</text>
+<rect x="1290.9" y="463.0" width="57.4" height="57.0" fill="#9333ea"><title>Constant mean baseline; high bin; count 33; MAE 13.267 cycles</title></rect>
+<text x="1319.6" y="458.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#172033">13.3</text>
+<text x="1319.6" y="537.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#172033">n=33</text>
+<rect x="1362.6" y="417.7" width="57.4" height="102.3" fill="#475569"><title>Dense RUL MLP; high bin; count 33; MAE 23.793 cycles</title></rect>
+<text x="1391.3" y="412.7" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#172033">23.8</text>
+<text x="1391.3" y="537.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#172033">n=33</text>
+<text x="1255.0" y="564.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" fill="#172033">High (101+)</text>
+<rect x="105" y="90" width="1380" height="430" fill="none" stroke="#334155"/>
+<text x="30.0" y="305.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#172033">MAE (cycles)</text>
+<rect x="180" y="614" width="14" height="14" fill="#2563eb"/>
+<text x="202.0" y="626.0" text-anchor="start" font-family="Arial,sans-serif" font-size="12" fill="#172033">Decision Tree</text>
+<rect x="450" y="614" width="14" height="14" fill="#0f766e"/>
+<text x="472.0" y="626.0" text-anchor="start" font-family="Arial,sans-serif" font-size="12" fill="#172033">Random Forest</text>
+<rect x="720" y="614" width="14" height="14" fill="#ea580c"/>
+<text x="742.0" y="626.0" text-anchor="start" font-family="Arial,sans-serif" font-size="12" fill="#172033">XGBoost</text>
+<rect x="990" y="614" width="14" height="14" fill="#9333ea"/>
+<text x="1012.0" y="626.0" text-anchor="start" font-family="Arial,sans-serif" font-size="12" fill="#172033">Constant mean baseline</text>
+<rect x="1260" y="614" width="14" height="14" fill="#475569"/>
+<text x="1282.0" y="626.0" text-anchor="start" font-family="Arial,sans-serif" font-size="12" fill="#172033">Dense RUL MLP</text>
+</svg>
