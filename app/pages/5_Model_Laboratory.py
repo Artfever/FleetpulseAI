@@ -1,6 +1,7 @@
 """Model Laboratory view."""
 
 import json
+from pathlib import Path
 
 import plotly.express as px
 import plotly.graph_objects as go
@@ -34,6 +35,9 @@ render_page(
     "Development validation and final test results are separated into distinct sections.",
     "Development validation informs model work. The official test section is held out and for final reporting only.",
 )
+_app_dir = Path(__file__).resolve().parents[1]
+st.page_link(st.Page(_app_dir / "pages" / "3_RUL_Prediction.py"), label="Continue to RUL Prediction")
+st.page_link(st.Page(_app_dir / "views" / "home.py", title="Home"), label="Return Home")
 
 st.subheader("Development validation and selection (FD001/train)")
 st.subheader("P11 candidate selection comparison")
