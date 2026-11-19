@@ -1,5 +1,6 @@
 """Model Laboratory view."""
 
+import base64
 import json
 from pathlib import Path
 
@@ -22,6 +23,11 @@ from fleetpulse.evaluation.model_comparison import (
     load_model_comparison,
     load_verified_forest_scores,
     load_verified_mlp_scores,
+)
+from fleetpulse.evaluation.p22_study_display import (
+    load_error_analysis,
+    load_sensor_sensitivity,
+    load_validation_bootstrap,
 )
 from fleetpulse.evaluation.selection_manifest import load_selection_manifest
 from fleetpulse.features import FeatureConfig
@@ -345,6 +351,122 @@ else:
             "saved validation cutoff. The Random Forest aggregate scores appear in the table above. "
             "RUL estimates are not clipped."
         )
+
+st.divider()
+st.subheader("P22 saved model studies")
+st.caption(
+    "These are fixed experiment outputs, separate from the current prediction and planner inputs. "
+    "They summarize simulated FD001 evidence; none is an aircraft fault diagnosis or maintenance claim."
+)
+
+error_analysis_path = ui.PROJECT_ROOT / "docs/figures/p22_s1_error_analysis.json"
+try:
+    error_analysis = load_error_analysis(error_analysis_path)
+except (ValueError, TypeError) as error:
+    st.info(f"Saved P22 error diagnostics are unavailable: {error}")
+else:
+    st.markdown("**P22-S1 — Official FD001/test error diagnostics**")
+    st.caption(
+        "One point per engine at its greatest observed cycle; raw predictions are paired with the "
+        "separate test answers. Bins are analysis ranges, not maintenance thresholds."
+    )
+    error_rows = []
+    for model in error_analysis["models"].values():
+        summary = model["summary"]
+        error_rows.append(
+            {
+                "Model": model["display_name"],
+                "Version": model["version"],
+                "Low MAE (cycles)": summary["by_true_rul_bin"]["low"]["mae_cycles"],
+                "Medium MAE (cycles)": summary["by_true_rul_bin"]["medium"]["mae_cycles"],
+                "High MAE (cycles)": summary["by_true_rul_bin"]["high"]["mae_cycles"],
+                "Overall MAE (cycles)": summary["overall"]["mae_cycles"],
+                "Overall RMSE (cycles)": summary["overall"]["rmse_cycles"],
+            }
+        )
+    st.dataframe(error_rows, hide_index=True, width="stretch")
+    figure_paths = (
+        ("p22_s1_actual_vs_predicted.svg", "Raw prediction versus true RUL"),
+        ("p22_s1_residuals.svg", "Raw prediction minus true RUL, by true RUL"),
+        ("p22_s1_rul_bins.svg", "MAE within the declared true-RUL bins"),
+    )
+    figure_dir = ui.PROJECT_ROOT / "docs/figures"
+    for filename, description in figure_paths:
+        figure_path = figure_dir / filename
+        try:
+            svg_bytes = figure_path.read_bytes()
+            if b"<svg" not in svg_bytes[:512] or b"<script" in svg_bytes.lower():
+                raise ValueError("the saved figure is not a safe SVG image")
+        except (OSError, ValueError) as error:
+            st.info(f"P22-S1 figure {filename} is unavailable: {error}")
+        else:
+            encoded = base64.b64encode(svg_bytes).decode("ascii")
+            st.markdown(
+                f'<img alt="{description}" src="data:image/svg+xml;base64,{encoded}" '
+                'style="display:block;max-width:100%;height:auto;" />',
+                unsafe_allow_html=True,
+            )
+            st.caption(description)
+    st.caption(
+        "P22-S1 uses five frozen model versions and 100 FD001/test engines. Its results are "
+        "descriptive summaries of this simulated test set, not tuning evidence or per-engine intervals."
+    )
+
+bootstrap_path = ui.PROJECT_ROOT / "docs/p22_s2_validation_bootstrap.json"
+try:
+    bootstrap = load_validation_bootstrap(bootstrap_path)
+except (ValueError, TypeError) as error:
+    st.info(f"Saved P22 validation bootstrap is unavailable: {error}")
+else:
+    st.markdown("**P22-S2 — Validation MAE variability across engines**")
+    bootstrap_rows = []
+    for model in bootstrap["models"].values():
+        interval = model["percentile_95_ci_mae_cycles"]
+        bootstrap_rows.append(
+            {
+                "Model": model["display_name"],
+                "Version": model["model_version"],
+                "Validation engines": model["engine_count"],
+                "Observed MAE (cycles)": model["observed_mae_cycles"],
+                "95% interval for validation MAE (cycles)": f"{interval[0]:.2f}–{interval[1]:.2f}",
+                "Bootstrap SE (cycles)": model["bootstrap_standard_error_cycles"],
+            }
+        )
+    st.dataframe(bootstrap_rows, hide_index=True, width="stretch")
+    st.caption(
+        "10,000 paired whole-engine resamples, seed 42. The interval summarizes variation in "
+        "aggregate validation MAE conditional on fixed models; it is not an interval for an engine's RUL."
+    )
+
+sensitivity_path = ui.PROJECT_ROOT / "docs/p22_s3_sensor_sensitivity.json"
+try:
+    sensitivity = load_sensor_sensitivity(sensitivity_path)
+except (ValueError, TypeError) as error:
+    st.info(f"Saved P22 sensor sensitivity study is unavailable: {error}")
+else:
+    st.markdown("**P22-S3 — Artificial sensor-change sensitivity**")
+    sensitivity_rows = []
+    for result in sensitivity["aggregate_summary"]:
+        sensitivity_rows.append(
+            {
+                "Model version": result["model_version"],
+                "Relative sensor change": f"±{result['relative_change_magnitude']:.0%}",
+                "Engine cases": result["engine_case_count"],
+                "Mean absolute raw RUL movement (cycles)": result[
+                    "mean_absolute_prediction_change_cycles"
+                ],
+                "95th percentile movement (cycles)": result[
+                    "p95_nearest_rank_absolute_prediction_change_cycles"
+                ],
+                "Maximum movement (cycles)": result["max_absolute_prediction_change_cycles"],
+                "Changed outputs": result["changed_output_count"],
+            }
+        )
+    st.dataframe(sensitivity_rows, hide_index=True, width="stretch")
+    st.caption(
+        "One channel at a time across 20 FD001/train validation prefixes; synthetic ±1%/±5% "
+        "changes are not observed noise or fault injections. Raw movement is sensitivity, not accuracy or causation."
+    )
 
 st.divider()
 st.subheader("Official held-out test results (FD001/test)")

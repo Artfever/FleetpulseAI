@@ -8,6 +8,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from fleetpulse import ui
+from fleetpulse.evaluation.p22_study_display import load_scheduler_study
 from fleetpulse.optimization.ga import (
     DEFAULT_GENERATIONS,
     DEFAULT_POPULATION_SIZE,
@@ -411,3 +412,114 @@ if saved_scenario is not None:
             row_labels,
             heading="Compare schedules on the saved synthetic scenario",
         )
+
+st.divider()
+st.subheader("Saved P22 scheduling studies")
+st.caption(
+    "These read-only results are fixed historical experiments. They do not use the selected fleet or "
+    "the live scenario controls above. Both studies used raw frozen Decision Tree predictions from "
+    "simulated FD001/test engines and labeled synthetic duration, priority, buffer, team and horizon assumptions."
+)
+
+fixed_study_path = ui.PROJECT_ROOT / "docs/p22_a1_fixed_fleet_scenarios.json"
+try:
+    fixed_study = load_scheduler_study(
+        fixed_study_path, expected_schema="p22-a1-fixed-fleet-scenarios-v1"
+    )
+except (ValueError, TypeError) as error:
+    st.info(f"Saved P22-A1 fleet study is unavailable: {error}")
+else:
+    st.markdown("**P22-A1 — Fixed fleet sizes, teams and buffers**")
+    st.caption(
+        f"Decision Tree {fixed_study['input_provenance']['model_version']}; "
+        f"GA population {fixed_study['ga_configuration']['population_size']}, "
+        f"{fixed_study['ga_configuration']['generations']} generations, seed "
+        f"{fixed_study['ga_configuration']['seed']}. The 120-cycle buffer is a stress assumption."
+    )
+    fixed_rows = []
+    fixed_labels = []
+    edd_values = []
+    ga_values = []
+    for case in fixed_study["scenarios"]:
+        label = f"{case['fleet_size']} engines / {case['team_count']} teams / {case['buffer_cycles']} cycle buffer"
+        fixed_labels.append(label)
+        edd_values.append(case["edd"]["weighted_tardiness_cycles"])
+        ga_values.append(case["ga"]["weighted_tardiness_cycles"])
+        fixed_rows.append(
+            {
+                "Fleet engines": case["fleet_size"],
+                "Teams": case["team_count"],
+                "Buffer (cycles)": case["buffer_cycles"],
+                "EDD weighted tardiness (weighted cycles)": case["edd"]["weighted_tardiness_cycles"],
+                "GA weighted tardiness (weighted cycles)": case["ga"]["weighted_tardiness_cycles"],
+                "GA outcome": case["ga_outcome_vs_edd"],
+                "EDD/GA makespan (cycles)": (
+                    f"{case['edd']['makespan_cycles']:g}/{case['ga']['makespan_cycles']:g}"
+                ),
+                "EDD/GA overflow (cycles)": (
+                    f"{case['edd']['horizon_overflow_cycles']:g}/"
+                    f"{case['ga']['horizon_overflow_cycles']:g}"
+                ),
+            }
+        )
+    st.dataframe(fixed_rows, hide_index=True, width="stretch")
+    fixed_figure = go.Figure()
+    fixed_figure.add_bar(name="EDD", x=fixed_labels, y=edd_values)
+    fixed_figure.add_bar(name="Seeded GA", x=fixed_labels, y=ga_values)
+    fixed_figure.update_layout(
+        barmode="group",
+        title="P22-A1 weighted tardiness by fixed scenario",
+        xaxis_title="Fleet size / teams / buffer",
+        yaxis_title="Weighted tardiness (weighted cycles)",
+        legend_title="Scheduler",
+    )
+    st.plotly_chart(fixed_figure, width="stretch")
+    outcomes = fixed_study["ga_outcomes"]
+    st.caption(
+        f"Observed in this 18-case matrix: GA tied {outcomes['equal']} times and improved "
+        f"weighted tardiness {outcomes['better']} times. This bounded heuristic is not a guarantee of general superiority."
+    )
+
+seed_study_path = ui.PROJECT_ROOT / "docs/p22_a2_seed_comparison.json"
+try:
+    seed_study = load_scheduler_study(
+        seed_study_path, expected_schema="p22-a2-seed-comparison-v1"
+    )
+except (ValueError, TypeError) as error:
+    st.info(f"Saved P22-A2 seed study is unavailable: {error}")
+else:
+    st.markdown("**P22-A2 — Scheduler comparison across fixed GA seeds**")
+    st.caption(
+        f"Seeds: {', '.join(str(seed) for seed in seed_study['ga_seeds'])}. "
+        "Each table row is one of the same 18 scenarios; scores are weighted tardiness in weighted cycles."
+    )
+    seed_rows = []
+    for case in seed_study["scenarios"]:
+        by_seed = ", ".join(
+            f"{entry['seed']}: {entry['ga']['weighted_tardiness_cycles']:g}"
+            for entry in case["ga_by_seed"]
+        )
+        outcome_count = {
+            outcome: sum(entry["outcome_vs_edd"] == outcome for entry in case["ga_by_seed"])
+            for outcome in ("better", "equal")
+        }
+        seed_rows.append(
+            {
+                "Fleet engines": case["fleet_size"],
+                "Teams": case["team_count"],
+                "Buffer (cycles)": case["buffer_cycles"],
+                "EDD weighted tardiness (weighted cycles)": case["edd"]["weighted_tardiness_cycles"],
+                "GA weighted tardiness by seed": by_seed,
+                "GA better/equal seeds": f"{outcome_count['better']}/{outcome_count['equal']}",
+                "All schedules feasible": all(
+                    entry["ga"]["feasible"] for entry in case["ga_by_seed"]
+                ),
+            }
+        )
+    st.dataframe(seed_rows, hide_index=True, width="stretch")
+    counts = seed_study["outcome_counts"]
+    st.caption(
+        f"Across {seed_study['ga_run_count']} paired seeded comparisons, GA tied {counts['equal']} times, "
+        f"improved {counts['better']} times and regressed zero times. All schedules were feasible and "
+        "same-seed repeats matched; this is descriptive evidence for these declared scenarios only."
+    )
