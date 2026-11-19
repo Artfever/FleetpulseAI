@@ -16,6 +16,10 @@ from fleetpulse.services.explanations import (
     explain_final_tree_history,
     explain_final_tree_prediction,
 )
+from fleetpulse.services.feature_preview import (
+    EngineFeaturePreview,
+    build_engine_feature_preview,
+)
 from fleetpulse.services.final_comparison import (
     FinalHistoryComparison,
     FinalModelFailure,
@@ -53,12 +57,14 @@ from fleetpulse.services.schedule_comparison import (
     ScheduleMethodResult,
     compare_schedules,
 )
+from fleetpulse.services.sensor_history import SensorHistorySummary, summarize_sensor_history
 from fleetpulse.services.uploaded_history import predict_uploaded_csv
 
 __all__ = [
     "BACKGROUND_SELECTION_POLICY",
     "MAX_REPLAY_CACHE_POINTS",
     "MAX_REPLAY_POINTS",
+    "EngineFeaturePreview",
     "EngineIdentity",
     "ExplanationConsistency",
     "FeatureContribution",
@@ -80,7 +86,9 @@ __all__ = [
     "RawRULPrediction",
     "ScheduleComparisonResult",
     "ScheduleMethodResult",
+    "SensorHistorySummary",
     "TrainingFeatureBackground",
+    "build_engine_feature_preview",
     "build_fd001_training_background",
     "build_paired_comparison_artifact",
     "build_planning_scenario",
@@ -97,4 +105,5 @@ __all__ = [
     "predict_rul_with_context",
     "predict_uploaded_csv",
     "replay_engine_history",
+    "summarize_sensor_history",
 ]
