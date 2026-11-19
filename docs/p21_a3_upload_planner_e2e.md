@@ -36,6 +36,11 @@ is disabled.
   is one simulated training-prefix prediction, not accuracy, official-test, or
   maintenance evidence. The real-bundle test skips in clean environments where
   that intentionally ignored artifact is absent.
+- The local manifest identifies the model's training seed as 42,
+  `max_depth=8`, and `min_samples_leaf=5`; it records 16,738 fitting rows from
+  80 engines. The feature config is `past-only-v1` with a 30-cycle window and
+  96 ordered features. These identify the saved local artifact used by the
+  integration test; no training or artifact changes were made in this task.
 - Existing `tests/test_p20_workflow_gate.py` covers the built-in packaged
   FD001/train flow for engines 4, 5, and 12 through Fleet Overview and both
   schedulers using the same local bundle. It asserts raw RUL values
@@ -52,6 +57,6 @@ Checks on the implementation branch:
 - `.venv/Scripts/python.exe -m streamlit run app/Home.py --server.port 18603 --server.headless true` — started; `curl.exe --fail --silent --show-error http://localhost:18603/_stcore/health` returned `ok`; server stopped.
 - `git diff --check` — PASS.
 
-The task's required teammate inspection/discussion of the actual uploaded
-output and its limits remains to be recorded before #223 is closed. No raw data,
-model, or trained artifact was added to Git.
+Abdullah confirmed that a teammate inspected and discussed the exact uploaded
+output and its limits. No raw data, model, or trained artifact was added to
+Git.
