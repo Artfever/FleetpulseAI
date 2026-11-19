@@ -4,10 +4,10 @@ from pathlib import Path
 
 import streamlit as st
 
+from fleetpulse import ui
 from fleetpulse.data.quality import SENSOR_COLUMNS
 from fleetpulse.data.targets import calculate_training_rul
 from fleetpulse.services import build_engine_feature_preview, summarize_sensor_history
-from fleetpulse.ui import render_training_data
 from fleetpulse.visualization import sensor_figure
 
 st.title("Engine Explorer")
@@ -15,10 +15,24 @@ st.caption("Explore an individual engine history.")
 _app_dir = Path(__file__).resolve().parents[1]
 st.page_link(st.Page(_app_dir / "pages" / "3_RUL_Prediction.py"), label="Continue to RUL Prediction")
 st.page_link(st.Page(_app_dir / "pages" / "1_Fleet_Overview.py"), label="Open Fleet Overview")
-records = render_training_data()
+records = ui.render_training_data()
 if records is not None:
     engine_ids = sorted({int(record["unit_id"]) for record in records})
-    selected_engine = st.selectbox("Training engine ID", engine_ids)
+    ui.prepare_selection(
+        ui.P21_SELECTED_ENGINE_STATE_KEY,
+        ui.P21_SELECTED_ENGINE_EXPLORER_WIDGET_KEY,
+        engine_ids,
+    )
+    selected_engine = st.selectbox(
+        "Training engine ID",
+        engine_ids,
+        key=ui.P21_SELECTED_ENGINE_EXPLORER_WIDGET_KEY,
+        on_change=ui.remember_selection,
+        args=(
+            ui.P21_SELECTED_ENGINE_STATE_KEY,
+            ui.P21_SELECTED_ENGINE_EXPLORER_WIDGET_KEY,
+        ),
+    )
     engine_records = sorted(
         (record for record in records if record["unit_id"] == selected_engine),
         key=lambda record: record["cycle"],
@@ -88,8 +102,21 @@ if records is not None:
             "Simulated FD001 training data; inspection only. Features use the selected "
             "engine's observed history through the selected cycle, not future rows or RUL labels."
         )
+        cycle_options = [int(row["cycle"]) for row in engine_records]
+        ui.prepare_selection(
+            ui.P21_SELECTED_CYCLE_STATE_KEY,
+            ui.P21_SELECTED_CYCLE_EXPLORER_WIDGET_KEY,
+            cycle_options,
+        )
         selected_cycle = st.selectbox(
-            "Feature preview cycle", [int(row["cycle"]) for row in engine_records]
+            "Feature preview cycle",
+            cycle_options,
+            key=ui.P21_SELECTED_CYCLE_EXPLORER_WIDGET_KEY,
+            on_change=ui.remember_selection,
+            args=(
+                ui.P21_SELECTED_CYCLE_STATE_KEY,
+                ui.P21_SELECTED_CYCLE_EXPLORER_WIDGET_KEY,
+            ),
         )
         try:
             preview = build_engine_feature_preview(

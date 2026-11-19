@@ -52,6 +52,16 @@ _app_dir = Path(__file__).resolve().parents[1]
 st.page_link(st.Page(_app_dir / "pages" / "1_Fleet_Overview.py"), label="Continue to Fleet Overview")
 st.page_link(st.Page(_app_dir / "pages" / "2_Engine_Explorer.py"), label="Return to Engine Explorer")
 
+ui.prepare_selection(
+    ui.P21_HISTORY_SOURCE_STATE_KEY,
+    ui.P21_HISTORY_SOURCE_WIDGET_KEY,
+    [
+        "Local FD001 training data",
+        "Packaged FD001/train parity subset",
+        "Illustrative synthetic example",
+        "Upload CSV",
+    ],
+)
 source = st.selectbox(
     "History source",
     [
@@ -60,6 +70,9 @@ source = st.selectbox(
         "Illustrative synthetic example",
         "Upload CSV",
     ],
+    key=ui.P21_HISTORY_SOURCE_WIDGET_KEY,
+    on_change=ui.remember_selection,
+    args=(ui.P21_HISTORY_SOURCE_STATE_KEY, ui.P21_HISTORY_SOURCE_WIDGET_KEY),
 )
 
 artifact_dir = ui.PROJECT_ROOT / "artifacts" / "development"
@@ -105,10 +118,18 @@ final_registry_names = {
     "XGBoost": "xgboost-rul",
     "Dense MLP (CPU)": "dense-rul-mlp-final",
 }
+ui.prepare_selection(
+    ui.P21_SELECTED_MODEL_STATE_KEY,
+    ui.P21_SELECTED_MODEL_WIDGET_KEY,
+    model_options,
+)
 selected_model = st.selectbox(
     "RUL model",
     model_options,
     format_func=lambda name: f"{name} · Development · {development_versions[name]}",
+    key=ui.P21_SELECTED_MODEL_WIDGET_KEY,
+    on_change=ui.remember_selection,
+    args=(ui.P21_SELECTED_MODEL_STATE_KEY, ui.P21_SELECTED_MODEL_WIDGET_KEY),
 )
 final_model_spec = FINAL_MODEL_REGISTRY[final_registry_names[selected_model]]
 st.caption(
@@ -342,7 +363,21 @@ else:
 
 if records is not None:
     engine_ids = sorted({int(row["unit_id"]) for row in records})
-    engine = st.selectbox("Engine ID", engine_ids)
+    ui.prepare_selection(
+        ui.P21_SELECTED_ENGINE_STATE_KEY,
+        ui.P21_SELECTED_ENGINE_PREDICTION_WIDGET_KEY,
+        engine_ids,
+    )
+    engine = st.selectbox(
+        "Engine ID",
+        engine_ids,
+        key=ui.P21_SELECTED_ENGINE_PREDICTION_WIDGET_KEY,
+        on_change=ui.remember_selection,
+        args=(
+            ui.P21_SELECTED_ENGINE_STATE_KEY,
+            ui.P21_SELECTED_ENGINE_PREDICTION_WIDGET_KEY,
+        ),
+    )
     history = sorted(
         (row for row in records if row["unit_id"] == engine), key=lambda row: row["cycle"]
     )
@@ -383,10 +418,22 @@ if records is not None:
             "or maintenance result."
         )
     cycle_options = [int(row["cycle"]) for row in history]
+    ui.prepare_selection(
+        ui.P21_SELECTED_CYCLE_STATE_KEY,
+        ui.P21_SELECTED_CYCLE_PREDICTION_WIDGET_KEY,
+        cycle_options,
+        default=cycle_options[-1],
+    )
     cycle = st.select_slider(
         "Observed cycle",
         options=cycle_options,
         value=cycle_options[-1],
+        key=ui.P21_SELECTED_CYCLE_PREDICTION_WIDGET_KEY,
+        on_change=ui.remember_selection,
+        args=(
+            ui.P21_SELECTED_CYCLE_STATE_KEY,
+            ui.P21_SELECTED_CYCLE_PREDICTION_WIDGET_KEY,
+        ),
     )
     sensor = st.selectbox("Sensor history", SENSOR_COLUMNS)
     visible_history = [row for row in history if int(row["cycle"]) <= cycle]
