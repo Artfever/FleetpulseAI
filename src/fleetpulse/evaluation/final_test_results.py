@@ -229,7 +229,7 @@ def build_residual_figures(results: Mapping[str, Any]) -> tuple[str, str]:
         yaxis_title="Engine count",
         barmode="overlay",
     )
-    prediction_figure.add_hline(y=0, line_dash="dash", line_color="black")
+    prediction_figure.add_hline(y=0, line_dash="dash", line_color="#697586")
     prediction_figure.update_layout(
         title="FD001/test residual by true RUL — frozen P12 models",
         xaxis_title="True RUL at final observed cycle (cycles)",

@@ -2,7 +2,10 @@
 
 import pytest
 
-from fleetpulse.evaluation.final_test_results import summarize_paired_results
+from fleetpulse.evaluation.final_test_results import (
+    build_residual_figures,
+    summarize_paired_results,
+)
 from fleetpulse.evaluation.official_test_pairing import PAIRING_SCHEMA, _canonical_sha256
 
 
@@ -69,6 +72,19 @@ def test_result_summary_saves_per_engine_residuals_and_raw_mae_rmse():
     assert model["rows"][1]["squared_error_cycles_squared"] == 9.0
     assert results["metric_definitions"]["predictions_clipped"] is False
     assert "not used" in results["results_use"]
+
+
+def test_residual_chart_uses_theme_visible_reference_line_and_cycle_units():
+    results = summarize_paired_results(
+        _paired_document(), _artifacts(), paired_file_sha256="e" * 64
+    )
+
+    _, residual_by_rul_html = build_residual_figures(results)
+
+    assert "#697586" in residual_by_rul_html
+    assert "True RUL at final observed cycle (cycles)" in residual_by_rul_html
+    assert "Residual: raw prediction" in residual_by_rul_html
+    assert "true RUL (cycles)" in residual_by_rul_html
 
 
 def test_result_summary_rejects_changed_model_version_or_bad_order():
