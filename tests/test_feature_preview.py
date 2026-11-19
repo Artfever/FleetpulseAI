@@ -7,6 +7,7 @@ from streamlit.testing.v1 import AppTest
 
 from fleetpulse import PROJECT_ROOT, features, ui
 from fleetpulse.data.loader import HISTORY_COLUMNS
+from fleetpulse.services import feature_preview as preview_service
 
 
 def test_feature_preview_passes_only_selected_engine_prefix(tmp_path, monkeypatch):
@@ -23,13 +24,13 @@ def test_feature_preview_passes_only_selected_engine_prefix(tmp_path, monkeypatc
     )
     monkeypatch.setattr(ui, "PROJECT_ROOT", tmp_path)
     calls = []
-    original = features.engineer_features
+    original = preview_service.engineer_features
 
     def capture(history, **kwargs):
         calls.append([row.copy() for row in history])
         return original(history, **kwargs)
 
-    monkeypatch.setattr(features, "engineer_features", capture)
+    monkeypatch.setattr(preview_service, "engineer_features", capture)
     app = AppTest.from_file(str(PROJECT_ROOT / "app" / "Home.py"), default_timeout=30).run()
     page = app.switch_page("pages/2_Engine_Explorer.py").run()
     page.selectbox[0].set_value(900002).run()

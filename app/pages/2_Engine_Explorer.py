@@ -1,12 +1,10 @@
 """Explore the observed records for one FD001 training engine."""
 
-from itertools import pairwise
-
 import streamlit as st
 
 from fleetpulse.data.quality import SENSOR_COLUMNS
 from fleetpulse.data.targets import calculate_training_rul
-from fleetpulse.features import FeatureConfig, engineer_features
+from fleetpulse.services import build_engine_feature_preview, summarize_sensor_history
 from fleetpulse.ui import render_training_data
 from fleetpulse.visualization import sensor_figure
 
@@ -48,19 +46,11 @@ if records is not None:
         )
         for sensor in selected_sensors:
             values = [float(record[sensor]) for record in engine_records]
-            differences = [right - left for left, right in pairwise(values)]
-            reversals = sum(
-                (left < 0 < right) or (left > 0 > right)
-                for left, right in pairwise(differences)
-            )
-            pattern = (
-                "flat across observed cycles"
-                if max(values) == min(values)
-                else "varies across observed cycles"
-            )
+            summary = summarize_sensor_history(values)
             st.markdown(
-                f"**{sensor}:** {pattern}; observed range "
-                f"{min(values):.6g} to {max(values):.6g}; {reversals} direction reversals."
+                f"**{sensor}:** {summary.pattern}; observed range "
+                f"{summary.minimum:.6g} to {summary.maximum:.6g}; "
+                f"{summary.direction_reversals} direction reversals."
             )
             st.line_chart(
                 {"cycle": [record["cycle"] for record in engine_records], sensor: values},
@@ -96,19 +86,18 @@ if records is not None:
         selected_cycle = st.selectbox(
             "Feature preview cycle", [int(row["cycle"]) for row in engine_records]
         )
-        prefix = [row for row in engine_records if row["cycle"] <= selected_cycle]
-        config = FeatureConfig()
         try:
-            vector = engineer_features(
-                prefix,
+            preview = build_engine_feature_preview(
+                engine_records,
                 dataset_partition="FD001/train",
                 unit_id=selected_engine,
                 selected_cycle=selected_cycle,
-                config=config,
             )
         except (ValueError, TypeError) as error:
             st.warning(f"Feature preview is unavailable: {error}")
         else:
+            vector = preview.vector
+            config = vector.config
             st.caption(
                 f"{vector.dataset_partition} engine {vector.unit_id}. "
                 f"Visible input: {vector.observed_row_count} rows through cycle "
@@ -116,7 +105,7 @@ if records is not None:
                 f"{config.window_cycles}-cycle window. Configuration: {config.version}."
             )
             st.write("Visible input history")
-            st.dataframe(prefix, hide_index=True)
+            st.dataframe(preview.visible_history, hide_index=True)
             st.write("Calculated features in model-vector order")
             st.caption(
                 "Latest, mean and standard deviation use source channel units; "
