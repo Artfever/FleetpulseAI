@@ -332,7 +332,7 @@ else:
                 y=[0, upper],
                 mode="lines",
                 name="Ideal prediction",
-                line={"dash": "dash", "color": "gray"},
+                line={"dash": "dash", "color": "#697586"},
             )
         )
         figure.update_layout(
