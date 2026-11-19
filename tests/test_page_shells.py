@@ -45,3 +45,4 @@ def test_page_shell_loads_without_data(filename, title, missing, tmp_path, monke
     home = app.switch_page("Home.py").run()
     assert not home.exception
     assert [heading.value for heading in home.title] == ["FleetPulse AI"]
+    assert any("matching artifacts are installed" in message.value for message in home.info)

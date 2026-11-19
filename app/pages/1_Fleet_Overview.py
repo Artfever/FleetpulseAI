@@ -7,6 +7,7 @@ import streamlit as st
 from streamlit.errors import StreamlitSecretNotFoundError
 
 from fleetpulse import deployment, ui
+from fleetpulse.models.usage_scope import classify_training_engine
 from fleetpulse.services import (
     PredictionArtifactError,
     PredictionInputError,
@@ -19,6 +20,23 @@ st.caption(
     "Review saved-model RUL estimates for observed engine histories. Estimates are in operating "
     "cycles and do not confirm physical faults or maintenance needs."
 )
+
+
+def _fit_membership_label(split_manifest: dict | None, unit_id: int) -> str:
+    """Describe saved development-split membership without inferring from absence."""
+    if split_manifest is None:
+        return "Unknown (split unavailable)"
+    try:
+        membership = classify_training_engine(
+            split_manifest, dataset_partition="FD001/train", unit_id=unit_id
+        )
+    except (TypeError, ValueError):
+        membership = "unknown"
+    return {
+        "fitting": "Seen during fitting",
+        "validation": "Not seen during fitting (development validation engine)",
+        "unknown": "Unknown (not listed in saved split)",
+    }[membership]
 
 source = st.selectbox(
     "History source",
@@ -34,6 +52,17 @@ else:
 if records:
     artifact_dir = ui.PROJECT_ROOT / "artifacts" / "development"
     manifest_path = artifact_dir / "decision_tree_validation.json"
+    split_path = ui.PROJECT_ROOT / "artifacts" / "split_manifest.json"
+    try:
+        split_manifest = json.loads(split_path.read_text(encoding="utf-8"))
+        if not isinstance(split_manifest, dict):
+            raise TypeError("the saved split manifest must be an object")
+    except (OSError, ValueError, TypeError) as error:
+        split_manifest = None
+        st.warning(
+            "Training-engine fit membership cannot be verified from the saved development "
+            f"split ({error}); affected rows are labeled unknown."
+        )
     try:
         supplied_bundle = st.secrets.get("deployment_model")
     except StreamlitSecretNotFoundError:
@@ -104,6 +133,9 @@ if records:
                     "Dataset": result.identity.dataset_partition,
                     "Engine ID": result.identity.unit_id,
                     "Observed cycle": result.observed_cycle,
+                    "Fit membership": _fit_membership_label(
+                        split_manifest, result.identity.unit_id
+                    ),
                     "Predicted RUL (cycles)": result.displayed_rul_cycles,
                     "Raw RUL (cycles)": result.raw_rul_cycles,
                     "Model": result.model_name,
@@ -159,6 +191,9 @@ if records:
                     "Dataset": result.identity.dataset_partition,
                     "Engine ID": result.identity.unit_id,
                     "Observed cycle": result.observed_cycle,
+                    "Fit membership": _fit_membership_label(
+                        split_manifest, result.identity.unit_id
+                    ),
                     "Predicted RUL (cycles)": result.displayed_rul_cycles,
                     "Raw RUL (cycles)": result.raw_rul_cycles,
                     "Model": result.model_name,

@@ -41,5 +41,8 @@ def test_home_empty_state(tmp_path, monkeypatch):
     monkeypatch.setattr(ui, "PROJECT_ROOT", tmp_path)
     app = AppTest.from_file(str(PROJECT_ROOT / "app" / "Home.py"), default_timeout=10).run()
     assert not app.exception
-    assert any("Trained models and evaluation results" in item.value for item in app.info)
+    assert any(
+        "Verified model bundles and evaluation reports" in item.value
+        for item in app.info
+    )
     assert any("Engine history data is not available" in item.value for item in app.warning)

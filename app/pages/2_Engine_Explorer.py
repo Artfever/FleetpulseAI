@@ -64,7 +64,7 @@ if records is not None:
             "This is a visual description of readings, not a fault or degradation diagnosis."
         )
     with truth_tab:
-        st.subheader("Known training RUL ? analysis only")
+        st.subheader("Known training RUL (analysis only)")
         st.caption(
             "Uncapped remaining cycles calculated from the complete training engine's "
             "final cycle. These labels use the future failure cycle and must never be "
