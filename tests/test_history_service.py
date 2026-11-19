@@ -281,6 +281,32 @@ def test_replay_rejects_a_cutoff_missing_from_engine_history(monkeypatch):
         )
 
 
+@pytest.mark.parametrize("unit_id", [4.0])
+def test_replay_keeps_accepting_integral_numeric_engine_ids(unit_id):
+    selected = history_service._select_replay_engine_records(
+        (_row(unit_id, 1),), 4
+    )
+    assert len(selected) == 1
+
+
+def test_replay_still_rejects_invalid_identity_in_an_unselected_row(monkeypatch):
+    monkeypatch.setattr(
+        history_service,
+        "predict_rul_with_context",
+        lambda *args, **kwargs: pytest.fail("invalid row identity must fail before prediction"),
+    )
+    rows = [_row(4, 1), _row(0, 1)]
+    with pytest.raises(PredictionInputError, match="no valid engine identity"):
+        history_service.replay_engine_history(
+            rows,
+            dataset_partition="FD001/train",
+            unit_id=4,
+            selected_cycle=1,
+            replay_cutoffs=[1],
+            manifest_path="test-manifest.json",
+        )
+
+
 def test_replay_caps_iteration_for_unbounded_cutoff_iterables():
     with pytest.raises(PredictionInputError, match="cannot contain more than"):
         history_service.replay_engine_history(
