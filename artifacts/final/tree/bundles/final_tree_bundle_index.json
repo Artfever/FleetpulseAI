@@ -1,0 +1,28 @@
+{
+  "payload": {
+    "artifact_role": "final-tree-model-inventory",
+    "bundles": {
+      "constant-rul": {
+        "manifest_file": "constant-rul_manifest.json",
+        "manifest_sha256": "dff249bdfef9426b731a4d8fb8f74bd298571d38e86eb277f0a2a8b27d724c96"
+      },
+      "decision-tree-rul": {
+        "manifest_file": "decision-tree-rul_manifest.json",
+        "manifest_sha256": "ed434d11ce7ae22cd6445aa18fc4fb7e5db5f3438dded681b596ef54d6d37e89"
+      },
+      "random-forest-rul": {
+        "manifest_file": "random-forest-rul_manifest.json",
+        "manifest_sha256": "f52ff4dbcb9c3876ff045bebfaef791652d996a151e987815cf37a6afed69b1a"
+      },
+      "xgboost-rul": {
+        "manifest_file": "xgboost-rul_manifest.json",
+        "manifest_sha256": "e40f4a9142caf5dc6d8c4880a2b0e526ef0e9e097e472ab70d44aa79169c2e11"
+      }
+    },
+    "refit_manifest_sha256": "28f0693746892c879c92001de6d07f60daef6715269b35061bcfc55be173e89e",
+    "schema_version": "p12-final-tree-bundle-index-v1",
+    "selection_manifest_sha256": "4cbda49f05eb928ebacc0a673de175dfae24b0017f7798db62a37cda8462fa2d",
+    "training_source_sha256": "963b5e22825b34d8b21c69e1aeb4af3e647050eb672ee8834ba4b5d91d2de0f8"
+  },
+  "sha256": "33bc4051835a5125f46ae31fc9f8a812325eb900559671de65dbe2e0273f8c89"
+}

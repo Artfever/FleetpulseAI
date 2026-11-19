@@ -1,6 +1,6 @@
 # FleetPulse model and artifact inventory
 
-Updated 18 November 2026. This inventory distinguishes development candidates from P12 full-training refits. The code registry is `fleetpulse.models.registry`: `DEVELOPMENT_MODEL_REGISTRY` (backward-compatible alias `MODEL_REGISTRY`), `FINAL_MODEL_REGISTRY`, and the stage-grouped `MODEL_REGISTRIES`. Treat stage, model name, version, feature config, and artifact checksum together; a repeated name/version does not mean that the serialized weights are identical.
+Updated 20 November 2026. This inventory distinguishes development candidates from P12 full-training refits. The code registry is `fleetpulse.models.registry`: `DEVELOPMENT_MODEL_REGISTRY` (backward-compatible alias `MODEL_REGISTRY`), `FINAL_MODEL_REGISTRY`, and the stage-grouped `MODEL_REGISTRIES`. Treat stage, model name, version, feature config, and artifact checksum together; a repeated name/version does not mean that the serialized weights are identical.
 
 ## Development candidates
 
@@ -17,7 +17,7 @@ The P06 constant baseline is an evaluation comparator, not an entry in the runti
 
 ## P12 final bundles
 
-All five final bundles were checksum-loaded and independently smoke-predicted in new processes in P12-T2. They use the 30-cycle, 96-feature `past-only-v1` contract and were refit using all 100 original FD001/train engines (20,631 cycle rows). Local outputs are ignored and are not tracked or provisioned to Streamlit Cloud by the registry.
+All five final bundles were checksum-loaded and independently smoke-predicted in new processes in P12-T2. They use the 30-cycle, 96-feature `past-only-v1` contract and were refit using all 100 original FD001/train engines (20,631 cycle rows). P23-T1 packages only the five serving bundles and their index for the full release; P13 evaluation outputs, refit intermediates, full source data, and development candidates remain excluded. The deployment registry resolves paths relative to the repository package root.
 
 | Final model | Version | Manifest path | Payload SHA-256 | Weights SHA-256 / state |
 | --- | --- | --- | --- | --- |

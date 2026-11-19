@@ -1,0 +1,564 @@
+{
+  "payload": {
+    "artifact_role": "final-training-model-bundle",
+    "model": {
+      "baseline": null,
+      "version": "decision-tree-rul-v1",
+      "weights_file": "decision_tree_final_v1.joblib",
+      "weights_sha256": "c33021cb9cf5931aba545b6a327d0547f14be1363cbd0c24d57f0ad923dd7bb3"
+    },
+    "name": "decision-tree-rul",
+    "schema_version": "p12-final-tree-bundle-v1",
+    "training": {
+      "dataset_partition": "train",
+      "feature_config": {
+        "channels": [
+          "setting_1",
+          "setting_2",
+          "setting_3",
+          "sensor_1",
+          "sensor_2",
+          "sensor_3",
+          "sensor_4",
+          "sensor_5",
+          "sensor_6",
+          "sensor_7",
+          "sensor_8",
+          "sensor_9",
+          "sensor_10",
+          "sensor_11",
+          "sensor_12",
+          "sensor_13",
+          "sensor_14",
+          "sensor_15",
+          "sensor_16",
+          "sensor_17",
+          "sensor_18",
+          "sensor_19",
+          "sensor_20",
+          "sensor_21"
+        ],
+        "version": "past-only-v1",
+        "window_cycles": 30
+      },
+      "feature_names": [
+        "setting_1_latest",
+        "setting_1_mean",
+        "setting_1_std",
+        "setting_1_slope",
+        "setting_2_latest",
+        "setting_2_mean",
+        "setting_2_std",
+        "setting_2_slope",
+        "setting_3_latest",
+        "setting_3_mean",
+        "setting_3_std",
+        "setting_3_slope",
+        "sensor_1_latest",
+        "sensor_1_mean",
+        "sensor_1_std",
+        "sensor_1_slope",
+        "sensor_2_latest",
+        "sensor_2_mean",
+        "sensor_2_std",
+        "sensor_2_slope",
+        "sensor_3_latest",
+        "sensor_3_mean",
+        "sensor_3_std",
+        "sensor_3_slope",
+        "sensor_4_latest",
+        "sensor_4_mean",
+        "sensor_4_std",
+        "sensor_4_slope",
+        "sensor_5_latest",
+        "sensor_5_mean",
+        "sensor_5_std",
+        "sensor_5_slope",
+        "sensor_6_latest",
+        "sensor_6_mean",
+        "sensor_6_std",
+        "sensor_6_slope",
+        "sensor_7_latest",
+        "sensor_7_mean",
+        "sensor_7_std",
+        "sensor_7_slope",
+        "sensor_8_latest",
+        "sensor_8_mean",
+        "sensor_8_std",
+        "sensor_8_slope",
+        "sensor_9_latest",
+        "sensor_9_mean",
+        "sensor_9_std",
+        "sensor_9_slope",
+        "sensor_10_latest",
+        "sensor_10_mean",
+        "sensor_10_std",
+        "sensor_10_slope",
+        "sensor_11_latest",
+        "sensor_11_mean",
+        "sensor_11_std",
+        "sensor_11_slope",
+        "sensor_12_latest",
+        "sensor_12_mean",
+        "sensor_12_std",
+        "sensor_12_slope",
+        "sensor_13_latest",
+        "sensor_13_mean",
+        "sensor_13_std",
+        "sensor_13_slope",
+        "sensor_14_latest",
+        "sensor_14_mean",
+        "sensor_14_std",
+        "sensor_14_slope",
+        "sensor_15_latest",
+        "sensor_15_mean",
+        "sensor_15_std",
+        "sensor_15_slope",
+        "sensor_16_latest",
+        "sensor_16_mean",
+        "sensor_16_std",
+        "sensor_16_slope",
+        "sensor_17_latest",
+        "sensor_17_mean",
+        "sensor_17_std",
+        "sensor_17_slope",
+        "sensor_18_latest",
+        "sensor_18_mean",
+        "sensor_18_std",
+        "sensor_18_slope",
+        "sensor_19_latest",
+        "sensor_19_mean",
+        "sensor_19_std",
+        "sensor_19_slope",
+        "sensor_20_latest",
+        "sensor_20_mean",
+        "sensor_20_std",
+        "sensor_20_slope",
+        "sensor_21_latest",
+        "sensor_21_mean",
+        "sensor_21_std",
+        "sensor_21_slope"
+      ],
+      "official_test_data_opened": false,
+      "official_test_labels_used": false,
+      "parameters": {
+        "max_depth": 8,
+        "min_samples_leaf": 5
+      },
+      "per_engine_row_counts": [
+        {
+          "row_count": 192,
+          "unit_id": 1
+        },
+        {
+          "row_count": 287,
+          "unit_id": 2
+        },
+        {
+          "row_count": 179,
+          "unit_id": 3
+        },
+        {
+          "row_count": 189,
+          "unit_id": 4
+        },
+        {
+          "row_count": 269,
+          "unit_id": 5
+        },
+        {
+          "row_count": 188,
+          "unit_id": 6
+        },
+        {
+          "row_count": 259,
+          "unit_id": 7
+        },
+        {
+          "row_count": 150,
+          "unit_id": 8
+        },
+        {
+          "row_count": 201,
+          "unit_id": 9
+        },
+        {
+          "row_count": 222,
+          "unit_id": 10
+        },
+        {
+          "row_count": 240,
+          "unit_id": 11
+        },
+        {
+          "row_count": 170,
+          "unit_id": 12
+        },
+        {
+          "row_count": 163,
+          "unit_id": 13
+        },
+        {
+          "row_count": 180,
+          "unit_id": 14
+        },
+        {
+          "row_count": 207,
+          "unit_id": 15
+        },
+        {
+          "row_count": 209,
+          "unit_id": 16
+        },
+        {
+          "row_count": 276,
+          "unit_id": 17
+        },
+        {
+          "row_count": 195,
+          "unit_id": 18
+        },
+        {
+          "row_count": 158,
+          "unit_id": 19
+        },
+        {
+          "row_count": 234,
+          "unit_id": 20
+        },
+        {
+          "row_count": 195,
+          "unit_id": 21
+        },
+        {
+          "row_count": 202,
+          "unit_id": 22
+        },
+        {
+          "row_count": 168,
+          "unit_id": 23
+        },
+        {
+          "row_count": 147,
+          "unit_id": 24
+        },
+        {
+          "row_count": 230,
+          "unit_id": 25
+        },
+        {
+          "row_count": 199,
+          "unit_id": 26
+        },
+        {
+          "row_count": 156,
+          "unit_id": 27
+        },
+        {
+          "row_count": 165,
+          "unit_id": 28
+        },
+        {
+          "row_count": 163,
+          "unit_id": 29
+        },
+        {
+          "row_count": 194,
+          "unit_id": 30
+        },
+        {
+          "row_count": 234,
+          "unit_id": 31
+        },
+        {
+          "row_count": 191,
+          "unit_id": 32
+        },
+        {
+          "row_count": 200,
+          "unit_id": 33
+        },
+        {
+          "row_count": 195,
+          "unit_id": 34
+        },
+        {
+          "row_count": 181,
+          "unit_id": 35
+        },
+        {
+          "row_count": 158,
+          "unit_id": 36
+        },
+        {
+          "row_count": 170,
+          "unit_id": 37
+        },
+        {
+          "row_count": 194,
+          "unit_id": 38
+        },
+        {
+          "row_count": 128,
+          "unit_id": 39
+        },
+        {
+          "row_count": 188,
+          "unit_id": 40
+        },
+        {
+          "row_count": 216,
+          "unit_id": 41
+        },
+        {
+          "row_count": 196,
+          "unit_id": 42
+        },
+        {
+          "row_count": 207,
+          "unit_id": 43
+        },
+        {
+          "row_count": 192,
+          "unit_id": 44
+        },
+        {
+          "row_count": 158,
+          "unit_id": 45
+        },
+        {
+          "row_count": 256,
+          "unit_id": 46
+        },
+        {
+          "row_count": 214,
+          "unit_id": 47
+        },
+        {
+          "row_count": 231,
+          "unit_id": 48
+        },
+        {
+          "row_count": 215,
+          "unit_id": 49
+        },
+        {
+          "row_count": 198,
+          "unit_id": 50
+        },
+        {
+          "row_count": 213,
+          "unit_id": 51
+        },
+        {
+          "row_count": 213,
+          "unit_id": 52
+        },
+        {
+          "row_count": 195,
+          "unit_id": 53
+        },
+        {
+          "row_count": 257,
+          "unit_id": 54
+        },
+        {
+          "row_count": 193,
+          "unit_id": 55
+        },
+        {
+          "row_count": 275,
+          "unit_id": 56
+        },
+        {
+          "row_count": 137,
+          "unit_id": 57
+        },
+        {
+          "row_count": 147,
+          "unit_id": 58
+        },
+        {
+          "row_count": 231,
+          "unit_id": 59
+        },
+        {
+          "row_count": 172,
+          "unit_id": 60
+        },
+        {
+          "row_count": 185,
+          "unit_id": 61
+        },
+        {
+          "row_count": 180,
+          "unit_id": 62
+        },
+        {
+          "row_count": 174,
+          "unit_id": 63
+        },
+        {
+          "row_count": 283,
+          "unit_id": 64
+        },
+        {
+          "row_count": 153,
+          "unit_id": 65
+        },
+        {
+          "row_count": 202,
+          "unit_id": 66
+        },
+        {
+          "row_count": 313,
+          "unit_id": 67
+        },
+        {
+          "row_count": 199,
+          "unit_id": 68
+        },
+        {
+          "row_count": 362,
+          "unit_id": 69
+        },
+        {
+          "row_count": 137,
+          "unit_id": 70
+        },
+        {
+          "row_count": 208,
+          "unit_id": 71
+        },
+        {
+          "row_count": 213,
+          "unit_id": 72
+        },
+        {
+          "row_count": 213,
+          "unit_id": 73
+        },
+        {
+          "row_count": 166,
+          "unit_id": 74
+        },
+        {
+          "row_count": 229,
+          "unit_id": 75
+        },
+        {
+          "row_count": 210,
+          "unit_id": 76
+        },
+        {
+          "row_count": 154,
+          "unit_id": 77
+        },
+        {
+          "row_count": 231,
+          "unit_id": 78
+        },
+        {
+          "row_count": 199,
+          "unit_id": 79
+        },
+        {
+          "row_count": 185,
+          "unit_id": 80
+        },
+        {
+          "row_count": 240,
+          "unit_id": 81
+        },
+        {
+          "row_count": 214,
+          "unit_id": 82
+        },
+        {
+          "row_count": 293,
+          "unit_id": 83
+        },
+        {
+          "row_count": 267,
+          "unit_id": 84
+        },
+        {
+          "row_count": 188,
+          "unit_id": 85
+        },
+        {
+          "row_count": 278,
+          "unit_id": 86
+        },
+        {
+          "row_count": 178,
+          "unit_id": 87
+        },
+        {
+          "row_count": 213,
+          "unit_id": 88
+        },
+        {
+          "row_count": 217,
+          "unit_id": 89
+        },
+        {
+          "row_count": 154,
+          "unit_id": 90
+        },
+        {
+          "row_count": 135,
+          "unit_id": 91
+        },
+        {
+          "row_count": 341,
+          "unit_id": 92
+        },
+        {
+          "row_count": 155,
+          "unit_id": 93
+        },
+        {
+          "row_count": 258,
+          "unit_id": 94
+        },
+        {
+          "row_count": 283,
+          "unit_id": 95
+        },
+        {
+          "row_count": 336,
+          "unit_id": 96
+        },
+        {
+          "row_count": 202,
+          "unit_id": 97
+        },
+        {
+          "row_count": 156,
+          "unit_id": 98
+        },
+        {
+          "row_count": 185,
+          "unit_id": 99
+        },
+        {
+          "row_count": 200,
+          "unit_id": 100
+        }
+      ],
+      "preprocessing": null,
+      "python_version": "3.12.10",
+      "random_seed": 42,
+      "refit_manifest_sha256": "28f0693746892c879c92001de6d07f60daef6715269b35061bcfc55be173e89e",
+      "scikit_learn_version": "1.9.1",
+      "selection_manifest_sha256": "4cbda49f05eb928ebacc0a673de175dfae24b0017f7798db62a37cda8462fa2d",
+      "target": "uncapped remaining cycles from complete original training lifetime",
+      "training_engine_count": 100,
+      "training_row_count": 20631,
+      "training_source_sha256": "963b5e22825b34d8b21c69e1aeb4af3e647050eb672ee8834ba4b5d91d2de0f8",
+      "xgboost_version": "3.4.1"
+    }
+  },
+  "sha256": "ed434d11ce7ae22cd6445aa18fc4fb7e5db5f3438dded681b596ef54d6d37e89"
+}
