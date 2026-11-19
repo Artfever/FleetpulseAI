@@ -145,7 +145,10 @@ def test_replay_cache_reuses_identical_history_model_and_feature_version(tmp_pat
     assert len(calls) == 2
 
 
-@pytest.mark.parametrize("change", ["history", "model_version", "feature_config", "model_bytes"])
+@pytest.mark.parametrize(
+    "change",
+    ["history", "dataset_partition", "engine_id", "model_version", "feature_config", "model_bytes"],
+)
 def test_replay_cache_invalidates_on_history_or_saved_bundle_change(tmp_path, monkeypatch, change):
     history_service.clear_history_replay_cache()
     bundle = tmp_path / "bundle"
@@ -154,11 +157,11 @@ def test_replay_cache_invalidates_on_history_or_saved_bundle_change(tmp_path, mo
     calls = []
     monkeypatch.setattr(history_service, "predict_rul_with_context", _controlled_prediction(calls))
 
-    def replay(current_records=records):
+    def replay(current_records=records, *, partition="FD001/train", unit_id=4):
         return history_service.replay_engine_history(
             current_records,
-            dataset_partition="FD001/train",
-            unit_id=4,
+            dataset_partition=partition,
+            unit_id=unit_id,
             selected_cycle=4,
             replay_cutoffs=[4],
             manifest_path=manifest,
@@ -169,6 +172,11 @@ def test_replay_cache_invalidates_on_history_or_saved_bundle_change(tmp_path, mo
         changed_records = [dict(row) for row in records]
         changed_records[-1]["sensor_1"] = 99.0
         replay(changed_records)
+    elif change == "dataset_partition":
+        replay(partition="FD001/test")
+    elif change == "engine_id":
+        changed_records = [dict(row, unit_id=8) for row in records]
+        replay(changed_records, unit_id=8)
     elif change == "model_bytes":
         (bundle / "model.bin").write_bytes(b"changed model")
         replay()
