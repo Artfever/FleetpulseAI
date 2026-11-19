@@ -1,3 +1,11 @@
+## P21-S1 #91 scientific label audit across app screens (active, 2026-11-19)
+
+- Abdullah is handling this Shaheer-assigned issue under the user's all-task authorization; GitHub assignment is unchanged. Branch `audit/P21-S1-scientific-labels` starts from `dev` commit `8b17c25f1e1bfe24215f0d672a6e259984ef7471`. Native task blockers are clear; P21 prerequisites #16/#18/#24/#25 are closed and gate #26 remains open.
+- Audited the six principal app screens and fixed labels for conditional local artifact availability, training-only ground-truth RUL, saved split membership, and unverified uploaded-history fit membership. Details/evidence are in `docs/p21_s1_scientific_label_audit.md`; assertions were added to existing UI tests, including the corrected Home empty-state assertion in `test_bootstrap.py`.
+- Actual local Decision Tree output for packaged simulated FD001/train engine 4 through cycle 164 is raw RUL 34.19607843137255 cycles. The split manifest identifies engine 4 as development validation (not official-test evidence). Model/config details and scientific limitations are documented in the audit. No training or artifact changes.
+- Checks: `.venv/Scripts/python.exe -m pytest -q tests/test_bootstrap.py` PASS (3 in 5.58s); `.venv/Scripts/python.exe -m pytest -q` PASS (687 in 158.42s); `.venv/Scripts/python.exe -m ruff check .` PASS; Streamlit smoke on port 18604 returned `ok` (HTTP 200), then server stopped; `git diff --check` PASS. The initial full-suite run exposed a stale Home copy assertion, corrected before the passing rerun. Teammate inspection/discussion for #91 is pending; no approval or review is claimed.
+- Next: finish checks, commit and open a focused `Refs #91` task PR to `dev`; after CI/conversations pass, get the required audit/output inspection recorded before closing the issue.
+
 ## P17-S1/S2/S3 explainability outputs (complete, 2026-11-18)
 
 - Abdullah implemented these Shaheer-assigned tasks under the user's explicit all-owner takeover authorization; GitHub issue ownership is unchanged. Branch `feat/P17-S1-final-tree-explanations` was based on `dev` at `aff8ac0e783a598bffb76991c2da262e2122c985`. #79 had no native task blockers; phase prerequisites P12 #22 and P16 #18 are closed. P17 phase gate #24 remains open.

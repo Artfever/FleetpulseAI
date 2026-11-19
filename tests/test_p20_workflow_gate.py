@@ -22,6 +22,9 @@ def test_real_saved_model_fleet_selection_reaches_both_schedulers():
     assert predictions["Dataset"].tolist() == ["FD001/train"] * 3
     assert predictions["Engine ID"].tolist() == [4, 5, 12]
     assert predictions["Observed cycle"].tolist() == [164, 58, 7]
+    assert predictions["Fit membership"].tolist() == [
+        "Not seen during fitting (development validation engine)"
+    ] * 3
     assert predictions["Version"].tolist() == ["decision-tree-rul-v1"] * 3
     raw_rul_by_engine = dict(
         zip(predictions["Engine ID"], predictions["Raw RUL (cycles)"], strict=True)

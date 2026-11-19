@@ -120,6 +120,10 @@ def test_upload_prediction_uses_shared_service_and_shows_short_history_limits(
         )
     ]
     assert page.metric[0].value == "12.50"
+    assert any(
+        "Engine fit membership: Not verified for the uploaded history." in item.value
+        for item in page.markdown
+    )
     assert any("test-model" in item.value and "test-v1" in item.value for item in page.markdown)
     assert any("short" in item.value for item in page.warning)
     assert any("gaps" in item.value for item in page.warning)

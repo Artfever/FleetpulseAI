@@ -100,6 +100,7 @@ def test_fleet_overview_displays_prediction_identity_cycle_model_and_version(
     assert math.isnan(table["Predicted RUL (cycles)"].tolist()[2])
     assert table["Model"].tolist()[:2] == ["Decision Tree"] * 2
     assert table["Version"].tolist()[:2] == ["decision-tree-rul-v1"] * 2
+    assert table["Fit membership"].tolist() == ["Unknown (split unavailable)"] * 3
     assert table["Warnings"].tolist() == ["", "cycle_gaps", ""]
     assert "non_finite_reading" in table["Error"].tolist()[2]
     assert any("same saved Decision Tree model and version" in item.value for item in page.caption)

@@ -5,7 +5,7 @@ from fleetpulse.ui import render_page, render_training_data
 render_page(
     "FleetPulse AI",
     "Simulated turbofan maintenance planning.",
-    "Trained models and evaluation results are not available yet.",
-    "Choose a page in the sidebar to explore the planned workflow.",
+    "Verified model bundles and evaluation reports appear only when matching artifacts are installed.",
+    "Open Model Laboratory to see which verified results are available in this deployment.",
 )
 render_training_data()

@@ -281,6 +281,7 @@ elif source == "Upload CSV":
                     f"{result['input_window_rows']} observed rows in the feature window. "
                     f"Raw estimate: {result['raw_rul_cycles']:.2f} cycles."
                 )
+                st.write("Engine fit membership: Not verified for the uploaded history.")
                 if "short_window" in result["warnings"]:
                     st.warning(
                         "The available feature window is short; the estimate uses fewer observations."
