@@ -1,0 +1,3552 @@
+{
+  "payload": {
+    "schema": "p22-a2-seed-comparison-v1",
+    "dataset_partition": "FD001/test",
+    "ga_seeds": [
+      0,
+      7,
+      42,
+      2026,
+      2027
+    ],
+    "fleet_sizes": [
+      5,
+      10,
+      20
+    ],
+    "team_counts": [
+      1,
+      2,
+      3
+    ],
+    "buffer_levels_cycles": [
+      2,
+      120
+    ],
+    "soft_horizon_cycles": 30,
+    "duration_assumption_cycles": "1 + (engine_id mod 3)",
+    "priority_weight_assumption": "1 + ((engine_id * 7) mod 5)",
+    "case_count": 18,
+    "ga_run_count": 90,
+    "outcome_counts": {
+      "equal": 60,
+      "better": 30
+    },
+    "all_schedules_feasible": true,
+    "all_seed_repeats_match": true,
+    "appendix_b_hand_check": {
+      "assumptions": "synthetic Appendix B jobs; 1 team; buffer 2; horizon 6",
+      "edd": {
+        "weighted_tardiness_cycles": 6.0,
+        "total_tardiness_cycles": 2.0,
+        "late_job_count": 2,
+        "makespan_cycles": 6,
+        "horizon_overflow_cycles": 0.0,
+        "overflow_job_count": 0,
+        "feasible": true,
+        "order": [
+          1,
+          2,
+          3
+        ]
+      },
+      "ga_seed_42": {
+        "weighted_tardiness_cycles": 2.0,
+        "total_tardiness_cycles": 2.0,
+        "late_job_count": 1,
+        "makespan_cycles": 6,
+        "horizon_overflow_cycles": 0.0,
+        "overflow_job_count": 0,
+        "feasible": true,
+        "order": [
+          2,
+          1,
+          3
+        ]
+      }
+    },
+    "scenarios": [
+      {
+        "fleet_size": 5,
+        "team_count": 1,
+        "buffer_cycles": 2,
+        "engine_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "edd": {
+          "weighted_tardiness_cycles": 0.0,
+          "total_tardiness_cycles": 0.0,
+          "late_job_count": 0,
+          "makespan_cycles": 11,
+          "horizon_overflow_cycles": 0.0,
+          "overflow_job_count": 0,
+          "feasible": true,
+          "order": [
+            3,
+            5,
+            4,
+            2,
+            1
+          ]
+        },
+        "edd_runtime_seconds": 0.00010520000068936497,
+        "ga_by_seed": [
+          {
+            "seed": 0,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 11,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                4,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.00932969999848865,
+            "unique_schedule_evaluations": 80,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 7,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 11,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                4,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.009641399999964051,
+            "unique_schedule_evaluations": 89,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 42,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 11,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                4,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.009850200000073528,
+            "unique_schedule_evaluations": 90,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2026,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 11,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                4,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.01137150000067777,
+            "unique_schedule_evaluations": 88,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2027,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 11,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                4,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.009628699997847434,
+            "unique_schedule_evaluations": 80,
+            "repeatability_verified": true
+          }
+        ]
+      },
+      {
+        "fleet_size": 5,
+        "team_count": 2,
+        "buffer_cycles": 2,
+        "engine_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "edd": {
+          "weighted_tardiness_cycles": 0.0,
+          "total_tardiness_cycles": 0.0,
+          "late_job_count": 0,
+          "makespan_cycles": 6,
+          "horizon_overflow_cycles": 0.0,
+          "overflow_job_count": 0,
+          "feasible": true,
+          "order": [
+            3,
+            5,
+            4,
+            2,
+            1
+          ]
+        },
+        "edd_runtime_seconds": 0.0001494999996793922,
+        "ga_by_seed": [
+          {
+            "seed": 0,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 6,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                4,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.016717199996492127,
+            "unique_schedule_evaluations": 80,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 7,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 6,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                4,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.009837399997195462,
+            "unique_schedule_evaluations": 89,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 42,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 6,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                4,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.00958109999919543,
+            "unique_schedule_evaluations": 90,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2026,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 6,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                4,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.009477300001890399,
+            "unique_schedule_evaluations": 88,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2027,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 6,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                4,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.009635499998694286,
+            "unique_schedule_evaluations": 80,
+            "repeatability_verified": true
+          }
+        ]
+      },
+      {
+        "fleet_size": 5,
+        "team_count": 3,
+        "buffer_cycles": 2,
+        "engine_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "edd": {
+          "weighted_tardiness_cycles": 0.0,
+          "total_tardiness_cycles": 0.0,
+          "late_job_count": 0,
+          "makespan_cycles": 4,
+          "horizon_overflow_cycles": 0.0,
+          "overflow_job_count": 0,
+          "feasible": true,
+          "order": [
+            3,
+            5,
+            4,
+            2,
+            1
+          ]
+        },
+        "edd_runtime_seconds": 7.790000017848797e-05,
+        "ga_by_seed": [
+          {
+            "seed": 0,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 4,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                4,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.009836000001087086,
+            "unique_schedule_evaluations": 80,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 7,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 4,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                4,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.010844799999176757,
+            "unique_schedule_evaluations": 89,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 42,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 4,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                4,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.012384600002405932,
+            "unique_schedule_evaluations": 90,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2026,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 4,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                4,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.014227799998479895,
+            "unique_schedule_evaluations": 88,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2027,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 4,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                4,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.00924959999974817,
+            "unique_schedule_evaluations": 80,
+            "repeatability_verified": true
+          }
+        ]
+      },
+      {
+        "fleet_size": 5,
+        "team_count": 1,
+        "buffer_cycles": 120,
+        "engine_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "edd": {
+          "weighted_tardiness_cycles": 20.0,
+          "total_tardiness_cycles": 10.0,
+          "late_job_count": 3,
+          "makespan_cycles": 11,
+          "horizon_overflow_cycles": 0.0,
+          "overflow_job_count": 0,
+          "feasible": true,
+          "order": [
+            3,
+            4,
+            5,
+            2,
+            1
+          ]
+        },
+        "edd_runtime_seconds": 7.950000144774094e-05,
+        "ga_by_seed": [
+          {
+            "seed": 0,
+            "ga": {
+              "weighted_tardiness_cycles": 20.0,
+              "total_tardiness_cycles": 10.0,
+              "late_job_count": 3,
+              "makespan_cycles": 11,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                5,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.006930299998202827,
+            "unique_schedule_evaluations": 41,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 7,
+            "ga": {
+              "weighted_tardiness_cycles": 20.0,
+              "total_tardiness_cycles": 10.0,
+              "late_job_count": 3,
+              "makespan_cycles": 11,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                5,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.007404500000120606,
+            "unique_schedule_evaluations": 45,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 42,
+            "ga": {
+              "weighted_tardiness_cycles": 20.0,
+              "total_tardiness_cycles": 10.0,
+              "late_job_count": 3,
+              "makespan_cycles": 11,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                5,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.006975500000407919,
+            "unique_schedule_evaluations": 40,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2026,
+            "ga": {
+              "weighted_tardiness_cycles": 20.0,
+              "total_tardiness_cycles": 10.0,
+              "late_job_count": 3,
+              "makespan_cycles": 11,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                5,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.006682700000965269,
+            "unique_schedule_evaluations": 36,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2027,
+            "ga": {
+              "weighted_tardiness_cycles": 20.0,
+              "total_tardiness_cycles": 10.0,
+              "late_job_count": 3,
+              "makespan_cycles": 11,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                5,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.0074308000002929475,
+            "unique_schedule_evaluations": 46,
+            "repeatability_verified": true
+          }
+        ]
+      },
+      {
+        "fleet_size": 5,
+        "team_count": 2,
+        "buffer_cycles": 120,
+        "engine_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "edd": {
+          "weighted_tardiness_cycles": 14.0,
+          "total_tardiness_cycles": 7.0,
+          "late_job_count": 3,
+          "makespan_cycles": 6,
+          "horizon_overflow_cycles": 0.0,
+          "overflow_job_count": 0,
+          "feasible": true,
+          "order": [
+            3,
+            4,
+            5,
+            2,
+            1
+          ]
+        },
+        "edd_runtime_seconds": 0.00015469999925699085,
+        "ga_by_seed": [
+          {
+            "seed": 0,
+            "ga": {
+              "weighted_tardiness_cycles": 14.0,
+              "total_tardiness_cycles": 7.0,
+              "late_job_count": 3,
+              "makespan_cycles": 6,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                5,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.011342999998305459,
+            "unique_schedule_evaluations": 40,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 7,
+            "ga": {
+              "weighted_tardiness_cycles": 14.0,
+              "total_tardiness_cycles": 7.0,
+              "late_job_count": 3,
+              "makespan_cycles": 6,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                5,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.00801090000095428,
+            "unique_schedule_evaluations": 46,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 42,
+            "ga": {
+              "weighted_tardiness_cycles": 14.0,
+              "total_tardiness_cycles": 7.0,
+              "late_job_count": 3,
+              "makespan_cycles": 6,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                5,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.00699729999905685,
+            "unique_schedule_evaluations": 40,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2026,
+            "ga": {
+              "weighted_tardiness_cycles": 14.0,
+              "total_tardiness_cycles": 7.0,
+              "late_job_count": 3,
+              "makespan_cycles": 6,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                5,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.007135899999411777,
+            "unique_schedule_evaluations": 44,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2027,
+            "ga": {
+              "weighted_tardiness_cycles": 14.0,
+              "total_tardiness_cycles": 7.0,
+              "late_job_count": 3,
+              "makespan_cycles": 6,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                5,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.007520899998780806,
+            "unique_schedule_evaluations": 46,
+            "repeatability_verified": true
+          }
+        ]
+      },
+      {
+        "fleet_size": 5,
+        "team_count": 3,
+        "buffer_cycles": 120,
+        "engine_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "edd": {
+          "weighted_tardiness_cycles": 13.0,
+          "total_tardiness_cycles": 6.0,
+          "late_job_count": 3,
+          "makespan_cycles": 4,
+          "horizon_overflow_cycles": 0.0,
+          "overflow_job_count": 0,
+          "feasible": true,
+          "order": [
+            3,
+            4,
+            5,
+            2,
+            1
+          ]
+        },
+        "edd_runtime_seconds": 7.839999670977704e-05,
+        "ga_by_seed": [
+          {
+            "seed": 0,
+            "ga": {
+              "weighted_tardiness_cycles": 13.0,
+              "total_tardiness_cycles": 6.0,
+              "late_job_count": 3,
+              "makespan_cycles": 4,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                5,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.007138899996789405,
+            "unique_schedule_evaluations": 40,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 7,
+            "ga": {
+              "weighted_tardiness_cycles": 13.0,
+              "total_tardiness_cycles": 6.0,
+              "late_job_count": 3,
+              "makespan_cycles": 4,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                5,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.007661100000404986,
+            "unique_schedule_evaluations": 45,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 42,
+            "ga": {
+              "weighted_tardiness_cycles": 13.0,
+              "total_tardiness_cycles": 6.0,
+              "late_job_count": 3,
+              "makespan_cycles": 4,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                5,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.007523199998104246,
+            "unique_schedule_evaluations": 46,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2026,
+            "ga": {
+              "weighted_tardiness_cycles": 13.0,
+              "total_tardiness_cycles": 6.0,
+              "late_job_count": 3,
+              "makespan_cycles": 4,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                5,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.007496799997170456,
+            "unique_schedule_evaluations": 46,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2027,
+            "ga": {
+              "weighted_tardiness_cycles": 13.0,
+              "total_tardiness_cycles": 6.0,
+              "late_job_count": 3,
+              "makespan_cycles": 4,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                5,
+                2,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.007692500003031455,
+            "unique_schedule_evaluations": 53,
+            "repeatability_verified": true
+          }
+        ]
+      },
+      {
+        "fleet_size": 10,
+        "team_count": 1,
+        "buffer_cycles": 2,
+        "engine_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "edd": {
+          "weighted_tardiness_cycles": 0.0,
+          "total_tardiness_cycles": 0.0,
+          "late_job_count": 0,
+          "makespan_cycles": 20,
+          "horizon_overflow_cycles": 0.0,
+          "overflow_job_count": 0,
+          "feasible": true,
+          "order": [
+            3,
+            5,
+            10,
+            4,
+            7,
+            2,
+            8,
+            9,
+            6,
+            1
+          ]
+        },
+        "edd_runtime_seconds": 0.00013140000010025688,
+        "ga_by_seed": [
+          {
+            "seed": 0,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 20,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                10,
+                4,
+                7,
+                2,
+                8,
+                9,
+                6,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.029992499999934807,
+            "unique_schedule_evaluations": 254,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 7,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 20,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                10,
+                4,
+                7,
+                2,
+                8,
+                9,
+                6,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.03070809999917401,
+            "unique_schedule_evaluations": 261,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 42,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 20,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                10,
+                4,
+                7,
+                2,
+                8,
+                9,
+                6,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.029502299999876413,
+            "unique_schedule_evaluations": 245,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2026,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 20,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                10,
+                4,
+                7,
+                2,
+                8,
+                9,
+                6,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.030233099998440593,
+            "unique_schedule_evaluations": 252,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2027,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 20,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                10,
+                4,
+                7,
+                2,
+                8,
+                9,
+                6,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.02935100000104285,
+            "unique_schedule_evaluations": 254,
+            "repeatability_verified": true
+          }
+        ]
+      },
+      {
+        "fleet_size": 10,
+        "team_count": 2,
+        "buffer_cycles": 2,
+        "engine_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "edd": {
+          "weighted_tardiness_cycles": 0.0,
+          "total_tardiness_cycles": 0.0,
+          "late_job_count": 0,
+          "makespan_cycles": 11,
+          "horizon_overflow_cycles": 0.0,
+          "overflow_job_count": 0,
+          "feasible": true,
+          "order": [
+            3,
+            5,
+            10,
+            4,
+            7,
+            2,
+            8,
+            9,
+            6,
+            1
+          ]
+        },
+        "edd_runtime_seconds": 0.00013620000027003698,
+        "ga_by_seed": [
+          {
+            "seed": 0,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 11,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                10,
+                4,
+                7,
+                2,
+                8,
+                9,
+                6,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.03107339999769465,
+            "unique_schedule_evaluations": 254,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 7,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 11,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                10,
+                4,
+                7,
+                2,
+                8,
+                9,
+                6,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.030919100001483457,
+            "unique_schedule_evaluations": 261,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 42,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 11,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                10,
+                4,
+                7,
+                2,
+                8,
+                9,
+                6,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.04045309999855817,
+            "unique_schedule_evaluations": 245,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2026,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 11,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                10,
+                4,
+                7,
+                2,
+                8,
+                9,
+                6,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.03132740000000922,
+            "unique_schedule_evaluations": 252,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2027,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 11,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                10,
+                4,
+                7,
+                2,
+                8,
+                9,
+                6,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.030718300000444287,
+            "unique_schedule_evaluations": 254,
+            "repeatability_verified": true
+          }
+        ]
+      },
+      {
+        "fleet_size": 10,
+        "team_count": 3,
+        "buffer_cycles": 2,
+        "engine_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "edd": {
+          "weighted_tardiness_cycles": 0.0,
+          "total_tardiness_cycles": 0.0,
+          "late_job_count": 0,
+          "makespan_cycles": 8,
+          "horizon_overflow_cycles": 0.0,
+          "overflow_job_count": 0,
+          "feasible": true,
+          "order": [
+            3,
+            5,
+            10,
+            4,
+            7,
+            2,
+            8,
+            9,
+            6,
+            1
+          ]
+        },
+        "edd_runtime_seconds": 0.00013469999976223335,
+        "ga_by_seed": [
+          {
+            "seed": 0,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 8,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                10,
+                4,
+                7,
+                2,
+                8,
+                9,
+                6,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.0313562000010279,
+            "unique_schedule_evaluations": 254,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 7,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 8,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                10,
+                4,
+                7,
+                2,
+                8,
+                9,
+                6,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.039269299999432405,
+            "unique_schedule_evaluations": 261,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 42,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 8,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                10,
+                4,
+                7,
+                2,
+                8,
+                9,
+                6,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.03133689999958733,
+            "unique_schedule_evaluations": 245,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2026,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 8,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                10,
+                4,
+                7,
+                2,
+                8,
+                9,
+                6,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.031152499999734573,
+            "unique_schedule_evaluations": 252,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2027,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 8,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                5,
+                10,
+                4,
+                7,
+                2,
+                8,
+                9,
+                6,
+                1
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.03492310000001453,
+            "unique_schedule_evaluations": 254,
+            "repeatability_verified": true
+          }
+        ]
+      },
+      {
+        "fleet_size": 10,
+        "team_count": 1,
+        "buffer_cycles": 120,
+        "engine_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "edd": {
+          "weighted_tardiness_cycles": 85.10167464114824,
+          "total_tardiness_cycles": 33.600478468899496,
+          "late_job_count": 7,
+          "makespan_cycles": 20,
+          "horizon_overflow_cycles": 0.0,
+          "overflow_job_count": 0,
+          "feasible": true,
+          "order": [
+            3,
+            4,
+            5,
+            7,
+            10,
+            2,
+            8,
+            9,
+            6,
+            1
+          ]
+        },
+        "edd_runtime_seconds": 0.00013580000086221844,
+        "ga_by_seed": [
+          {
+            "seed": 0,
+            "ga": {
+              "weighted_tardiness_cycles": 61.600478468899496,
+              "total_tardiness_cycles": 35.30023923444975,
+              "late_job_count": 6,
+              "makespan_cycles": 20,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                7,
+                4,
+                3,
+                10,
+                2,
+                8,
+                5,
+                6,
+                9,
+                1
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.016119500000058906,
+            "unique_schedule_evaluations": 100,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 7,
+            "ga": {
+              "weighted_tardiness_cycles": 61.600478468899496,
+              "total_tardiness_cycles": 35.30023923444975,
+              "late_job_count": 6,
+              "makespan_cycles": 20,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                7,
+                4,
+                3,
+                10,
+                2,
+                8,
+                5,
+                9,
+                6,
+                1
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.01799110000138171,
+            "unique_schedule_evaluations": 96,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 42,
+            "ga": {
+              "weighted_tardiness_cycles": 61.600478468899496,
+              "total_tardiness_cycles": 34.30023923444975,
+              "late_job_count": 6,
+              "makespan_cycles": 20,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                7,
+                3,
+                4,
+                10,
+                2,
+                8,
+                5,
+                1,
+                6,
+                9
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.021019600000727223,
+            "unique_schedule_evaluations": 130,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2026,
+            "ga": {
+              "weighted_tardiness_cycles": 65.6004784688995,
+              "total_tardiness_cycles": 36.30023923444975,
+              "late_job_count": 6,
+              "makespan_cycles": 20,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                7,
+                4,
+                3,
+                5,
+                2,
+                10,
+                8,
+                9,
+                6,
+                1
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.02411019999999553,
+            "unique_schedule_evaluations": 95,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2027,
+            "ga": {
+              "weighted_tardiness_cycles": 67.0,
+              "total_tardiness_cycles": 41.0,
+              "late_job_count": 5,
+              "makespan_cycles": 20,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                7,
+                3,
+                4,
+                2,
+                8,
+                9,
+                10,
+                5,
+                1,
+                6
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.07475030000205152,
+            "unique_schedule_evaluations": 113,
+            "repeatability_verified": true
+          }
+        ]
+      },
+      {
+        "fleet_size": 10,
+        "team_count": 2,
+        "buffer_cycles": 120,
+        "engine_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "edd": {
+          "weighted_tardiness_cycles": 40.0,
+          "total_tardiness_cycles": 17.0,
+          "late_job_count": 5,
+          "makespan_cycles": 11,
+          "horizon_overflow_cycles": 0.0,
+          "overflow_job_count": 0,
+          "feasible": true,
+          "order": [
+            3,
+            4,
+            5,
+            7,
+            10,
+            2,
+            8,
+            9,
+            6,
+            1
+          ]
+        },
+        "edd_runtime_seconds": 0.0004952000017510727,
+        "ga_by_seed": [
+          {
+            "seed": 0,
+            "ga": {
+              "weighted_tardiness_cycles": 34.0,
+              "total_tardiness_cycles": 17.0,
+              "late_job_count": 5,
+              "makespan_cycles": 11,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                4,
+                7,
+                3,
+                10,
+                5,
+                8,
+                1,
+                9,
+                6,
+                2
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.08342980000088573,
+            "unique_schedule_evaluations": 130,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 7,
+            "ga": {
+              "weighted_tardiness_cycles": 34.0,
+              "total_tardiness_cycles": 17.0,
+              "late_job_count": 5,
+              "makespan_cycles": 11,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                4,
+                7,
+                3,
+                5,
+                10,
+                2,
+                8,
+                6,
+                9,
+                1
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.08084709999820916,
+            "unique_schedule_evaluations": 116,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 42,
+            "ga": {
+              "weighted_tardiness_cycles": 35.0,
+              "total_tardiness_cycles": 16.0,
+              "late_job_count": 5,
+              "makespan_cycles": 11,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                4,
+                3,
+                7,
+                5,
+                10,
+                8,
+                1,
+                6,
+                9,
+                2
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.07844810000096913,
+            "unique_schedule_evaluations": 116,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2026,
+            "ga": {
+              "weighted_tardiness_cycles": 34.0,
+              "total_tardiness_cycles": 16.0,
+              "late_job_count": 5,
+              "makespan_cycles": 11,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                7,
+                3,
+                4,
+                10,
+                5,
+                8,
+                1,
+                6,
+                9,
+                2
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.07600589999856311,
+            "unique_schedule_evaluations": 120,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2027,
+            "ga": {
+              "weighted_tardiness_cycles": 34.0,
+              "total_tardiness_cycles": 17.0,
+              "late_job_count": 5,
+              "makespan_cycles": 10,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                7,
+                4,
+                10,
+                3,
+                5,
+                6,
+                8,
+                2,
+                1,
+                9
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.07311390000177198,
+            "unique_schedule_evaluations": 129,
+            "repeatability_verified": true
+          }
+        ]
+      },
+      {
+        "fleet_size": 10,
+        "team_count": 3,
+        "buffer_cycles": 120,
+        "engine_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "edd": {
+          "weighted_tardiness_cycles": 32.0,
+          "total_tardiness_cycles": 13.0,
+          "late_job_count": 5,
+          "makespan_cycles": 8,
+          "horizon_overflow_cycles": 0.0,
+          "overflow_job_count": 0,
+          "feasible": true,
+          "order": [
+            3,
+            4,
+            5,
+            7,
+            10,
+            2,
+            8,
+            9,
+            6,
+            1
+          ]
+        },
+        "edd_runtime_seconds": 0.0004501000003074296,
+        "ga_by_seed": [
+          {
+            "seed": 0,
+            "ga": {
+              "weighted_tardiness_cycles": 28.0,
+              "total_tardiness_cycles": 13.0,
+              "late_job_count": 5,
+              "makespan_cycles": 8,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                7,
+                10,
+                2,
+                5,
+                8,
+                6,
+                9,
+                1
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.07413160000214702,
+            "unique_schedule_evaluations": 116,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 7,
+            "ga": {
+              "weighted_tardiness_cycles": 28.0,
+              "total_tardiness_cycles": 13.0,
+              "late_job_count": 5,
+              "makespan_cycles": 7,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                7,
+                5,
+                10,
+                2,
+                8,
+                9,
+                6,
+                1
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.07935320000251522,
+            "unique_schedule_evaluations": 116,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 42,
+            "ga": {
+              "weighted_tardiness_cycles": 28.0,
+              "total_tardiness_cycles": 13.0,
+              "late_job_count": 5,
+              "makespan_cycles": 8,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                4,
+                3,
+                7,
+                5,
+                1,
+                10,
+                8,
+                9,
+                6,
+                2
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.09169640000254731,
+            "unique_schedule_evaluations": 118,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2026,
+            "ga": {
+              "weighted_tardiness_cycles": 28.0,
+              "total_tardiness_cycles": 13.0,
+              "late_job_count": 5,
+              "makespan_cycles": 8,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                7,
+                3,
+                4,
+                10,
+                5,
+                8,
+                1,
+                6,
+                9,
+                2
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.13038820000292617,
+            "unique_schedule_evaluations": 111,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2027,
+            "ga": {
+              "weighted_tardiness_cycles": 28.0,
+              "total_tardiness_cycles": 13.0,
+              "late_job_count": 5,
+              "makespan_cycles": 7,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                7,
+                4,
+                5,
+                9,
+                10,
+                2,
+                1,
+                8,
+                6
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.10214379999888479,
+            "unique_schedule_evaluations": 126,
+            "repeatability_verified": true
+          }
+        ]
+      },
+      {
+        "fleet_size": 20,
+        "team_count": 1,
+        "buffer_cycles": 2,
+        "engine_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "edd": {
+          "weighted_tardiness_cycles": 0.0,
+          "total_tardiness_cycles": 0.0,
+          "late_job_count": 0,
+          "makespan_cycles": 41,
+          "horizon_overflow_cycles": 11.0,
+          "overflow_job_count": 7,
+          "feasible": true,
+          "order": [
+            20,
+            3,
+            17,
+            13,
+            5,
+            10,
+            18,
+            11,
+            19,
+            4,
+            14,
+            7,
+            2,
+            8,
+            16,
+            9,
+            6,
+            1,
+            15,
+            12
+          ]
+        },
+        "edd_runtime_seconds": 0.000838399999338435,
+        "ga_by_seed": [
+          {
+            "seed": 0,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 41,
+              "horizon_overflow_cycles": 11.0,
+              "overflow_job_count": 7,
+              "feasible": true,
+              "order": [
+                20,
+                3,
+                17,
+                13,
+                5,
+                10,
+                18,
+                11,
+                19,
+                4,
+                14,
+                7,
+                2,
+                8,
+                16,
+                9,
+                6,
+                1,
+                15,
+                12
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.33506000000124914,
+            "unique_schedule_evaluations": 271,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 7,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 41,
+              "horizon_overflow_cycles": 11.0,
+              "overflow_job_count": 7,
+              "feasible": true,
+              "order": [
+                20,
+                3,
+                17,
+                13,
+                5,
+                10,
+                18,
+                11,
+                19,
+                4,
+                14,
+                7,
+                2,
+                8,
+                16,
+                9,
+                6,
+                1,
+                15,
+                12
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.2840587000027881,
+            "unique_schedule_evaluations": 284,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 42,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 41,
+              "horizon_overflow_cycles": 11.0,
+              "overflow_job_count": 7,
+              "feasible": true,
+              "order": [
+                20,
+                3,
+                17,
+                13,
+                5,
+                10,
+                18,
+                11,
+                19,
+                4,
+                14,
+                7,
+                2,
+                8,
+                16,
+                9,
+                6,
+                1,
+                15,
+                12
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.2925996000012674,
+            "unique_schedule_evaluations": 283,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2026,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 41,
+              "horizon_overflow_cycles": 11.0,
+              "overflow_job_count": 7,
+              "feasible": true,
+              "order": [
+                20,
+                3,
+                17,
+                13,
+                5,
+                10,
+                18,
+                11,
+                19,
+                4,
+                14,
+                7,
+                2,
+                8,
+                16,
+                9,
+                6,
+                1,
+                15,
+                12
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.2732533999987936,
+            "unique_schedule_evaluations": 281,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2027,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 41,
+              "horizon_overflow_cycles": 11.0,
+              "overflow_job_count": 7,
+              "feasible": true,
+              "order": [
+                20,
+                3,
+                17,
+                13,
+                5,
+                10,
+                18,
+                11,
+                19,
+                4,
+                14,
+                7,
+                2,
+                8,
+                16,
+                9,
+                6,
+                1,
+                15,
+                12
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.30573610000283225,
+            "unique_schedule_evaluations": 264,
+            "repeatability_verified": true
+          }
+        ]
+      },
+      {
+        "fleet_size": 20,
+        "team_count": 2,
+        "buffer_cycles": 2,
+        "engine_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "edd": {
+          "weighted_tardiness_cycles": 0.0,
+          "total_tardiness_cycles": 0.0,
+          "late_job_count": 0,
+          "makespan_cycles": 21,
+          "horizon_overflow_cycles": 0.0,
+          "overflow_job_count": 0,
+          "feasible": true,
+          "order": [
+            20,
+            3,
+            17,
+            13,
+            5,
+            10,
+            18,
+            11,
+            19,
+            4,
+            14,
+            7,
+            2,
+            8,
+            16,
+            9,
+            6,
+            1,
+            15,
+            12
+          ]
+        },
+        "edd_runtime_seconds": 0.000817699998151511,
+        "ga_by_seed": [
+          {
+            "seed": 0,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 21,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                20,
+                3,
+                17,
+                13,
+                5,
+                10,
+                18,
+                11,
+                19,
+                4,
+                14,
+                7,
+                2,
+                8,
+                16,
+                9,
+                6,
+                1,
+                15,
+                12
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.3139117000027909,
+            "unique_schedule_evaluations": 281,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 7,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 21,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                20,
+                3,
+                17,
+                13,
+                5,
+                10,
+                18,
+                11,
+                19,
+                4,
+                14,
+                7,
+                2,
+                8,
+                16,
+                9,
+                6,
+                1,
+                15,
+                12
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.3867571000009775,
+            "unique_schedule_evaluations": 276,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 42,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 21,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                20,
+                3,
+                17,
+                13,
+                5,
+                10,
+                18,
+                11,
+                19,
+                4,
+                14,
+                7,
+                2,
+                8,
+                16,
+                9,
+                6,
+                1,
+                15,
+                12
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.30976989999908255,
+            "unique_schedule_evaluations": 281,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2026,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 21,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                20,
+                3,
+                17,
+                13,
+                5,
+                10,
+                18,
+                11,
+                19,
+                4,
+                14,
+                7,
+                2,
+                8,
+                16,
+                9,
+                6,
+                1,
+                15,
+                12
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.32913859999825945,
+            "unique_schedule_evaluations": 279,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2027,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 21,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                20,
+                3,
+                17,
+                13,
+                5,
+                10,
+                18,
+                11,
+                19,
+                4,
+                14,
+                7,
+                2,
+                8,
+                16,
+                9,
+                6,
+                1,
+                15,
+                12
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.3015995000023395,
+            "unique_schedule_evaluations": 278,
+            "repeatability_verified": true
+          }
+        ]
+      },
+      {
+        "fleet_size": 20,
+        "team_count": 3,
+        "buffer_cycles": 2,
+        "engine_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "edd": {
+          "weighted_tardiness_cycles": 0.0,
+          "total_tardiness_cycles": 0.0,
+          "late_job_count": 0,
+          "makespan_cycles": 14,
+          "horizon_overflow_cycles": 0.0,
+          "overflow_job_count": 0,
+          "feasible": true,
+          "order": [
+            20,
+            3,
+            17,
+            13,
+            5,
+            10,
+            18,
+            11,
+            19,
+            4,
+            14,
+            7,
+            2,
+            8,
+            16,
+            9,
+            6,
+            1,
+            15,
+            12
+          ]
+        },
+        "edd_runtime_seconds": 0.0008438000004389323,
+        "ga_by_seed": [
+          {
+            "seed": 0,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 14,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                20,
+                3,
+                17,
+                13,
+                5,
+                10,
+                18,
+                11,
+                19,
+                4,
+                14,
+                7,
+                2,
+                8,
+                16,
+                9,
+                6,
+                1,
+                15,
+                12
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.32232890000159387,
+            "unique_schedule_evaluations": 278,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 7,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 14,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                20,
+                3,
+                17,
+                13,
+                5,
+                10,
+                18,
+                11,
+                19,
+                4,
+                14,
+                7,
+                2,
+                8,
+                16,
+                9,
+                6,
+                1,
+                15,
+                12
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.29771509999773116,
+            "unique_schedule_evaluations": 279,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 42,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 14,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                20,
+                3,
+                17,
+                13,
+                5,
+                10,
+                18,
+                11,
+                19,
+                4,
+                14,
+                7,
+                2,
+                8,
+                16,
+                9,
+                6,
+                1,
+                15,
+                12
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.40819740000006277,
+            "unique_schedule_evaluations": 280,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2026,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 14,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                20,
+                3,
+                17,
+                13,
+                5,
+                10,
+                18,
+                11,
+                19,
+                4,
+                14,
+                7,
+                2,
+                8,
+                16,
+                9,
+                6,
+                1,
+                15,
+                12
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.32424860000173794,
+            "unique_schedule_evaluations": 284,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2027,
+            "ga": {
+              "weighted_tardiness_cycles": 0.0,
+              "total_tardiness_cycles": 0.0,
+              "late_job_count": 0,
+              "makespan_cycles": 14,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                20,
+                3,
+                17,
+                13,
+                5,
+                10,
+                18,
+                11,
+                19,
+                4,
+                14,
+                7,
+                2,
+                8,
+                16,
+                9,
+                6,
+                1,
+                15,
+                12
+              ]
+            },
+            "outcome_vs_edd": "equal",
+            "runtime_seconds": 0.2941415999994206,
+            "unique_schedule_evaluations": 274,
+            "repeatability_verified": true
+          }
+        ]
+      },
+      {
+        "fleet_size": 20,
+        "team_count": 1,
+        "buffer_cycles": 120,
+        "engine_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "edd": {
+          "weighted_tardiness_cycles": 736.728866623042,
+          "total_tardiness_cycles": 243.33233627298537,
+          "late_job_count": 16,
+          "makespan_cycles": 41,
+          "horizon_overflow_cycles": 11.0,
+          "overflow_job_count": 7,
+          "feasible": true,
+          "order": [
+            3,
+            4,
+            5,
+            7,
+            10,
+            11,
+            13,
+            14,
+            17,
+            18,
+            19,
+            20,
+            2,
+            8,
+            16,
+            9,
+            6,
+            1,
+            15,
+            12
+          ]
+        },
+        "edd_runtime_seconds": 0.0018630000013217796,
+        "ga_by_seed": [
+          {
+            "seed": 0,
+            "ga": {
+              "weighted_tardiness_cycles": 541.5011961722487,
+              "total_tardiness_cycles": 234.6004784688995,
+              "late_job_count": 14,
+              "makespan_cycles": 41,
+              "horizon_overflow_cycles": 11.0,
+              "overflow_job_count": 7,
+              "feasible": true,
+              "order": [
+                3,
+                19,
+                4,
+                7,
+                2,
+                18,
+                17,
+                13,
+                9,
+                11,
+                14,
+                10,
+                20,
+                8,
+                16,
+                12,
+                6,
+                1,
+                15,
+                5
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.16899990000092657,
+            "unique_schedule_evaluations": 149,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 7,
+            "ga": {
+              "weighted_tardiness_cycles": 512.728866623042,
+              "total_tardiness_cycles": 240.33233627298537,
+              "late_job_count": 16,
+              "makespan_cycles": 41,
+              "horizon_overflow_cycles": 11.0,
+              "overflow_job_count": 6,
+              "feasible": true,
+              "order": [
+                4,
+                7,
+                18,
+                17,
+                19,
+                14,
+                3,
+                16,
+                2,
+                11,
+                13,
+                9,
+                20,
+                12,
+                8,
+                6,
+                1,
+                10,
+                5,
+                15
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.14918549999856623,
+            "unique_schedule_evaluations": 159,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 42,
+            "ga": {
+              "weighted_tardiness_cycles": 525.0023923444975,
+              "total_tardiness_cycles": 239.90071770334924,
+              "late_job_count": 15,
+              "makespan_cycles": 41,
+              "horizon_overflow_cycles": 11.0,
+              "overflow_job_count": 5,
+              "feasible": true,
+              "order": [
+                7,
+                17,
+                13,
+                4,
+                19,
+                3,
+                2,
+                18,
+                16,
+                14,
+                9,
+                11,
+                6,
+                5,
+                15,
+                10,
+                8,
+                20,
+                1,
+                12
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.15401870000277995,
+            "unique_schedule_evaluations": 148,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2026,
+            "ga": {
+              "weighted_tardiness_cycles": 537.0023923444975,
+              "total_tardiness_cycles": 233.90071770334924,
+              "late_job_count": 15,
+              "makespan_cycles": 41,
+              "horizon_overflow_cycles": 11.0,
+              "overflow_job_count": 6,
+              "feasible": true,
+              "order": [
+                4,
+                7,
+                13,
+                17,
+                3,
+                19,
+                14,
+                18,
+                16,
+                9,
+                11,
+                2,
+                5,
+                10,
+                15,
+                8,
+                6,
+                20,
+                1,
+                12
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.13770950000252924,
+            "unique_schedule_evaluations": 143,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2027,
+            "ga": {
+              "weighted_tardiness_cycles": 552.728866623042,
+              "total_tardiness_cycles": 234.33233627298537,
+              "late_job_count": 16,
+              "makespan_cycles": 41,
+              "horizon_overflow_cycles": 11.0,
+              "overflow_job_count": 6,
+              "feasible": true,
+              "order": [
+                4,
+                19,
+                17,
+                7,
+                3,
+                10,
+                2,
+                13,
+                18,
+                8,
+                14,
+                9,
+                16,
+                12,
+                11,
+                5,
+                20,
+                6,
+                1,
+                15
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.06959719999940717,
+            "unique_schedule_evaluations": 128,
+            "repeatability_verified": true
+          }
+        ]
+      },
+      {
+        "fleet_size": 20,
+        "team_count": 2,
+        "buffer_cycles": 120,
+        "engine_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "edd": {
+          "weighted_tardiness_cycles": 311.0023923444975,
+          "total_tardiness_cycles": 106.90071770334924,
+          "late_job_count": 15,
+          "makespan_cycles": 21,
+          "horizon_overflow_cycles": 0.0,
+          "overflow_job_count": 0,
+          "feasible": true,
+          "order": [
+            3,
+            4,
+            5,
+            7,
+            10,
+            11,
+            13,
+            14,
+            17,
+            18,
+            19,
+            20,
+            2,
+            8,
+            16,
+            9,
+            6,
+            1,
+            15,
+            12
+          ]
+        },
+        "edd_runtime_seconds": 0.0008428999972238671,
+        "ga_by_seed": [
+          {
+            "seed": 0,
+            "ga": {
+              "weighted_tardiness_cycles": 236.00239234449748,
+              "total_tardiness_cycles": 106.90071770334924,
+              "late_job_count": 15,
+              "makespan_cycles": 21,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                4,
+                3,
+                7,
+                17,
+                19,
+                13,
+                14,
+                11,
+                18,
+                20,
+                2,
+                8,
+                16,
+                10,
+                9,
+                12,
+                15,
+                5,
+                6,
+                1
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.1848783999994339,
+            "unique_schedule_evaluations": 166,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 7,
+            "ga": {
+              "weighted_tardiness_cycles": 225.10167464114824,
+              "total_tardiness_cycles": 107.6004784688995,
+              "late_job_count": 14,
+              "makespan_cycles": 21,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                4,
+                7,
+                18,
+                19,
+                14,
+                17,
+                11,
+                3,
+                16,
+                2,
+                13,
+                20,
+                8,
+                12,
+                10,
+                5,
+                9,
+                6,
+                1,
+                15
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.2927921999980754,
+            "unique_schedule_evaluations": 157,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 42,
+            "ga": {
+              "weighted_tardiness_cycles": 239.00239234449748,
+              "total_tardiness_cycles": 102.90071770334924,
+              "late_job_count": 15,
+              "makespan_cycles": 21,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                4,
+                3,
+                7,
+                18,
+                14,
+                19,
+                17,
+                10,
+                6,
+                11,
+                13,
+                16,
+                2,
+                8,
+                5,
+                15,
+                20,
+                12,
+                9,
+                1
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.1802602999996452,
+            "unique_schedule_evaluations": 149,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2026,
+            "ga": {
+              "weighted_tardiness_cycles": 251.00239234449748,
+              "total_tardiness_cycles": 107.90071770334924,
+              "late_job_count": 15,
+              "makespan_cycles": 21,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                4,
+                17,
+                13,
+                7,
+                19,
+                3,
+                11,
+                14,
+                10,
+                18,
+                20,
+                2,
+                8,
+                16,
+                9,
+                5,
+                6,
+                15,
+                1,
+                12
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.16634070000145584,
+            "unique_schedule_evaluations": 120,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2027,
+            "ga": {
+              "weighted_tardiness_cycles": 246.00239234449748,
+              "total_tardiness_cycles": 106.90071770334924,
+              "late_job_count": 15,
+              "makespan_cycles": 21,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                4,
+                19,
+                17,
+                7,
+                3,
+                10,
+                14,
+                13,
+                18,
+                8,
+                11,
+                9,
+                2,
+                16,
+                12,
+                20,
+                5,
+                6,
+                1,
+                15
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.17133299999841256,
+            "unique_schedule_evaluations": 141,
+            "repeatability_verified": true
+          }
+        ]
+      },
+      {
+        "fleet_size": 20,
+        "team_count": 3,
+        "buffer_cycles": 120,
+        "engine_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "edd": {
+          "weighted_tardiness_cycles": 189.50119617224874,
+          "total_tardiness_cycles": 65.6004784688995,
+          "late_job_count": 14,
+          "makespan_cycles": 14,
+          "horizon_overflow_cycles": 0.0,
+          "overflow_job_count": 0,
+          "feasible": true,
+          "order": [
+            3,
+            4,
+            5,
+            7,
+            10,
+            11,
+            13,
+            14,
+            17,
+            18,
+            19,
+            20,
+            2,
+            8,
+            16,
+            9,
+            6,
+            1,
+            15,
+            12
+          ]
+        },
+        "edd_runtime_seconds": 0.0008068999995884951,
+        "ga_by_seed": [
+          {
+            "seed": 0,
+            "ga": {
+              "weighted_tardiness_cycles": 151.50119617224874,
+              "total_tardiness_cycles": 64.6004784688995,
+              "late_job_count": 14,
+              "makespan_cycles": 14,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                7,
+                17,
+                14,
+                19,
+                11,
+                10,
+                18,
+                13,
+                5,
+                20,
+                2,
+                8,
+                16,
+                9,
+                6,
+                1,
+                15,
+                12
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.16417860000001383,
+            "unique_schedule_evaluations": 125,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 7,
+            "ga": {
+              "weighted_tardiness_cycles": 152.50119617224874,
+              "total_tardiness_cycles": 63.600478468899496,
+              "late_job_count": 14,
+              "makespan_cycles": 14,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                19,
+                7,
+                13,
+                14,
+                17,
+                11,
+                18,
+                5,
+                10,
+                20,
+                2,
+                8,
+                16,
+                9,
+                6,
+                1,
+                15,
+                12
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.18924369999876944,
+            "unique_schedule_evaluations": 135,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 42,
+            "ga": {
+              "weighted_tardiness_cycles": 156.50119617224874,
+              "total_tardiness_cycles": 62.600478468899496,
+              "late_job_count": 14,
+              "makespan_cycles": 14,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                3,
+                4,
+                7,
+                18,
+                17,
+                13,
+                14,
+                10,
+                11,
+                19,
+                20,
+                2,
+                5,
+                8,
+                16,
+                9,
+                6,
+                1,
+                15,
+                12
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.16776150000077905,
+            "unique_schedule_evaluations": 141,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2026,
+            "ga": {
+              "weighted_tardiness_cycles": 156.0,
+              "total_tardiness_cycles": 70.0,
+              "late_job_count": 12,
+              "makespan_cycles": 14,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                4,
+                17,
+                7,
+                3,
+                19,
+                11,
+                14,
+                10,
+                18,
+                13,
+                20,
+                2,
+                8,
+                16,
+                9,
+                5,
+                6,
+                15,
+                12,
+                1
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.16251550000015413,
+            "unique_schedule_evaluations": 118,
+            "repeatability_verified": true
+          },
+          {
+            "seed": 2027,
+            "ga": {
+              "weighted_tardiness_cycles": 156.0,
+              "total_tardiness_cycles": 67.0,
+              "late_job_count": 12,
+              "makespan_cycles": 15,
+              "horizon_overflow_cycles": 0.0,
+              "overflow_job_count": 0,
+              "feasible": true,
+              "order": [
+                4,
+                7,
+                18,
+                14,
+                17,
+                3,
+                19,
+                10,
+                20,
+                11,
+                13,
+                2,
+                12,
+                8,
+                16,
+                9,
+                15,
+                6,
+                1,
+                5
+              ]
+            },
+            "outcome_vs_edd": "better",
+            "runtime_seconds": 0.21004559999710182,
+            "unique_schedule_evaluations": 173,
+            "repeatability_verified": true
+          }
+        ]
+      }
+    ],
+    "input_provenance": {
+      "report_sha256": "db420935dc14221c50f71f0ca3349b0667bea6b37df45b330026df3d3e8d40d4",
+      "model_name": "decision-tree-rul",
+      "model_version": "decision-tree-rul-v1",
+      "manifest_sha256": "928428a1cd81e24922f55518aacc6dfb25b98d74fbc6df542ce72c5c179247cf",
+      "weights_sha256": "c33021cb9cf5931aba545b6a327d0547f14be1363cbd0c24d57f0ad923dd7bb3"
+    },
+    "benchmark_environment": {
+      "python": "3.12.16",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "logical_cpu_count": 12
+    }
+  },
+  "sha256": "3ca4b0429577d3e5f59d65c5b168fb1597022ac0f4cd28152ec933cef87733c8"
+}

@@ -16,7 +16,8 @@ def _page():
 def test_planner_compares_both_methods_on_the_same_reviewed_scenario():
     page = _page()
     assert not page.exception
-    assert not page.dataframe
+    assert len(page.dataframe) == 2
+    assert not any("Assumed RUL (cycles)" in item.value.columns for item in page.dataframe)
     page.button[0].click().run()
     assert not page.exception
 
@@ -53,7 +54,7 @@ def test_planner_compares_both_methods_on_the_same_reviewed_scenario():
         "Runtime (seconds)",
     ] * 2
     charts = page.get("plotly_chart")
-    assert len(charts) == 3
+    assert len(charts) == 4
     assert all(chart.proto.spec for chart in charts)
     edd_timeline = json.loads(charts[0].proto.spec)
     ga_timeline = json.loads(charts[1].proto.spec)
@@ -153,4 +154,5 @@ def test_planner_rejects_an_empty_job_selection():
     page.button[0].click().run()
     assert not page.exception
     assert [error.value for error in page.error] == ["Select at least one engine."]
-    assert not page.dataframe
+    assert len(page.dataframe) == 2
+    assert all("Engine" not in item.value.columns for item in page.dataframe)
