@@ -2,6 +2,7 @@
 
 import json
 from dataclasses import replace
+from pathlib import Path
 
 import plotly.graph_objects as go
 import streamlit as st
@@ -27,6 +28,9 @@ from fleetpulse.services import (
 )
 
 st.title("Maintenance Planner")
+_app_dir = Path(__file__).resolve().parents[1]
+st.page_link(st.Page(_app_dir / "pages" / "1_Fleet_Overview.py"), label="Return to Fleet Overview")
+st.page_link(st.Page(_app_dir / "pages" / "5_Model_Laboratory.py"), label="Review model evidence")
 st.caption("Review selected fleet estimates and configure a simulated maintenance scenario.")
 
 
