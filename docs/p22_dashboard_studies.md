@@ -1,5 +1,7 @@
 # P22 saved study views
 
+For a concise, report-ready set of observed P22 results with labeled tables, the three S1 figures, and claim-to-artifact traceability, see [P22 report-ready results](p22_report_results.md).
+
 The Model Laboratory and Maintenance Planner load the committed P22 study outputs as read-only evidence. They do not run training, change model inputs or recalculate a saved result. The Planner's saved-study section is visually separated from its current selected-fleet and synthetic-scenario controls.
 
 ## Sources displayed
