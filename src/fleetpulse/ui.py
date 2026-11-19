@@ -15,6 +15,36 @@ P20_FLEET_SCENARIO_STATE_KEY = "fleetpulse_p20_fleet_scenario"
 P20_FLEET_COMPARISON_STATE_KEY = "fleetpulse_p20_fleet_comparison"
 P20_FLEET_COMPARISON_ARTIFACT_STATE_KEY = "fleetpulse_p20_fleet_comparison_artifact"
 P20_SYNTHETIC_COMPARISON_STATE_KEY = "fleetpulse_p20_synthetic_comparison"
+P21_HISTORY_SOURCE_STATE_KEY = "fleetpulse_p21_history_source"
+P21_SELECTED_ENGINE_STATE_KEY = "fleetpulse_p21_selected_engine"
+P21_SELECTED_MODEL_STATE_KEY = "fleetpulse_p21_selected_model"
+P21_SELECTED_CYCLE_STATE_KEY = "fleetpulse_p21_selected_cycle"
+P21_HISTORY_SOURCE_WIDGET_KEY = "fleetpulse_p21_history_source_widget"
+P21_SELECTED_ENGINE_EXPLORER_WIDGET_KEY = "fleetpulse_p21_selected_engine_explorer_widget"
+P21_SELECTED_ENGINE_PREDICTION_WIDGET_KEY = "fleetpulse_p21_selected_engine_prediction_widget"
+P21_SELECTED_MODEL_WIDGET_KEY = "fleetpulse_p21_selected_model_widget"
+P21_SELECTED_CYCLE_EXPLORER_WIDGET_KEY = "fleetpulse_p21_selected_cycle_explorer_widget"
+P21_SELECTED_CYCLE_PREDICTION_WIDGET_KEY = "fleetpulse_p21_selected_cycle_prediction_widget"
+
+
+def prepare_selection(
+    state_key: str, widget_key: str, options: object, *, default: object | None = None
+) -> None:
+    """Sync a persistent selection with a page-local widget, validating its choices."""
+    choices = tuple(options)
+    if not choices:
+        return
+    selected = st.session_state.get(state_key)
+    if selected not in choices:
+        selected = default if default in choices else choices[0]
+        st.session_state[state_key] = selected
+    if st.session_state.get(widget_key) != selected:
+        st.session_state[widget_key] = selected
+
+
+def remember_selection(state_key: str, widget_key: str) -> None:
+    """Copy a page-local widget change into the persistent selection."""
+    st.session_state[state_key] = st.session_state[widget_key]
 
 
 def render_page(title: str, description: str, missing: str, next_step: str) -> None:
