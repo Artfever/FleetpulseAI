@@ -5,6 +5,7 @@
 - Actual local bundle facts: `decision-tree-rul-v1`, seed 42, max depth 8, minimum leaf 5; 16,738 fitting rows from 80 fitting engines; `past-only-v1`, 30-cycle window, 96 ordered features. Packaged FD001/train engine 4 through cycle 164 returns raw 34.19607843137255 cycles and is identified by the split manifest as development validation, not official-test evidence. No training or artifact changes.
 - Checks: `.venv/Scripts/python.exe -m pytest -q tests/test_bootstrap.py` PASS (3 in 5.58s); `.venv/Scripts/python.exe -m pytest -q` PASS (687 in 158.42s); `.venv/Scripts/python.exe -m ruff check .` PASS; Streamlit smoke on port 18604 returned `ok` (HTTP 200), then server stopped; `git diff --check` PASS. The first full run found a stale Home copy assertion; the corrected full rerun passed.
 - #91 remains open because teammate inspection/discussion of the audit and actual output has not been recorded. Abdullah was asked whether Shaheer or Taha checked it; response pending. The next issue is P21-S2 #168, assigned to Artfever/Shaheer; its native `blocked_by` is #91, and it blocks P21-S3 #224. Do not start #168 until #91 is closed. P21 gate #26 remains open. No teammate message sent.
+- Post-merge handoff commit `36ff5c4` is in [PR #492](https://github.com/Artfever/FleetpulseAI/pull/492), open to `dev`; CI is pending.
 
 ## P21-A3 #223 built-in/uploaded prediction-to-planner journeys (complete, 2026-11-19)
 

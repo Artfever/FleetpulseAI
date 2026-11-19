@@ -5,6 +5,7 @@
 - Actual local Decision Tree output for packaged simulated FD001/train engine 4 through cycle 164 is raw RUL 34.19607843137255 cycles. The split manifest identifies engine 4 as development validation, not official-test evidence. Model/config details and limits are in the audit. No model was retrained or changed.
 - Local checks: bootstrap test 3 passed; full suite 687 passed in 158.42s; Ruff passed; Streamlit smoke returned `ok` (HTTP 200); `git diff --check` passed.
 - #91 remains open until a teammate's audit/output inspection is recorded. The user has been asked whether Shaheer or Taha performed this check. #168 is assigned to Shaheer, is natively blocked by #91, and in turn blocks #224; wait for #91 closure before starting it.
+- Post-merge handoff commit `36ff5c4` is in [PR #492](https://github.com/Artfever/FleetpulseAI/pull/492), open to `dev`; CI is pending.
 
 ## P17-S1/S2/S3 explainability outputs (complete, 2026-11-18)
 
