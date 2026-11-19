@@ -161,6 +161,36 @@ def _positive_integer(value: object, name: str) -> int:
     return result
 
 
+def _select_replay_engine_records(
+    records: tuple[Mapping[str, object], ...], selected_unit: int
+) -> list[dict[str, object]]:
+    """Validate identities while selecting one engine from normalized history."""
+    engine_records: list[dict[str, object]] = []
+    for row_number, record in enumerate(records, start=1):
+        if type(record) is not dict and not isinstance(record, Mapping):
+            raise PredictionInputError(f"History row {row_number} must be a mapping.")
+        row_unit = record.get("unit_id")
+        if type(row_unit) is int:
+            # The normalized FD001 loader yields built-in ints for every row.
+            # Keep validating other numeric-like inputs, while avoiding ABC
+            # and Integral checks on the common full-fleet replay path.
+            row_unit_id = row_unit
+            if row_unit_id <= 0:
+                raise PredictionInputError(
+                    f"History row {row_number} has no valid engine identity; replay cannot verify completeness."
+                )
+        else:
+            try:
+                row_unit_id = _positive_integer(row_unit, "history unit_id")
+            except PredictionInputError:
+                raise PredictionInputError(
+                    f"History row {row_number} has no valid engine identity; replay cannot verify completeness."
+                ) from None
+        if row_unit_id == selected_unit:
+            engine_records.append(dict(record))
+    return engine_records
+
+
 def replay_engine_history(
     records: Iterable[Mapping[str, object]],
     *,
@@ -187,19 +217,7 @@ def replay_engine_history(
     except TypeError as error:
         raise PredictionInputError("records must be an iterable of engine mappings.") from error
 
-    engine_records: list[dict[str, object]] = []
-    for row_number, record in enumerate(all_records, start=1):
-        if not isinstance(record, Mapping):
-            raise PredictionInputError(f"History row {row_number} must be a mapping.")
-        row_unit = record.get("unit_id")
-        try:
-            row_unit_id = _positive_integer(row_unit, "history unit_id")
-        except PredictionInputError:
-            raise PredictionInputError(
-                f"History row {row_number} has no valid engine identity; replay cannot verify completeness."
-            ) from None
-        if row_unit_id == selected_unit:
-            engine_records.append(dict(record))
+    engine_records = _select_replay_engine_records(all_records, selected_unit)
     if not engine_records:
         raise PredictionInputError(f"Engine {selected_unit} is not present in the supplied history.")
 
