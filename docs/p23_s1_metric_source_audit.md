@@ -93,3 +93,17 @@ checksum-sealed report with per-engine evaluation rows and source/model hashes.
 It does not add raw sensor data, test history files, answer files, or model
 weights. After this change is deployed, a fresh remote check is still needed to
 confirm that the panel renders the same five rows.
+
+## Post-deployment verification (2026-11-21)
+
+The owner supplied a fresh signed-in screenshot of the deployed Model Laboratory at `https://fleetpulseai.streamlit.app/Model_Laboratory`, checked November 21, 2026 at 12:54:58 AM PKT. It shows the dedicated **Official held-out test results (FD001/test)** section, separate from the P22 study table. The screenshot's accessible table text exposes full precision; all five rows match the checksum-verified report exactly:
+
+| Model | Version | Engines | MAE (cycles) | RMSE (cycles) |
+| --- | --- | ---: | ---: | ---: |
+| Decision Tree | `decision-tree-rul-v1` | 100 | 24.513306424988755 | 33.95219459227001 |
+| Random Forest | `random-forest-rul-v1` | 100 | 20.34970822712025 | 27.51996165541398 |
+| XGBoost | `xgboost-rul-v1` | 100 | 18.44893268585205 | 24.16644813405696 |
+| Constant mean baseline | `constant-rul-v1` | 100 | 40.87930202123019 | 52.62485752612688 |
+| Dense RUL MLP | `dense-rul-mlp-final-v1` | 100 | 18.160531787872316 | 25.573537464442705 |
+
+The visible explanatory note identifies the values as error measures in operating cycles, not accuracy percentages or guarantees about future engines. The hosted commit was not displayed. The screenshot is attached to the owner's conversation; no local image path was supplied. This is a remote rendering check plus the exact match to the locally audited report and frozen manifests, not a claim that the hosting platform exposed its deployed SHA.
