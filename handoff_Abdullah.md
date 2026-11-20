@@ -1120,3 +1120,27 @@ Publish via local gh authenticated as Abdullah-SE-bit. Do not send teammate mess
 - Remaining: open a focused `Refs #174` PR to `dev`; merge after all required CI passes and conversations are resolved. Then repeat the engine-4/cycle-164 SHAP and five-model comparison in the signed-in hosted RUL Prediction page. The current session has no browser-control connector, so remote post-deployment verification is not yet run. Keep #174 open until verified. #262 waits on #174. #261 remains independently open; P23 gate #28 remains open.
 
 - Implementation commit `215fc96` (`feat: package verified SHAP reference background`) is pushed in [PR #523](https://github.com/Artfever/FleetpulseAI/pull/523), targeting `dev` with `Refs #174`. Required CI and review conversations are pending. Next: wait for required CI and resolve any conversations; merge when clear; then capture a fresh hosted check of contributions and five-model comparison for packaged FD001/train engine 4 through cycle 164. Keep #174 open until the deployed output is verified.
+
+## P23-S2 #174 implementation merged; hosted review pending (2026-11-21)
+
+- PR [#523](https://github.com/Artfever/FleetpulseAI/pull/523) merged to `dev` at `b4d992e10bc5b689804d17ba4f15071690f1c31f`. Implementation commit `215fc9692b3f0e385fbd23ed7fdfdffc8df39912`; handoff commit `e83ba802c10a18eff340aa8debc1ab4c3298fc0e`. All five required CI checks passed; review conversations were zero.
+- #174 remains OPEN pending post-deployment check of packaged-history engine 4/cycle 164: show SHAP contributions and compare all five final-model raw outputs against `docs/p23_s2_explanation_background.md`. The hosted commit SHA is not exposed. Anonymous HTTP to `/RUL_Prediction` returned 303 to Streamlit sign-in. This session has no connected browser-control tool; a browser plugin suggestion is pending user connection.
+- #97 is CLOSED. #262 remains dependent on #174; #261 is independently open pending its named teammate review. Gate #28 remains open; do not begin P24.
+
+## P23 gate reevaluation (2026-11-21)
+
+- Verified current GitHub state: #261 CLOSED; P23-A1 #96, A2 #173, S1 #97, T1 #98, T2 #175, and T3 #229 are CLOSED. P23-S2 #174 and dependent P23-S3 #262 remain OPEN. Parent gate #28 remains OPEN; P24 gate #29 and tasks remain unopened by this work.
+- Abdullah's latest supplied screenshot records the dedicated Official held-out FD001/test metrics panel and supports #97 only. It does not show the post-PR #523 explanation output or a fresh missing/invalid upload check for #174/#262.
+- Current agent-side access check: `curl.exe -I -L --max-redirs 3 --max-time 20 https://fleetpulseai.streamlit.app/RUL_Prediction` ended at Streamlit sign-in (HTTP 303); web open also reported the URL inaccessible. No authenticated browser-control connector is available in this session. Thus the packaged SHAP fix is implemented, merged, and fully locally tested, but hosted explanation output is NOT VERIFIED. The prior malformed-header observation is recorded in `docs/p23_a3_remote_parity.md`; a fresh missing-file behavior check is also NOT VERIFIED.
+- Do not close #174/#262 or #28 based on unrelated evidence. Next exact step: an authenticated browser check after PR #523 deployment must compare the engine-4/cycle-164 SHAP contribution and five raw model values to `docs/p23_s2_explanation_background.md`; then test the public upload failure state(s) required by #262 and record actual screen output. Close those tasks and gate only after their criteria are evidenced.
+- Once these two P23 tasks and shared gate are genuinely complete, inspect the P24 gate #29 dependencies and start its first ready task. Until then P24 is blocked by P23 gate #28.
+
+- Follow-up from Abdullah: confirms a teammate checked the P23-A3 #261 remote prediction/planner parity output. The teammate's name was not specified, so none is attributed here. #261 is already CLOSED.
+
+## P23 waiver and P24-A1 clean-install work started (2026-11-21)
+
+- At Abdullah's explicit direction, P23-S2 #174, P23-S3 #262, and parent gate #28 were closed with GitHub reason `not planned`. This is an owner-directed waiver, not a claim that hosted explanation or upload-failure checks passed. P23-S2's hosted output remains unverified; P23-S3's fresh missing-upload check remains unverified. P22 gate #27 is CLOSED as completed. P24 gate #29 is OPEN.
+- Started P24-A1 #99 on `feat/P24-A1-clean-install`, branched from current `origin/dev` at `b4d992e10bc5b689804d17ba4f15071690f1c31f`.
+- Initial clean clone at `%TEMP%\fleetpulse-p24-a1-clean-install` exposed a README setup defect: the documented generic `python -m venv` selected system Python 3.14.6, while package metadata requires `>=3.12,<3.13`; the editable install failed with that exact version error. `py -0p` confirmed Python 3.12.16 is installed.
+- Changed `README.md` to use explicit `py -3.12` / `python3.12` venv creation and environment-local executable commands. The revised README has not yet been installed/tested. Next: commit this correction with the handoff, clone the task branch into a second fresh directory, follow only README commands, run pytest/Ruff, launch Streamlit and check its health endpoint. Then update evidence and open a task PR to `dev` with `Refs #99`.
+- Existing local P23 handoff additions are preserved in this branch; no app/model/data changes are planned for A1.
