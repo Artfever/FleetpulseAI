@@ -76,7 +76,11 @@ def _read_document(path: Path, label: str) -> tuple[dict[str, Any], str, str]:
     digest = document.get("sha256")
     if not isinstance(payload, dict) or digest != _canonical_sha256(payload):
         raise ValueError(f"{label} payload checksum is invalid: {path}.")
-    return payload, digest, hashlib.sha256(raw).hexdigest()
+    # Git for Windows may check out tracked JSON with CRLF when core.autocrlf
+    # is enabled. The saved P13 provenance hash describes the Git-stored LF
+    # bytes, so normalize line endings before comparing whole-file identity.
+    file_sha = hashlib.sha256(raw.replace(b"\r\n", b"\n")).hexdigest()
+    return payload, digest, file_sha
 
 
 def audit_bundles(
