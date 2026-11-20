@@ -1,6 +1,6 @@
 # FleetPulse AI
 
-FleetPulse is a planned Streamlit application for predicting the remaining useful life of simulated turbofan engines and exploring maintenance schedules. It is currently a bootstrap: no dataset, trained model, predictions, or evaluation results are included.
+FleetPulse is a Streamlit application for estimating the remaining useful life (RUL) of simulated NASA C-MAPSS FD001 engine histories and comparing illustrative maintenance schedules. It includes a small tracked training-history demo subset and verified model/evaluation artifacts; full raw datasets and development outputs are provisioned locally and are not all tracked in Git. These simulated-data estimates are not aircraft fault diagnoses or maintenance recommendations. See the [data, feature, and service architecture report](docs/report/p25_a1_data_features_architecture.md) for provenance, leakage boundaries, and implementation details.
 
 ## Get started
 
@@ -42,18 +42,18 @@ See the [setup guide](docs/SETUP.md) for Windows, Linux, and macOS commands and 
 ## Repository structure
 
 ```text
-app/                  Streamlit entrypoint and future pages
-src/fleetpulse/       Python package and planned domain modules
+app/                  Streamlit entrypoint and six current application pages
+src/fleetpulse/       Data, feature, model, evaluation, service, and optimization packages
 tests/                Automated tests
-data/                 Local datasets (contents ignored by Git)
-artifacts/            Local model and experiment outputs (contents ignored by Git)
+data/                 Tracked demo subset; full raw datasets are local/ignored
+artifacts/            Tracked final bundles; development outputs are local/ignored
 docs/                 Setup, workflow, and project documentation
 planning/             Backlog manifest and issue mapping
 scripts/              Backlog and issue-workflow utilities
 .github/              CI, issue and pull request templates, and code owners
 ```
 
-Empty data and artifact folders are kept using `.gitkeep` files. See the [repository layout](docs/REPOSITORY_LAYOUT.md) for details and the distinction between planned and implemented components.
+See the [repository layout](docs/REPOSITORY_LAYOUT.md) for the tracked and locally provisioned contents.
 
 ## Working on the project
 
