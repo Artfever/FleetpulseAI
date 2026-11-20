@@ -120,3 +120,7 @@ the model, manifest, source, and scenario hashes above. Full output and the
 planner prediction values are also recorded in
 [`docs/p20_prediction_planner_boundary.md`](p20_prediction_planner_boundary.md)
 and [`docs/p20_s3_paired_comparison_artifact.md`](p20_s3_paired_comparison_artifact.md).
+
+## Later P23-S1 remote update
+
+After PR #521 added the checksum-sealed P13 display report to `dev`, Abdullah supplied a fresh signed-in screenshot of the Model Laboratory checked at 2026-11-21 12:54:58 AM PKT. The dedicated official-results panel was visible, and all five full-precision values matched the local report. The hosted commit was not displayed. See `docs/p23_s1_metric_source_audit.md` for exact rows, source checksum, and evidence limits.
