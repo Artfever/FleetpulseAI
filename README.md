@@ -62,6 +62,8 @@ New-Item -ItemType Directory -Path $run | Out-Null
 
 Full data requirements, Linux/macOS variants, exact observed outputs, limitations, and code-matched pipeline diagrams are in the [P25 reproduction and architecture report](docs/report/p25_a2_pipeline_and_reproduction.md). Final test scores are for held-out reporting; do not use them to tune or select models.
 
+For the architecture/data walkthrough, see the [editable P25 slides](docs/slides/p25_abdullah_architecture_data.md) and [presenter guide](docs/slides/p25_abdullah_presenter_guide.md).
+
 ## Repository structure
 
 ```text
