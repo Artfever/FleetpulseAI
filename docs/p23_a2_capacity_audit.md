@@ -17,6 +17,17 @@ that the hosted service has been checked.
 - The upload widget now sets `max_upload_size=1` (MiB), matching the parser's
   1 MiB contract. `tests/test_upload_page.py` asserts the configured widget
   protocol value.
+- `compare_final_models` validates history before accessing artifacts. Invalid
+  histories raise `PredictionInputError` before a model is called. Per-model
+  load/validation/prediction errors are returned with a model name, code, and
+  reason; one failed model does not prevent attempts on the remaining models.
+  The service distinguishes `artifact_unavailable`, `dependency_unavailable`,
+  `incompatible_artifact`, and `prediction_failed`. If none succeed, it returns
+  no synthetic estimates. The service documentation states there is no model
+  cache, training, or development-model fallback.
+- Existing tests cover invalid input before artifact access, all bundles
+  missing, incompatible manifests/weights, one estimator failure with continued
+  per-model handling, and no fake estimate when all models fail.
 
 ## Local model-load profile
 
@@ -45,6 +56,8 @@ evidence. No model was retrained.
 - `.venv/Scripts/python.exe -m pytest -q tests/test_upload_page.py tests/test_input_validation.py tests/test_history_service.py tests/test_final_comparison.py` — PASS, 59 passed.
 - `.venv/Scripts/python.exe -m ruff check .` — PASS.
 - `.venv/Scripts/python.exe -m pytest -q` — PASS, 731 passed in 205.96 seconds.
+- The focused final-comparison tests are included in the 59-test focused run and
+  the full 731-test run; they exercise the error cases listed above.
 - `.venv/Scripts/python.exe -m streamlit run app/Home.py --server.port 18631 --server.headless true` — first launch reported port already in use; the existing local app health endpoint was checked with `curl.exe --fail --silent --show-error http://localhost:18631/_stcore/health` and returned `ok` (HTTP 200). The existing app process was stopped after the check.
 
 ## Remaining evidence
