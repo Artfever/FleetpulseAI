@@ -165,7 +165,7 @@ elif source == "Upload CSV":
         "Upload a headered CSV with the 26 raw-history fields. Target/RUL columns are not accepted; "
         "files are limited to 1 MiB."
     )
-    uploaded_file = st.file_uploader("Engine history CSV", type=["csv"])
+    uploaded_file = st.file_uploader("Engine history CSV", type=["csv"], max_upload_size=1)
     if uploaded_file is not None:
         upload_bytes = uploaded_file.getvalue()
         try:

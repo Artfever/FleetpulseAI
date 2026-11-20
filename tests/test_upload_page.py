@@ -47,6 +47,7 @@ def test_upload_page_selects_engine_and_previews_only_its_rows_without_predictio
 
     page.run()
     page.selectbox[0].select("Upload CSV").run()
+    assert page.file_uploader[0].proto.max_upload_size_mb == 1
     page.file_uploader[0].set_value(("histories.csv", contents, "text/csv")).run()
 
     assert not page.exception
