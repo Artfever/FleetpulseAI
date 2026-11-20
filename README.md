@@ -16,6 +16,17 @@ py -3.12 -m venv .venv
 .venv/Scripts/python.exe -m streamlit run app/Home.py
 ```
 
+If the Windows Python launcher does not recognize an installed 3.12 runtime,
+create the same environment with uv instead:
+
+```powershell
+uv venv --python 3.12 --seed .venv
+.venv/Scripts/python.exe -m pip install -e ".[dev]"
+.venv/Scripts/python.exe -m pytest -q
+.venv/Scripts/python.exe -m ruff check .
+.venv/Scripts/python.exe -m streamlit run app/Home.py
+```
+
 On Linux or macOS, use `python3.12` and the environment's `bin` directory:
 
 ```sh
