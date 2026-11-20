@@ -10,7 +10,7 @@ Task: [P24-A3 #230](https://github.com/Artfever/FleetpulseAI/issues/230)
 
 The tracked final serving artifacts were inventoried and the existing frozen-bundle audit passed. It checked 10 model manifest/weight files across five models and confirmed that all five evaluated models match the frozen inventory and reported P13 results. No artifact, model, dataset, or code was changed by this audit.
 
-The candidate snapshot is proposed as annotated tag `p24-rc1` after this report is merged to `dev`. This is a release candidate, not a claim that the P24 shared gate passed. P23 gate #28 was closed as `NOT_PLANNED` at Abdullah's direction; the hosted SHAP check for #174 and fresh upload-failure check for #262 remain unverified. The P24 shared gate #29 remains open.
+The candidate snapshot is tagged `p24-rc1` at merge commit `bfcb1a4abc5abd4eff9fd4a11d7daf29b44f826d`. The annotated tag message preserves the release caveat. This is a release candidate, not a claim that the P24 shared gate passed. P23 gate #28 was closed as `NOT_PLANNED` at Abdullah's direction; the hosted SHAP check for #174 and fresh upload-failure check for #262 remain unverified. The P24 shared gate #29 remains open.
 
 ## Audit command and output
 
@@ -63,4 +63,4 @@ The following 13 paths are tracked under `artifacts/final/` (including the empty
 
 ## Release candidate tag
 
-Proposed annotated tag: `p24-rc1`, pointing to the dev merge commit that contains this report. The tag message must retain the caveat that this is an auditable candidate snapshot and that hosted P23 checks were waived/unverified. Do not treat it as a production release or as closure of P24 gate #29.
+Annotated tag: [`p24-rc1`](https://github.com/Artfever/FleetpulseAI/releases/tag/p24-rc1), pointing to dev merge commit `bfcb1a4abc5abd4eff9fd4a11d7daf29b44f826d`. The tag message retains the caveat that this is an auditable candidate snapshot and hosted P23 checks were waived/unverified. Do not treat it as a production release or as closure of P24 gate #29.
