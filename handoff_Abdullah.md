@@ -1347,3 +1347,11 @@ P25-A2 final verification before commit (2026-11-21): README and Mermaid chapter
 - Commit and PR are pending. Next: stage/review diff and run `git diff --check`; commit and open `Refs #233` PR to `dev`; monitor five checks and review conversations; merge when CI is green and conversations resolved; then record merge hash and close #233 with the slide/evidence output. P26 task sequencing follows the remaining P25 shared gate and sibling issues.
 
 P25-A3 review and wording update before commit (2026-11-21): Abdullah replied “Checked and accepted” after the slide review prompt. This records owner acceptance only; it does not name a teammate or claim that a live teammate teaching session occurred. Clarified that cycle numbers feed slope calculation but are not standalone model columns, and model-weight hashes apply only when the bundle has a separate weight file.
+
+## P25-A3 #233 PR #536 opened (2026-11-21)
+
+- PR https://github.com/Artfever/FleetpulseAI/pull/536 targets `dev` with `Refs #233`. Implementation commit `d2175aa` (`docs: prepare P25 architecture and data slides`).
+- The PR adds the six-slide Marp Markdown source, five-minute presenter guide, and README links. Abdullah checked and accepted the content; no teammate is named and no formal teammate approval is claimed.
+- The materials and real checks are summarized above. No live teammate walkthrough is claimed; keep #233 open until this manual teach-back item is completed or the owner explicitly decides it is not required. No teammate messages were sent.
+- Initial CI/conversation state must be checked for the newest commit after this handoff update is pushed. Required Development CI has five checks; task PR policy does not require approval.
+- Next: verify all five checks and review conversations on the latest PR revision. Merge only when checks pass and conversations are resolved; after merge, record the merge hash, then close #233 only if its human acceptance evidence is complete. Otherwise leave it open with the precise human step recorded and report the blocker.
