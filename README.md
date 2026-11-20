@@ -4,15 +4,37 @@ FleetPulse is a planned Streamlit application for predicting the remaining usefu
 
 ## Get started
 
-The project requires Python 3.12. From the repository root:
+The project requires Python 3.12. From the repository root, create the
+environment with the Python 3.12 interpreter explicitly. On Windows
+PowerShell:
+
+```powershell
+py -3.12 -m venv .venv
+.venv/Scripts/python.exe -m pip install -e ".[dev,xgboost,mlp]" --extra-index-url https://download.pytorch.org/whl/cpu
+.venv/Scripts/python.exe -m pytest -q
+.venv/Scripts/python.exe -m ruff check .
+.venv/Scripts/python.exe -m streamlit run app/Home.py
+```
+
+If the Windows Python launcher does not recognize an installed 3.12 runtime,
+create the same environment with uv instead:
+
+```powershell
+uv venv --python 3.12 --seed .venv
+.venv/Scripts/python.exe -m pip install -e ".[dev,xgboost,mlp]" --extra-index-url https://download.pytorch.org/whl/cpu
+.venv/Scripts/python.exe -m pytest -q
+.venv/Scripts/python.exe -m ruff check .
+.venv/Scripts/python.exe -m streamlit run app/Home.py
+```
+
+On Linux or macOS, use `python3.12` and the environment's `bin` directory:
 
 ```sh
-python -m venv .venv
-# Activate the environment, then run:
-python -m pip install -e ".[dev]"
-python -m pytest -q
-python -m ruff check .
-python -m streamlit run app/Home.py
+python3.12 -m venv .venv
+.venv/bin/python -m pip install -e '.[dev,xgboost,mlp]' --extra-index-url https://download.pytorch.org/whl/cpu
+.venv/bin/python -m pytest -q
+.venv/bin/python -m ruff check .
+.venv/bin/python -m streamlit run app/Home.py
 ```
 
 See the [setup guide](docs/SETUP.md) for Windows, Linux, and macOS commands and the editable-install path contract.
