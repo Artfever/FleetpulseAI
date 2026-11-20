@@ -673,3 +673,9 @@ Starter record created by repository governance on 9 November 2026. Taha should 
 - Known issues recorded: raw FD001 files are not tracked and may be absent in a clean install; one nonfatal cycle-slider session-state Streamlit log warning; P24-S2 tiny MLP output drift has an unproven cause; model data is simulated FD001 and schedule controls are assumptions.
 - Verification: `curl.exe --silent --show-error --max-time 10 -i http://127.0.0.1:8765/_stcore/health` PASS, HTTP 200/body `ok`; `.venv\\Scripts\\python.exe -m ruff check .` PASS; focused `.venv\\Scripts\\python.exe -m pytest -q tests\\test_page_shells.py tests\\test_p21_t1_navigation.py tests\\test_upload_page.py tests\\test_model_laboratory_page.py` PASS, 15 tests in 15.10s. Browser pages had zero app exceptions/browser errors. Full pytest not run; PR CI applies.
 - Pre-commit checks: `git diff --check` PASS; all 10 internal screenshot/report links resolve. Next: commit, open `Refs #178` task PR to `dev`, and merge/close only after required CI and conversations pass. Then inspect P24-T3 #232. P24 gate #29 remains open.
+## P24-T2 #178 PR opened (2026-11-21)
+
+- Evidence commit `791e5c41f7e95d7111fafbe597701da51edde938` is in [PR #531](https://github.com/Artfever/FleetpulseAI/pull/531), targeting `dev` with `Refs #178`.
+- The PR adds `docs/p24_t2_screenshots_known_issues.md`, five local Chrome screenshots in `docs/images/p24_t2/`, and updates both handoffs. It records the public URL, owner report, current HTTP 303 sign-in redirect, local results, known issues, test evidence, and source commit for screenshots.
+- At initial PR check all five Development CI checks were queued; review conversations were zero. A handoff-status update is being pushed, so inspect the newest CI run before merging.
+- Next: merge only after required CI passes and conversations are resolved; close #178 with evidence and the remote-verification caveat, then inspect P24-T3 #232 blockers. Keep parent gate #29 open.
