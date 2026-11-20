@@ -142,3 +142,29 @@ def test_rejects_reported_bundle_metadata_that_does_not_match(tmp_path: Path) ->
             expected_results_sha256=json.loads(results_path.read_text())["sha256"],
             expected_feature_config_sha256="feature-sha",
         )
+
+
+def test_manifest_identity_is_stable_across_windows_crlf_checkout(tmp_path: Path) -> None:
+    index_path, tree_dir, mlp_dir, results_path, expected, index = _fixture(tmp_path)
+    manifest_path = tree_dir / "decision.json"
+    lf_bytes = manifest_path.read_bytes().replace(b"\r\n", b"\n")
+    manifest_path.write_bytes(lf_bytes.replace(b"\n", b"\r\n"))
+
+    results = json.loads(results_path.read_text())
+    results["payload"]["models"][0]["artifact"]["manifest_file_sha256"] = hashlib.sha256(
+        lf_bytes
+    ).hexdigest()
+    _write(results_path, _seal(results["payload"]))
+
+    report = audit_bundles(
+        index_path,
+        tree_dir,
+        mlp_dir,
+        results_path,
+        expected_inventory=expected,
+        expected_tree_index_sha256=index["sha256"],
+        expected_results_sha256=json.loads(results_path.read_text())["sha256"],
+        expected_feature_config_sha256="feature-sha",
+    )
+
+    assert report["evaluated_models_match_frozen_inventory"] is True
