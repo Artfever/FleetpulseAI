@@ -10,7 +10,7 @@ PowerShell:
 
 ```powershell
 py -3.12 -m venv .venv
-.venv/Scripts/python.exe -m pip install -e ".[dev]"
+.venv/Scripts/python.exe -m pip install -e ".[dev,xgboost,mlp]" --extra-index-url https://download.pytorch.org/whl/cpu
 .venv/Scripts/python.exe -m pytest -q
 .venv/Scripts/python.exe -m ruff check .
 .venv/Scripts/python.exe -m streamlit run app/Home.py
@@ -21,7 +21,7 @@ create the same environment with uv instead:
 
 ```powershell
 uv venv --python 3.12 --seed .venv
-.venv/Scripts/python.exe -m pip install -e ".[dev]"
+.venv/Scripts/python.exe -m pip install -e ".[dev,xgboost,mlp]" --extra-index-url https://download.pytorch.org/whl/cpu
 .venv/Scripts/python.exe -m pytest -q
 .venv/Scripts/python.exe -m ruff check .
 .venv/Scripts/python.exe -m streamlit run app/Home.py
@@ -31,7 +31,7 @@ On Linux or macOS, use `python3.12` and the environment's `bin` directory:
 
 ```sh
 python3.12 -m venv .venv
-.venv/bin/python -m pip install -e '.[dev]'
+.venv/bin/python -m pip install -e '.[dev,xgboost,mlp]' --extra-index-url https://download.pytorch.org/whl/cpu
 .venv/bin/python -m pytest -q
 .venv/bin/python -m ruff check .
 .venv/bin/python -m streamlit run app/Home.py
