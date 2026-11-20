@@ -1,11 +1,11 @@
 # P23-S1 local Model Laboratory metric-source audit
 
-Status: the local source/display audit passed, and the owner-supplied public-app
-screenshot shows the P22-S1 official FD001/test metric table. Its five model
-versions, counts, MAE, and RMSE values match the verified local P13 report and
-frozen model audit below. The screenshot's deployment revision predates this
-branch's packaging fix; the dedicated official-results panel was previously
-observed unavailable in the hosted app. Verify that panel again after deployment.
+Status: the local source/display audit and the post-PR #521 hosted check passed.
+The owner-supplied screenshot confirms the dedicated **Official held-out test
+results (FD001/test)** panel is visible separately from P22 and that all five
+full-precision rows match the verified local P13 report and frozen model audit
+below. See the dated post-deployment section for the exact rows and evidence
+limits; the hosted commit was not displayed.
 
 ## What was checked
 
