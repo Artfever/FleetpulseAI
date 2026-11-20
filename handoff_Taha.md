@@ -642,3 +642,9 @@ Starter record created by repository governance on 9 November 2026. Taha should 
 - Relevant reload command `.venv/Scripts/python.exe scripts/smoke_p23_a1_release.py` PASS: five frozen models, zero failures, inference only, engine 4 through cycle 164. No model retraining.
 - Next: commit and open `Refs #229` PR to `dev`, verify CI/conversations, and keep #229 open until the owner confirms the deployed SHA/version/failures or accepts the recorded limitations.
 - T3 record commit `a7019c4` (`docs: record P23 deployed release status`) is on `feat/P23-T3-release-record` in [PR #516](https://github.com/Artfever/FleetpulseAI/pull/516), targeting `dev` with `Refs #229`; CI/conversation checks are pending.
+
+## P23-T3 #229 release record merged; hosted revision remains unknown (2026-11-20)
+
+- PR #516 merged to `dev` at `ffe8a4555ba278ce4dd061bc14abdcbc40239873`; all required CI checks passed and review conversations were zero.
+- #229 remains OPEN because the exact hosted SHA is not retrievable here. Abdullah's last observed app check corresponds in time to `dev` `b296e5e`; later commits (#514–#516) may or may not be deployed. Anonymous URL/health requests return HTTP 303 to sign-in.
+- P23-A3 #261 is blocked on #229. Next: get the deployment SHA from the hosting dashboard or owner confirmation of current dev, then run the remote/local parity check; preserve the recorded local smoke outputs and avoid treating them as remote results.
