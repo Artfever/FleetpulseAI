@@ -39,6 +39,29 @@ python3.12 -m venv .venv
 
 See the [setup guide](docs/SETUP.md) for Windows, Linux, and macOS commands and the editable-install path contract.
 
+## Reproduce training and evaluation
+
+With the original, checksum-verified `data/raw/train_FD001.txt` available, rebuild development features and train/reload the P06 Decision Tree with:
+
+```powershell
+.venv/Scripts/python.exe scripts/run_p06_validation.py
+```
+
+This rebuild replaces generated P06 files under the ignored `artifacts/development/` directory; save any local outputs you want to keep before rerunning it.
+
+For final reporting only, the P13 workflow predicts from the five frozen bundles on `FD001/test`, separately pairs the held-out RUL answers, and then calculates the final metrics. Use a new output directory on each run:
+
+```powershell
+$run = "artifacts/experiments/p13-$(Get-Date -Format yyyyMMdd-HHmmssfff)"
+New-Item -ItemType Directory -Path $run | Out-Null
+.venv/Scripts/python.exe -m fleetpulse.evaluation.test --test-data data/raw/test_FD001.txt --output "$run/official_test_predictions.json"
+.venv/Scripts/python.exe -m fleetpulse.evaluation.official_test_pairing --predictions "$run/official_test_predictions.json" --rul-answers data/raw/RUL_FD001.txt --output "$run/official_test_pairings.json"
+.venv/Scripts/python.exe -m fleetpulse.evaluation.final_test_results --pairings "$run/official_test_pairings.json" --output "$run/final_test_results.json" --residual-figure "$run/test_residual_histogram.html" --prediction-figure "$run/test_prediction_errors.html"
+.venv/Scripts/python.exe scripts/audit_p13_metrics.py --predictions "$run/official_test_predictions.json" --rul data/raw/RUL_FD001.txt --reported "$run/final_test_results.json" --output "$run/metric_audit.json"
+```
+
+Full data requirements, Linux/macOS variants, exact observed outputs, limitations, and code-matched pipeline diagrams are in the [P25 reproduction and architecture report](docs/report/p25_a2_pipeline_and_reproduction.md). Final test scores are for held-out reporting; do not use them to tune or select models.
+
 ## Repository structure
 
 ```text
