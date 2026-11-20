@@ -30,6 +30,8 @@ from fleetpulse.services.predictor import PredictionInputError
 
 BACKGROUND_SELECTION_POLICY = "fd001-train-all-engines-observed-cycle-90-v1"
 BACKGROUND_CYCLE = 90
+BACKGROUND_SCHEMA_VERSION = "p23-shap-feature-background-v1"
+BACKGROUND_ARTIFACT_PATH = Path("artifacts/final/explanation/decision-tree-background.json")
 DECISION_TREE_KEY = "decision-tree-rul"
 ADDITIVITY_ABSOLUTE_TOLERANCE = 2e-5
 ADDITIVITY_RELATIVE_TOLERANCE = 1e-7
@@ -196,6 +198,100 @@ def build_fd001_training_background(
     )
 
 
+def save_training_feature_background(
+    background: TrainingFeatureBackground,
+    path: str | Path = PROJECT_ROOT / BACKGROUND_ARTIFACT_PATH,
+) -> str:
+    """Save only the fixed feature rows needed by hosted interventional SHAP."""
+    if not isinstance(background, TrainingFeatureBackground):
+        raise TypeError("background must be a TrainingFeatureBackground.")
+    _validate_background_content(
+        background,
+        feature_names=background.feature_names,
+        training_source_sha256=background.training_source_sha256,
+    )
+    payload = {
+        "schema_version": BACKGROUND_SCHEMA_VERSION,
+        "dataset_partition": "FD001/train",
+        "source_file": "data/raw/train_FD001.txt",
+        "training_source_sha256": background.training_source_sha256,
+        "selection_policy": background.selection_policy,
+        "feature_names": list(background.feature_names),
+        "row_count": len(background.values),
+        "values": [list(row) for row in background.values],
+        "background_sha256": background.background_sha256,
+    }
+    digest = _canonical_sha256(payload)
+    document = json.dumps(
+        {"payload": payload, "sha256": digest},
+        sort_keys=True,
+        separators=(",", ":"),
+        allow_nan=False,
+    ) + "\n"
+    output = Path(path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    if output.exists():
+        if output.read_text(encoding="utf-8") != document:
+            raise FileExistsError(f"Refusing to replace different explanation background at {output}.")
+    else:
+        output.write_text(document, encoding="utf-8", newline="\n")
+    return digest
+
+
+def load_training_feature_background(
+    path: str | Path = PROJECT_ROOT / BACKGROUND_ARTIFACT_PATH,
+    *,
+    expected_training_source_sha256: str,
+    feature_config: FeatureConfig,
+) -> TrainingFeatureBackground:
+    """Load and verify the packaged feature-only training reference."""
+    if not isinstance(feature_config, FeatureConfig):
+        raise TypeError("feature_config must be a FeatureConfig.")
+    if not _is_sha256(expected_training_source_sha256):
+        raise ValueError("expected_training_source_sha256 must be a lowercase SHA-256 digest.")
+    input_path = Path(path)
+    document = json.loads(input_path.read_text(encoding="utf-8"))
+    payload = document.get("payload")
+    if not isinstance(payload, dict) or document.get("sha256") != _canonical_sha256(payload):
+        raise ValueError("Packaged explanation background checksum is invalid.")
+    if (
+        payload.get("schema_version") != BACKGROUND_SCHEMA_VERSION
+        or payload.get("dataset_partition") != "FD001/train"
+        or payload.get("source_file") != "data/raw/train_FD001.txt"
+        or payload.get("training_source_sha256") != expected_training_source_sha256
+        or payload.get("selection_policy") != BACKGROUND_SELECTION_POLICY
+        or payload.get("feature_names") != list(feature_config.output_schema)
+    ):
+        raise ValueError("Packaged explanation background source, policy or feature schema is incompatible.")
+    values = payload.get("values")
+    if (
+        type(payload.get("row_count")) is not int
+        or not isinstance(values, list)
+        or payload["row_count"] != len(values)
+        or not all(
+            isinstance(row, list)
+            and len(row) == len(feature_config.output_schema)
+            and all(type(value) in (int, float) and math.isfinite(value) for value in row)
+            for row in values
+        )
+    ):
+        raise ValueError("Packaged explanation background has invalid row values or dimensions.")
+    background = TrainingFeatureBackground(
+        values=tuple(tuple(float(value) for value in row) for row in values),
+        feature_names=tuple(payload["feature_names"]),
+        training_source_sha256=payload["training_source_sha256"],
+        selection_policy=payload["selection_policy"],
+        source_path=input_path.as_posix(),
+        background_sha256=payload.get("background_sha256"),
+    )
+    _validate_background_content(
+        background,
+        feature_names=feature_config.output_schema,
+        training_source_sha256=expected_training_source_sha256,
+    )
+    return background
+
+
 def explain_final_tree_prediction(
     history: Iterable[Mapping[str, object]],
     *,
@@ -325,18 +421,28 @@ def explain_final_tree_history(
 ) -> FinalTreeExplanation:
     """Explain a prefix using the registered final tree and its train reference.
 
-    This convenience entry point loads the frozen Decision Tree, verifies the
-    original train-source hash, builds the documented fixed background, then
-    delegates to the strict single-prefix explanation service.
+    This convenience entry point loads the frozen Decision Tree and its fixed
+    feature-only reference. It prefers the packaged, checksum-verified matrix
+    so the public app does not need the raw training file. If that artifact is
+    absent, a local raw training file can generate the same fixed background.
     """
     rows = tuple(history)
     spec = FINAL_MODEL_REGISTRY[DECISION_TREE_KEY]
     bundle = load_final_tree_bundle(Path(artifact_root) / spec.manifest_path)
-    background = build_fd001_training_background(
-        training_path,
-        expected_training_source_sha256=bundle.payload["training"]["training_source_sha256"],
-        feature_config=bundle.feature_config,
-    )
+    training_source_sha = bundle.payload["training"]["training_source_sha256"]
+    background_path = Path(artifact_root) / BACKGROUND_ARTIFACT_PATH
+    if background_path.is_file():
+        background = load_training_feature_background(
+            background_path,
+            expected_training_source_sha256=training_source_sha,
+            feature_config=bundle.feature_config,
+        )
+    else:
+        background = build_fd001_training_background(
+            training_path,
+            expected_training_source_sha256=training_source_sha,
+            feature_config=bundle.feature_config,
+        )
     return explain_final_tree_prediction(
         rows,
         dataset_partition=dataset_partition,
@@ -442,9 +548,22 @@ def _validate_background(
     bundle: FinalTreeBundle,
     training_source_sha256: str,
 ) -> None:
+    _validate_background_content(
+        background,
+        feature_names=bundle.feature_names,
+        training_source_sha256=training_source_sha256,
+    )
+
+
+def _validate_background_content(
+    background: TrainingFeatureBackground,
+    *,
+    feature_names: tuple[str, ...],
+    training_source_sha256: str,
+) -> None:
     if (
         background.training_source_sha256 != training_source_sha256
-        or background.feature_names != bundle.feature_names
+        or background.feature_names != feature_names
         or background.selection_policy != BACKGROUND_SELECTION_POLICY
         or not _is_sha256(background.background_sha256)
     ):
@@ -452,7 +571,7 @@ def _validate_background(
     matrix = np.asarray(background.values, dtype=np.float64)
     if (
         matrix.ndim != 2
-        or matrix.shape[1] != len(bundle.feature_names)
+        or matrix.shape[1] != len(feature_names)
         or not 100 <= matrix.shape[0] <= 1000
         or not np.isfinite(matrix).all()
     ):

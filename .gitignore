@@ -60,6 +60,9 @@ artifacts/final/mlp/bundle/*
 !artifacts/final/p13/
 artifacts/final/p13/*
 !artifacts/final/p13/final_test_results.json
+!artifacts/final/explanation/
+artifacts/final/explanation/*
+!artifacts/final/explanation/decision-tree-background.json
 !artifacts/experiments/
 artifacts/experiments/*
 !artifacts/experiments/.gitkeep

@@ -145,6 +145,56 @@ def test_background_source_hash_and_feature_order_are_required(tmp_path, monkeyp
         )
 
 
+def test_feature_background_round_trip_and_integrity(tmp_path, monkeypatch):
+    source_hash, background, _ = _build_inputs(tmp_path, monkeypatch)
+    path = tmp_path / "decision-tree-background.json"
+
+    artifact_sha = explanations.save_training_feature_background(background, path)
+    loaded = explanations.load_training_feature_background(
+        path,
+        expected_training_source_sha256=source_hash,
+        feature_config=FeatureConfig(),
+    )
+
+    assert artifact_sha == _sha(json.loads(path.read_text(encoding="utf-8"))["payload"])
+    assert loaded.values == background.values
+    assert loaded.feature_names == background.feature_names
+    assert loaded.background_sha256 == background.background_sha256
+    assert loaded.source_path == path.as_posix()
+
+    document = json.loads(path.read_text(encoding="utf-8"))
+    document["payload"]["values"][0][0] += 1.0
+    path.write_text(json.dumps(document), encoding="utf-8")
+    with pytest.raises(ValueError, match="checksum"):
+        explanations.load_training_feature_background(
+            path,
+            expected_training_source_sha256=source_hash,
+            feature_config=FeatureConfig(),
+        )
+
+
+def test_explanation_uses_packaged_background_without_raw_history_file(
+    tmp_path, monkeypatch
+):
+    source_hash, background, bundle = _build_inputs(tmp_path, monkeypatch)
+    artifact_root = tmp_path / "workspace"
+    background_path = artifact_root / explanations.BACKGROUND_ARTIFACT_PATH
+    explanations.save_training_feature_background(background, background_path)
+
+    result = explanations.explain_final_tree_history(
+        _history(501, offset=3.0),
+        dataset_partition="FD001/train",
+        unit_id=501,
+        artifact_root=artifact_root,
+        training_path=tmp_path / "missing" / "train_FD001.txt",
+    )
+
+    assert result.model_version == bundle.version
+    assert result.training_source_sha256 == source_hash
+    assert result.background_sha256 == background.background_sha256
+    assert result.background_row_count == 100
+
+
 def test_invalid_observed_history_is_rejected_before_explaining(tmp_path, monkeypatch):
     _, background, _ = _build_inputs(tmp_path, monkeypatch)
     invalid = _history(501)
