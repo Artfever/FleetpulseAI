@@ -1,10 +1,11 @@
 # P23-S1 local Model Laboratory metric-source audit
 
-Status: local source/display audit passed. A fresh remote browser check of the
-metrics table is still not independently available from this environment; the
-public URL redirects anonymous requests to Streamlit sign-in. Abdullah reports
-that he can open the deployed app, but has not yet confirmed the specific table
-values or whether the ignored P13 report is provisioned in that deployment.
+Status: the local source/display audit passed, and the owner-supplied public-app
+screenshot shows the P22-S1 official FD001/test metric table. Its five model
+versions, counts, MAE, and RMSE values match the verified local P13 report and
+frozen model audit below. The screenshot's deployment revision predates this
+branch's packaging fix; the dedicated official-results panel was previously
+observed unavailable in the hosted app. Verify that panel again after deployment.
 
 ## What was checked
 
@@ -69,7 +70,26 @@ change does not weaken the payload checksum or serialized model-weight checks.
 - `.venv/Scripts/python.exe scripts/audit_p13_bundles.py` — PASS after the
   newline correction; all five final bundles matched the P13 report.
 
-This verifies the local page and local frozen artifacts. It does not prove that
-the hosted Model Laboratory has the ignored P13 report available or that its
-remote table renders these values. That requires a fresh browser check of the
-actual deployment or confirmation of its exact artifact/commit inventory.
+The local audit verifies the page and frozen artifacts. The owner-supplied
+screenshot independently shows the P22-S1 table with matching rounded values;
+the dedicated final-results panel was still absent on the previously deployed
+revision. A fresh browser check after this report is deployed must confirm the
+dedicated panel itself.
+
+## Owner-supplied public screenshot and deployment fix
+
+The Model Laboratory screenshot supplied in the project conversation shows the
+P22-S1 table with the five frozen FD001/test model versions, 100 engines each,
+and the same metrics listed above (rounded to four decimals). The values are
+consistent with the local checksum-sealed report. The screenshot also shows the
+P22 selection and study sections; those are separate development/diagnostic
+views, not a substitute for the dedicated official-results panel.
+
+The signed-in remote audit recorded in `docs/p23_a3_remote_parity.md` found the
+dedicated **Official held-out test results (FD001/test)** panel unavailable on
+the then-deployed revision because the report was Git-ignored. This change
+packages only `artifacts/final/p13/final_test_results.json`, a 140,609-byte
+checksum-sealed report with per-engine evaluation rows and source/model hashes.
+It does not add raw sensor data, test history files, answer files, or model
+weights. After this change is deployed, a fresh remote check is still needed to
+confirm that the panel renders the same five rows.

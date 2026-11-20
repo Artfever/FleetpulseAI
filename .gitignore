@@ -57,6 +57,9 @@ artifacts/final/mlp/*
 artifacts/final/mlp/bundle/*
 !artifacts/final/mlp/bundle/final_mlp_manifest.json
 !artifacts/final/mlp/bundle/final_mlp_state.pt
+!artifacts/final/p13/
+artifacts/final/p13/*
+!artifacts/final/p13/final_test_results.json
 !artifacts/experiments/
 artifacts/experiments/*
 !artifacts/experiments/.gitkeep

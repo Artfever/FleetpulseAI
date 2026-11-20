@@ -9,8 +9,9 @@ The tracked deployment data is limited to:
 - `data/demo/fd001_training_prefixes.txt` (229 owner-approved FD001/train rows; SHA-256 `e31832ddbc23fa32b4093e1325f00fd6bed2cb2d3f6d03ca13ace44886390b6d`).
 - `data/demo/illustrative_history.txt` (the existing synthetic demo).
 - Ten frozen P12 serving files under `artifacts/final/tree/bundles/` and `artifacts/final/mlp/bundle/`.
+- The checksum-sealed P13 display report `artifacts/final/p13/final_test_results.json`. It contains final per-engine evaluation results and pinned source/model provenance for the Model Laboratory; it does not contain raw sensor histories or model weights.
 
-`git ls-files data artifacts/final` confirms that full raw histories, official test labels, development candidates, refit intermediates, and P13 evaluation exports are not part of the release package. P13 reports remain Git-ignored. `requirements.txt` installs the project's pinned core dependencies and the pinned XGBoost/PyTorch extras. The app resolves final manifests from the repository package root, not from a developer's absolute path.
+`git ls-files data artifacts/final` confirms that full raw histories, development candidates, and refit intermediates are not part of the release package. Only the verified P13 display report is included; raw source datasets and derived figures remain Git-ignored. `requirements.txt` installs the project's pinned core dependencies and the pinned XGBoost/PyTorch extras. The app resolves final manifests from the repository package root, not from a developer's absolute path.
 
 ## Clean-checkout inference check
 
