@@ -773,3 +773,9 @@ P26 closure-handoff PR opened: PR #554 (https://github.com/Artfever/FleetpulseAI
 - Local Streamlit preview: http://127.0.0.1:18511/Engine_Explorer. Next: record final checks and visually review the desktop and mobile scene.
 
 - Draft PR #556 was updated to include the 3D replay. Implementation commit `635a0ac` passed all five required CI checks in run `44905691703`. A fresh local `python -m pytest -q` finished with 750 passed in 169.95 seconds. The restarted local Streamlit server returned `ok` on port 18511. Browser rendering remains unverified because the browser access host could not open the preview.
+
+## FleetPulse presenter animation (2026-11-21)
+
+- User approved the four-step extension on `feat/fleetpulse-ui`, targeting existing draft PR #556. Implemented camera easing toward the selected nacelle, the cutaway reveal, optional exploded fan/compressor/turbine geometry and illustrative airflow, active checkpoint highlighting, and the guided Engine 4 presenter sequence with pause/resume and skip.
+- The final checkpoint card reports the observed cycle, saved estimate and model version when available. Other cycles retain measured sensor values only. The card links to Maintenance Planner using the Streamlit base path. Reduced-motion users get static scene changes and airflow.
+- Changed `app/engine_replay/{index.html,replay.css,replay.js}`, `src/fleetpulse/ui_engine_replay.py`, and `tests/engine_replay_motion.test.cjs`. Five JavaScript state and Canvas smoke checks passed via Node. Streamlit AppTest mounted both iframe variants and found Engine 4's verified cutoff and Planner route. Ruff and diff checks passed. Fresh local Streamlit health is `ok` on port 18511. Full local pytest is running. Browser visual review: **NOT RUN**, browser access host unavailable.

@@ -13,7 +13,8 @@ function mesh() {
   const faces = [];
   return {
     faces,
-    face(points, color) { faces.push({points, color}); },
+    group: "",
+    face(points, color) { faces.push({points, color, group: this.group}); },
     tube(center, rings, colors, start = 0, end = TAU, segments = 24) {
       const [x, y, z] = center;
       const at = ([offset, r], angle) => [x + Math.cos(angle) * r, y + Math.sin(angle) * r, z + offset];
@@ -67,18 +68,22 @@ function aircraftMesh() {
 function cutawayMesh() {
   const m = mesh();
   const origin = [0, 0, 0];
+  m.group = "shell";
   m.tube(origin, [[-2.65, 1.39], [-2.52, 1.57], [-1.45, 1.6],
     [.6, 1.25], [2.1, .99], [2.62, .72]], alloy, Math.PI, TAU);
   for (const side of [-1, 1]) {
     m.face([[side * 1.39, 0, -2.65], [side * 1.6, 0, -1.45], [side * 1.25, 0, .60],
       [side * .72, 0, 2.62], [side * .54, 0, 2.62], [side * 1.35, 0, -1.45]], "#60ddd2");
   }
+  m.group = "fan";
   m.tube(origin, [[-2.66, 1.4], [-2.71, 1.23], [-2.5, 1.2]], mint);
+  m.group = "shaft";
   m.tube(origin, [[-2.8, 0], [-2.63, .2], [-2.14, .31], [-1.4, .39],
     [.6, .57], [1.55, .48], [2.68, .36], [2.77, .25]], dark);
   for (const [z, radius, color] of [[-.95, .93, mint], [-.49, .85, alloy], [-.05, .79, mint],
     [.38, .75, alloy], [1.12, .65, ["#a25850", "#d67b62", "#ffc08a"]],
     [1.65, .53, alloy], [2.3, .68, mint]]) {
+    m.group = z < 1 ? "compressor" : "turbine";
     m.tube(origin, [[z - .12, .34], [z - .08, radius], [z + .095, radius],
       [z + .21, .37]], color);
   }
@@ -87,6 +92,7 @@ function cutawayMesh() {
 
 function fanMesh(angle) {
   const m = mesh();
+  m.group = "fan";
   for (let i = 0; i < 18; i++) {
     const a = angle + TAU * i / 18;
     const p = (r, offset, z) => [r * Math.cos(a + offset), r * Math.sin(a + offset), z];
@@ -99,9 +105,12 @@ function fanMesh(angle) {
 const plane = aircraftMesh(), engineShape = cutawayMesh();
 let engine = payload.engines[0], sensor = payload.sensors[0], index = 0;
 let mode = "aircraft", yaw = .32, pitch = .49, zoom = .78, fan = 0;
-let playing = false, nextStep = 0, lastFrame = 0, frameId = 0;
+let playing = false, replayDelay = 0, lastFrame = null, frameId = 0;
 let pointer = null, hotspots = [];
-let chartValues = [], geometry = plane;
+let chartValues = [], flight = null, separation = 0, exploded = false;
+let airflow = false, flowTime = 0, presenter = null, previousCheckpoint = null;
+const offsets = {fan: -1.3, compressor: 0, turbine: 1.45, shell: 0, shaft: 0};
+const smooth = t => t * t * (3 - 2 * t);
 
 function canvasContext(canvas) {
   const width = canvas.clientWidth, height = canvas.clientHeight;
@@ -121,13 +130,35 @@ function canvasContext(canvas) {
 
 function projection(w, h) {
   const cy = Math.cos(yaw), sy = Math.sin(yaw), cx = Math.cos(pitch), sx = Math.sin(pitch);
-  const scale = Math.min(w / 13.1, h / 9.8) * zoom * (mode === "aircraft" ? 1 : 1.65);
-  return ([x, y, z]) => {
+  const progress = flight ? smooth(flight.elapsed / flight.duration) : 0;
+  const center = flight ? flight.motor.map(component => component * progress) : [0, 0, 0];
+  const scale = Math.min(w / 13.1, h / 9.8) * zoom *
+    (mode === "aircraft" ? 1 + 1.9 * progress : 1.65 - .26 * separation);
+  return point => {
+    const [x, y, z] = point.map((component, i) => component - center[i]);
     const xx = cy * x + sy * z, zz = -sy * x + cy * z;
     const yy = cx * y - sx * zz, depth = sx * y + cx * zz;
     const lens = 23 / (23 + depth);
     return [w * .50 + xx * scale * lens, h * .54 - yy * scale * lens, depth];
   };
+}
+
+function drawAirflow(ctx, project) {
+  ctx.lineWidth = 1.5;
+  for (let i = 0; i < 24; i++) {
+    const lane = i % 6;
+    const phase = (i / 24 + flowTime / 2450) % 1;
+    const z = -3.8 + phase * 7.6;
+    const angle = lane * TAU / 6;
+    const radius = .62 + .18 * Math.cos(phase * TAU);
+    const [x, y] = [Math.cos(angle) * radius, .45 + Math.sin(angle) * radius];
+    const [a, b] = [project([x, y, z - .34]), project([x, y, z])];
+    ctx.strokeStyle = z < .65 ? "#78f9e1bd" : "#ffc18abd";
+    ctx.beginPath();
+    ctx.moveTo(a[0], a[1]);
+    ctx.lineTo(b[0], b[1]);
+    ctx.stroke();
+  }
 }
 
 function polygon(context, points) {
@@ -152,21 +183,26 @@ function drawScene() {
     }
   }
   ctx.stroke();
-  const faces = mode === "aircraft" ? geometry : geometry.concat(fanMesh(fan));
-  const projected = faces.map(({points, color}) => {
-    const vertices = points.map(project);
-    return {vertices, color, depth: vertices.reduce((sum, p) => sum + p[2], 0) / vertices.length};
+  const faces = mode === "aircraft" ? plane : engineShape.concat(fanMesh(fan));
+  const projected = faces.map(({points, color, group}) => {
+    const shift = (offsets[group] ?? 0) * separation;
+    const vertices = points.map(point => project([point[0], point[1], point[2] + shift]));
+    return {vertices, color, group, depth: vertices.reduce((sum, p) => sum + p[2], 0) / vertices.length};
   });
   projected.sort((a, b) => b.depth - a.depth);
   ctx.lineWidth = .45;
-  for (const {vertices, color} of projected) {
+  for (const {vertices, color, group} of projected) {
+    ctx.globalAlpha = flight ? 1 - .72 * smooth(flight.elapsed / flight.duration) :
+      group === "shell" ? 1 - .55 * Math.max(separation, 1 - zoom) : 1;
     polygon(ctx, vertices);
     ctx.fillStyle = color;
     ctx.strokeStyle = color;
     ctx.fill();
     ctx.stroke();
   }
-  hotspots = mode === "aircraft" && !payload.preview ? motorCenters.map(project) : [];
+  ctx.globalAlpha = 1;
+  if (mode === "cutaway" && airflow) drawAirflow(ctx, project);
+  hotspots = mode === "aircraft" && !payload.preview && !flight ? motorCenters.map(project) : [];
   for (const [x, y] of hotspots) {
     ctx.beginPath();
     ctx.arc(x, y, 10, 0, TAU);
@@ -203,7 +239,7 @@ function drawTrace() {
   for (const point of engine.checkpoints) {
     const at = engine.cycles.indexOf(point.cycle);
     ctx.beginPath();
-    ctx.arc(x(at), h - 5, 2.5, 0, TAU);
+    ctx.arc(x(at), h - 5, at === index ? 4.5 : 2.5, 0, TAU);
     ctx.fill();
   }
   ctx.strokeStyle = "#6af3dc";
@@ -220,6 +256,15 @@ function drawTrace() {
 function readings() {
   const cycle = engine.cycles[index], value = engine.sensors[sensor][index];
   const point = engine.checkpoints.find(item => item.cycle === cycle);
+  const estimate = byId("estimate");
+  estimate.classList.toggle("checkpoint", Boolean(point));
+  if (point && point !== previousCheckpoint && !reducedMotion.matches) {
+    estimate.animate?.([
+      {boxShadow: "0 0 18px #ffc18a55", backgroundColor: "#2c2c32"},
+      {boxShadow: "none", backgroundColor: "#132237"},
+    ], {duration: 650, easing: "ease-out"});
+  }
+  previousCheckpoint = point;
   byId("cycle").textContent = cycle;
   byId("reading").textContent = Number(value).toLocaleString("en", {maximumFractionDigits: 4});
   byId("rul").textContent = point ? point.rul.toFixed(2) : "—";
@@ -230,27 +275,48 @@ function readings() {
   byId("model").textContent = details.trim();
   scrub.value = index;
   scrub.setAttribute("aria-valuetext", `Operating cycle ${cycle}`);
+  byId("result").hidden = index !== engine.cycles.length - 1;
+  if (!byId("result").hidden) {
+    byId("result-value").textContent = point ?
+      `Cycle ${cycle} · ${point.rul.toFixed(2)} estimated remaining operating cycles` :
+      `Cycle ${cycle} · Estimate unavailable`;
+    byId("result-model").textContent = point ? `Decision Tree · ${point.version}` : details;
+  }
   drawTrace();
+  return point;
 }
 
 function frame(time) {
   frameId = 0;
-  if (playing && time >= nextStep) {
-    index += 1;
-    if (index >= engine.cycles.length - 1) {
-      index = engine.cycles.length - 1;
-      setPlaying(false);
-    }
-    nextStep = time + 95;
-    readings();
-  }
-  if (playing && mode === "cutaway" && !reducedMotion.matches) {
-    fan = (fan + Math.min(50, time - lastFrame) * .009) % TAU;
-  }
+  const dt = lastFrame === null ? 0 : Math.min(50, time - lastFrame);
   lastFrame = time;
-  zoom = reducedMotion.matches || zoom > .995 ? 1 : zoom + (1 - zoom) * .13;
+  if (!presenter?.paused) {
+    if (flight) {
+      if (reducedMotion.matches || (flight.elapsed += dt) >= flight.duration) openCutaway();
+    }
+    advancePresenter(dt);
+
+    if (playing && (replayDelay -= dt) <= 0) {
+      index = Math.min(index + 1, engine.cycles.length - 1);
+      const point = readings();
+      replayDelay = (presenter ? 42 : 95) + (point ? 215 : 0);
+      if (index === engine.cycles.length - 1) finishReplay();
+    }
+    if (mode === "cutaway" && !reducedMotion.matches) {
+      if (playing || presenter) fan = (fan + dt * .009) % TAU;
+      if (airflow) flowTime = (flowTime + dt) % 2450;
+    }
+    const target = Number(exploded);
+    const easing = 1 - Math.exp(-dt / 110);
+    separation = reducedMotion.matches || Math.abs(target - separation) < .008 ?
+      target : separation + (target - separation) * easing;
+    zoom = reducedMotion.matches || zoom > .995 ? 1 : zoom + (1 - zoom) * easing;
+  }
   drawScene();
-  if (playing || zoom < 1) requestFrame();
+  const moving = !reducedMotion.matches && (zoom < 1 || separation !== Number(exploded) ||
+    (mode === "cutaway" && airflow));
+  if (!presenter?.paused && (presenter || playing || flight || moving)) requestFrame();
+  else lastFrame = null;
 }
 
 function requestFrame() {
@@ -260,24 +326,138 @@ function requestFrame() {
 function setPlaying(value) {
   playing = value;
   play.textContent = value ? "Pause" : "Play";
-  if (value) nextStep = performance.now() + 95;
+  if (value) replayDelay = presenter ? 42 : 95;
   requestFrame();
 }
 
 function setView(view) {
   if (view === mode) return;
   mode = view;
-  geometry = mode === "aircraft" ? plane : engineShape;
-  yaw = mode === "aircraft" ? .32 : .82;
+  yaw = mode === "aircraft" ? .32 : -1.02;
   pitch = mode === "aircraft" ? .49 : .34;
   zoom = .74;
   byId("aircraft").setAttribute("aria-pressed", String(mode === "aircraft"));
   byId("cutaway").setAttribute("aria-pressed", String(mode === "cutaway"));
   byId("view-title").textContent = mode === "aircraft" ? "Aircraft overview" : "Turbofan cutaway";
   byId("parts").hidden = mode === "aircraft";
+  byId("cutaway-controls").hidden = mode === "aircraft";
   byId("hint").textContent = mode === "aircraft" ?
     "Drag to orbit · Select a highlighted engine to inspect" : "Drag to orbit · Play to animate the illustrative fan";
   requestFrame();
+}
+
+function setExploded(value) {
+  exploded = value;
+  const control = byId("explode");
+  control.setAttribute("aria-pressed", String(value));
+  control.textContent = value ? "Assemble engine" : "Explode view";
+  requestFrame();
+}
+
+function setAirflow(value) {
+  airflow = value;
+  const control = byId("airflow");
+  control.setAttribute("aria-pressed", String(value));
+  control.textContent = value ? "Hide airflow" : "Show airflow";
+  requestFrame();
+}
+
+function openCutaway() {
+  flight = null;
+  setView("cutaway");
+  if (presenter?.phase === "approach") {
+    setPresenterStage("cutaway", "02 / Explore the engine stages");
+    setExploded(true);
+    setAirflow(true);
+  }
+}
+
+function approachEngine(motor) {
+  if (mode === "cutaway") return;
+  if (reducedMotion.matches) {
+    openCutaway();
+    return;
+  }
+  flight = {motor, elapsed: 0, duration: 920};
+  byId("hint").textContent = "Approaching the selected engine";
+  requestFrame();
+}
+
+function cancelApproach() {
+  if (!flight) return;
+  flight = null;
+  byId("hint").textContent = "Drag to orbit · Select a highlighted engine to inspect";
+}
+
+function setPresenterStage(phase, label) {
+  presenter.phase = phase;
+  presenter.elapsed = 0;
+  byId("stage").textContent = label;
+}
+
+function startPresenter() {
+  if (presenter) {
+    presenter.paused = !presenter.paused;
+    byId("present").textContent = presenter.paused ? "Resume presenter" : "Pause presenter";
+    lastFrame = null;
+    requestFrame();
+    return;
+  }
+  cancelApproach();
+  setView("aircraft");
+  yaw = -.2;
+  setExploded(false);
+  setAirflow(false);
+  engineSelect.value = String(payload.engines.find(item => item.id === 4)?.id ?? payload.engines[0].id);
+  sensorSelect.value = payload.sensors[0];
+  loadEngine();
+  presenter = {phase: "orbit", elapsed: 0, paused: false};
+  setPresenterStage("orbit", "01 / Approach the aircraft");
+  byId("present").textContent = "Pause presenter";
+  byId("skip").hidden = false;
+  requestFrame();
+}
+
+function advancePresenter(dt) {
+  if (!presenter) return;
+  presenter.elapsed += dt;
+  if (presenter.phase === "orbit") {
+    if (!reducedMotion.matches) yaw += dt * .00072;
+    if (reducedMotion.matches || presenter.elapsed >= 1150) {
+      setPresenterStage("approach", "01 / Fly into the engine");
+      approachEngine(motorCenters[0]);
+    }
+  } else if (presenter.phase === "cutaway" && presenter.elapsed >= 1900) {
+    setExploded(false);
+    setPresenterStage("replay", "03 / Replay observed sensor cycles");
+    setPlaying(true);
+  }
+}
+
+function stopPresenter(completed = false) {
+  if (!presenter) return;
+  presenter = null;
+  cancelApproach();
+  setPlaying(false);
+  setAirflow(false);
+  byId("skip").hidden = true;
+  byId("present").textContent = completed ? "Replay presenter mode" : "Start presenter mode";
+  byId("stage").textContent = completed ? "04 / Final recorded checkpoint" : "Guided demo · Engine 4";
+}
+
+function finishReplay() {
+  if (presenter) stopPresenter(true);
+  else setPlaying(false);
+}
+
+function jumpToResult() {
+  if (presenter) {
+    setView("cutaway");
+    setExploded(false);
+  }
+  index = engine.cycles.length - 1;
+  finishReplay();
+  readings();
 }
 
 function loadEngine() {
@@ -285,6 +465,7 @@ function loadEngine() {
   sensor = sensorSelect.value;
   chartValues = engine.sensors[sensor];
   index = 0;
+  previousCheckpoint = null;
   scrub.max = engine.cycles.length - 1;
   setPlaying(false);
   readings();
@@ -292,28 +473,49 @@ function loadEngine() {
 
 for (const item of payload.engines) engineSelect.add(new Option(`Engine ${item.id}`, item.id));
 for (const key of payload.sensors) sensorSelect.add(new Option(key.replace("_", " "), key));
-engineSelect.addEventListener("change", loadEngine);
+engineSelect.addEventListener("change", () => { stopPresenter(); loadEngine(); });
 sensorSelect.addEventListener("change", () => {
+  stopPresenter();
   sensor = sensorSelect.value;
   chartValues = engine.sensors[sensor];
   readings();
 });
-byId("aircraft").addEventListener("click", () => setView("aircraft"));
-byId("cutaway").addEventListener("click", () => setView("cutaway"));
-byId("rotate").addEventListener("click", () => { yaw += Math.PI / 7; requestFrame(); });
+byId("aircraft").addEventListener("click", () => {
+  stopPresenter();
+  cancelApproach();
+  setView("aircraft");
+  byId("hint").textContent = "Drag to orbit · Select a highlighted engine to inspect";
+  requestFrame();
+});
+byId("cutaway").addEventListener("click", () => {
+  stopPresenter();
+  approachEngine(motorCenters[0]);
+});
+byId("rotate").addEventListener("click", () => {
+  stopPresenter();
+  cancelApproach();
+  yaw += Math.PI / 7;
+  requestFrame();
+});
+byId("explode").addEventListener("click", () => { stopPresenter(); setExploded(!exploded); });
+byId("airflow").addEventListener("click", () => {
+  const show = !airflow;
+  stopPresenter();
+  setAirflow(show);
+});
+byId("present").addEventListener("click", startPresenter);
+byId("skip").addEventListener("click", jumpToResult);
 play.addEventListener("click", () => {
+  stopPresenter();
   if (!playing && index >= engine.cycles.length - 1) {
     index = 0;
     readings();
   }
   setPlaying(!playing);
 });
-byId("last").addEventListener("click", () => {
-  index = engine.cycles.length - 1;
-  setPlaying(false);
-  readings();
-});
+byId("last").addEventListener("click", jumpToResult);
 scrub.addEventListener("input", () => {
+  stopPresenter();
   index = Number(scrub.value);
   setPlaying(false);
   readings();
@@ -326,6 +528,10 @@ scene.addEventListener("pointerdown", event => {
 scene.addEventListener("pointermove", event => {
   if (pointer?.id !== event.pointerId) return;
   const dx = event.clientX - pointer.x, dy = event.clientY - pointer.y;
+  if (Math.abs(dx) + Math.abs(dy) > 0) {
+    stopPresenter();
+    cancelApproach();
+  }
   pointer.x = event.clientX;
   pointer.y = event.clientY;
   pointer.moved += Math.abs(dx) + Math.abs(dy);
@@ -336,8 +542,12 @@ scene.addEventListener("pointermove", event => {
 scene.addEventListener("pointerup", event => {
   if (pointer?.id !== event.pointerId) return;
   const rect = scene.getBoundingClientRect();
-  if (pointer.moved < 6 && hotspots.some(([x, y]) =>
-    Math.hypot(x - event.clientX + rect.left, y - event.clientY + rect.top) < 20)) setView("cutaway");
+  const selectedMotor = hotspots.findIndex(([x, y]) =>
+    Math.hypot(x - event.clientX + rect.left, y - event.clientY + rect.top) < 20);
+  if (pointer.moved < 6 && selectedMotor >= 0) {
+    stopPresenter();
+    approachEngine(motorCenters[selectedMotor]);
+  }
   pointer = null;
 });
 scene.addEventListener("pointercancel", () => { pointer = null; });
@@ -347,5 +557,6 @@ if (payload.preview) {
   byId("hint").textContent = "Illustration · Open Engine Explorer for the full replay";
   requestFrame();
 } else {
+  byId("planner").href = payload.plannerUrl;
   loadEngine();
 }

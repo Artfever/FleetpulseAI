@@ -100,6 +100,8 @@ def render_engine_replay(root: Path) -> bool:
     if not payload["engines"]:
         return False
     st.subheader("3D Engine Replay")
-    st.caption("Orbit the aircraft, select either engine, then follow the packaged FD001 history.")
+    st.caption("Start presenter mode for a guided Engine 4 replay, or select either engine to explore.")
+    base_path = st.get_option("server.baseUrlPath").strip("/")
+    payload["plannerUrl"] = "/" + "/".join(filter(None, (base_path, "Maintenance_Planner")))
     _mount_replay(payload, description="Interactive 3D aircraft, turbofan, and cycle replay")
     return True
