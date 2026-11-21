@@ -56,13 +56,13 @@ Training configuration is taken from P11-S2 and P12-S1/S2. Training rows are sim
 
 ## Metrics answer different questions
 
-| Frozen FD001/test model | MAE (cycles) | RMSE (cycles) |
-| --- | ---: | ---: |
-| Decision Tree | 24.5133 | 33.9522 |
-| Random Forest | 20.3497 | 27.5200 |
-| XGBoost | 18.4489 | **24.1664** |
-| Constant mean | 40.8793 | 52.6249 |
-| Dense MLP | **18.1605** | 25.5735 |
+| Frozen FD001/test model | Version | MAE (cycles) | RMSE (cycles) |
+| --- | --- | ---: | ---: |
+| Decision Tree | `decision-tree-rul-v1` | 24.5133 | 33.9522 |
+| Random Forest | `random-forest-rul-v1` | 20.3497 | 27.5200 |
+| XGBoost | `xgboost-rul-v1` | 18.4489 | **24.1664** |
+| Constant mean | `constant-rul-v1` | 40.8793 | 52.6249 |
+| Dense MLP | `dense-rul-mlp-final-v1` | **18.1605** | 25.5735 |
 
 **MAE** is the average absolute prediction error. **RMSE** is the square root of average squared error, so larger misses have more influence. Here the MLP has lower MAE, while XGBoost has lower RMSE. XGBoost was selected earlier using development validation RMSE; these final test results are reporting only and did not change that choice.
 
