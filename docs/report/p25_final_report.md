@@ -106,6 +106,7 @@ The screenshots and browser record document a local app run. They do not identif
 
 ## Source chapters and evidence map
 
+- [Editable final presentation](../slides/p25_final_deck.md) · [10-page PDF export](../../output/pdf/p25_final_deck.pdf)
 - [Data, targets, features, and service architecture](p25_a1_data_features_architecture.md)
 - [Pipelines, diagrams, and reproduction commands](p25_a2_pipeline_and_reproduction.md)
 - [Models, evaluation, SHAP, and schedule results](p25_s1_model_evaluation_scheduling.md)

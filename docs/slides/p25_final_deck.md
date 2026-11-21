@@ -2,6 +2,8 @@
 marp: true
 theme: default
 paginate: true
+style: |
+  section img { display: block; margin: 0 auto; max-height: 40vh; width: auto; object-fit: contain; }
 ---
 
 # FleetPulse AI
@@ -35,8 +37,6 @@ NASA C-MAPSS FD001 simulation data
 4. Pass a successful estimate into the planner.
 5. Compare EDD and seeded GA on the same jobs and assumptions.
 6. Review model and evaluation evidence separately in Model Laboratory.
-
-![Home and navigation across the six application screens.](../images/p24_t1/01_home.png)
 
 ---
 
@@ -73,6 +73,10 @@ Features use observed prefix through 164 | separate training target = 25 cycles
 
 Recorded local demo: FD001/train engine 4, 164 observed rows through cycle 164. The service returned raw RUL **34.196078 cycles**; UI displays 34.20. Model version: `decision-tree-rul-v1`.
 
+---
+
+## Same uploaded engine passed to the planner
+
 ![Same uploaded engine and prediction carried into paired scheduling results.](../images/p24_t1/05_upload_planner_comparison.png)
 
 One-job demo: EDD and GA both had zero tardiness and one-cycle makespan. One team, duration 1, priority 1, buffer 2, horizon 6 are illustrative settings.
@@ -90,8 +94,6 @@ One-job demo: EDD and GA both had zero tardiness and one-cycle makespan. One tea
 | Dense MLP | **18.1605** | 25.5735 |
 
 100 simulated held-out FD001/test engines. MLP has lowest MAE; XGBoost has lowest RMSE. Final test scores are reporting only; XGBoost selection used development validation RMSE.
-
-![Official held-out test table shown separately from P22 studies.](../images/p24_t2/05_official_test_results.png)
 
 ---
 
