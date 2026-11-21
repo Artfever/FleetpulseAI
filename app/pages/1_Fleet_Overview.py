@@ -15,15 +15,23 @@ from fleetpulse.services import (
     model_provenance_from_manifest,
     predict_fleet,
 )
+from fleetpulse.ui_presentation import module_header, module_links
 
-st.title("Fleet Overview")
-st.caption(
+module_header(
+    "fleet",
+    "Fleet intelligence",
+    "Fleet Overview",
     "Review saved-model RUL estimates for observed engine histories. Estimates are in operating "
-    "cycles and do not confirm physical faults or maintenance needs."
+    "cycles and do not confirm physical faults or maintenance needs.",
+    "FD001 training histories",
+    "Saved Decision Tree",
+    "Operating cycles",
 )
 _app_dir = Path(__file__).resolve().parents[1]
-st.page_link(st.Page(_app_dir / "pages" / "2_Engine_Explorer.py"), label="Inspect an engine history")
-st.page_link(st.Page(_app_dir / "pages" / "3_RUL_Prediction.py"), label="Open RUL Prediction")
+module_links(
+    (_app_dir / "pages" / "2_Engine_Explorer.py", "Inspect an engine history", ":material/timeline:"),
+    (_app_dir / "pages" / "3_RUL_Prediction.py", "Open RUL Prediction", ":material/insights:"),
+)
 
 
 def _fit_membership_label(split_manifest: dict | None, unit_id: int) -> str:
