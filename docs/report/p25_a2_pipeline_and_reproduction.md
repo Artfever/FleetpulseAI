@@ -7,7 +7,7 @@ This chapter documents the pipelines visible in the source at P25-A2. The diagra
 The development flow uses complete FD001/train engine histories to form fitting examples and a fixed whole-engine manifest for validation. The official FD001/test flow is separate: predictions are created without labels, then the answer vector is paired and scored in a later step. Official-test results must not feed training or model selection.
 
 ```mermaid
-flowchart LR
+flowchart TB
   subgraph Development[Development: FD001 train only]
     TrainFile[data/raw/train_FD001.txt] --> Load[src/fleetpulse/data/loader.py<br/>src/fleetpulse/data/quality.py]
     Load --> Target[src/fleetpulse/data/targets.py<br/>labels kept separate]
@@ -39,7 +39,7 @@ flowchart LR
 The request path starts from one observed history. Feature configuration and ordered names come from the selected verified model bundle. Raw prediction and presentation fields remain distinguishable; the planner uses the successful prediction snapshot and explicit simulation assumptions.
 
 ```mermaid
-flowchart LR
+flowchart TB
   User[Streamlit page or uploaded CSV] --> Input[src/fleetpulse/data/input_validation.py<br/>history and schema checks]
   Input --> Service[src/fleetpulse/services/predictor.py<br/>src/fleetpulse/services/fleet.py<br/>src/fleetpulse/services/uploaded_history.py]
   Service --> Registry[src/fleetpulse/models/registry.py<br/>selected model manifest]
