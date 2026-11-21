@@ -89,3 +89,5 @@ The repository currently has no license file. Contact the repository owner befor
 P25-S1's [model, evaluation, explanation, and scheduling chapter](docs/report/p25_s1_model_evaluation_scheduling.md) brings together the frozen model rationale, checked results, and simulation limits.
 
 P25-S2's [captioned evidence and limitations](docs/report/p25_s2_evidence_captions.md) maps report figures and claims to their saved source outputs.
+
+P25-S3's [AI results slides](docs/slides/p25_ai_algorithms_results.md) and [presenter guide](docs/slides/p25_s3_presenter_guide.md) prepare the model, attribution, metric, and scheduling discussion.
