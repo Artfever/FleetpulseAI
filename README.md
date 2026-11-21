@@ -40,6 +40,14 @@ python3.12 -m venv .venv
 See the [setup guide](docs/SETUP.md) for Windows, Linux, and macOS commands and the editable-install path contract.
 The [P26 runnable package inventory](docs/p26_a1_runnable_package.md) lists the tracked source, scripts, tests, frozen model bundles, and raw-data access instructions verified for the final package.
 
+## Final delivery
+
+- [Final report](docs/report/p25_final_report.md)
+- [Editable presentation](docs/slides/p25_final_deck.md) and [PDF export](output/pdf/p25_final_deck.pdf)
+- [Public Streamlit app](https://fleetpulseai.streamlit.app/)
+- [Repeatable demo procedure](docs/p25_live_demo_runbook.md)
+- [P26 delivery map and evidence limits](docs/p26_t1_delivery_manifest.md)
+
 ## Reproduce training and evaluation
 
 With the original, checksum-verified `data/raw/train_FD001.txt` available, rebuild development features and train/reload the P06 Decision Tree with:
