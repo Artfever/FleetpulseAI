@@ -85,3 +85,5 @@ See the [repository layout](docs/REPOSITORY_LAYOUT.md) for the tracked and local
 Start with the [contributing guide](docs/CONTRIBUTING.md), [repository instructions](AGENTS.md), and the relevant handoff ([Shaheer](handoff_Shaheer.md), [Abdullah](handoff_Abdullah.md), or [Taha](handoff_Taha.md)). The [issue backlog](docs/ISSUE_BACKLOG.md) and [dependency guide](docs/DEPENDENCIES_AND_MERGE_ORDER.md) describe the planned work. Changes follow the [branch and review workflow](docs/BRANCHING_AND_REVIEWS.md) and [CI checks](docs/CI_CD.md).
 
 The repository currently has no license file. Contact the repository owner before assuming permission to reuse or redistribute its contents.
+
+P25-S1's [model, evaluation, explanation, and scheduling chapter](docs/report/p25_s1_model_evaluation_scheduling.md) brings together the frozen model rationale, checked results, and simulation limits.

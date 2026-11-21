@@ -1367,3 +1367,18 @@ Merged `docs/CI_CD.md` explains the red check, failed gate, downloadable JUnit a
 - The PR includes `docs/p24_s3_claims_and_assumptions_audit.md` and both handoffs. It records the P22 scenario reruns, synthetic schedule hand-check, caveats, local evidence links, and human-review provenance.
 - At initial PR check, branch-policy was queued; quality, unit-and-contract-tests, and Streamlit smoke were running. There were zero review threads. Checks are not yet complete; after the handoff update is pushed, inspect the newest CI run and conversations before merging.
 - Next: merge only after required CI succeeds and conversations are resolved; close #231 with the merged evidence, then inspect the next unblocked P24 task. Keep gate #29 open until the full phase is complete.
+
+## P25-S1 #103 takeover status (2026-11-21)
+
+- Abdullah is preparing this issue under the user's authorization to handle remaining tasks originally assigned to teammates. GitHub assignee remains Artfever/Shaheer; neither ownership nor authorship is rewritten. Gate #29 is closed and #103 has no native task blockers.
+- Draft output: `docs/report/p25_s1_model_evaluation_scheduling.md`, linked from README. It consolidates tracked P11-P13, P17-P20, and P22 evidence with model-selection trade-offs, final MLP rule, final metrics, error analysis, SHAP, and scheduling assumptions/limits. No model fitting or test scoring was done for this chapter.
+- Checks passed: P22 audit (60 claims, 3 figures, 24 links); P13 independent metric audit (500 rows, 10 metrics, zero delta); P17 SHAP output check; P20 saved-model planner artifact round-trip; local links 37/37; Ruff; full pytest (734 passed); diff check. Streamlit smoke NOT RUN (documentation only). No teammate inspection, oral rehearsal, or formal review is claimed.
+- Next: Abdullah reviews final diff, commits, opens a focused `Refs #103` PR to `dev`, waits for five required CI checks and resolved conversations, then merges if clear. The issue's human explain/discuss and rehearsal requirement remains outstanding before closure.
+
+## P25-S1 #103 PR #537 opened (2026-11-21)
+
+- PR https://github.com/Artfever/FleetpulseAI/pull/537 targets `dev` with `Refs #103`. Implementation commit: `62e295c6c260c5dc95ab30d6478b0512ea477aea`. The chapter is source-linked from README.
+- Audits and local checks are recorded above and in the PR. The issue remains open pending the required human explanation/discussion and oral rehearsal; no reviewer name or formal approval is claimed.
+- Next: check latest-revision CI and conversations after pushing this status update; merge when five required checks pass and conversations are resolved. Record the merge SHA, then proceed to #180 after #103's human acceptance evidence is complete.
+
+P25-S1 human check update (2026-11-21): Abdullah reports that Shaheer or Taha checked and accepted the figures/limitations; the reply did not name which teammate. Abdullah confirmed oral rehearsal. No human GitHub approval event exists on PR #537; the task PR follows repository policy, which does not require teammate approval. All required checks are still pending on the newest revision.
