@@ -35,3 +35,15 @@ The [P25-A2 pipeline/reproduction chapter](report/p25_a2_pipeline_and_reproducti
 ## Human checks still required
 
 This audit checks source traceability and a locally rendered export. It is not a teammate approval, a group rehearsal, or proof that the exported slides suit the final presentation room. The issue owner will inspect the PDF and presentation content after this PR; issue #181 remains open until that human acceptance is recorded. No teammate review or rehearsal is claimed here.
+
+## P26-T2 refreshed export check (2026-11-21)
+
+After P26-S2 added the model-version column to the final-deck results table, the PDF was regenerated from `docs/slides/p25_final_deck.md` with Marp CLI `4.5.1`:
+
+```powershell
+npx --yes @marp-team/marp-cli@4.5.1 docs/slides/p25_final_deck.md --pdf --allow-local-files --output output/pdf/p25_final_deck.pdf
+```
+
+The refreshed file is 269,501 bytes with SHA-256 `6128FC9F6144E6344566584DE415032044178D31F7E7804ACDD490FDD4A347B7`. PyMuPDF `2.1` opened it as a 10-page, 16:9 PDF and rendered every page to 1440 × 810 PNG. I visually inspected all ten rendered pages. The refreshed slide 8 table shows all five frozen model names, model versions, MAE, and RMSE without clipping; the surrounding selection/evaluation notes remain legible. The other nine pages also fit their visible content within page bounds, including upload, planner, explanation, and limitation examples.
+
+Local app recheck for P26-T2: `python -m streamlit run app/Home.py --server.headless true --server.port 8765` started successfully; `curl.exe --fail --silent --show-error http://localhost:8765/_stcore/health` returned `ok`. The focused upload/planner and Model Laboratory tests passed (8 tests). The full suite and Ruff results are recorded in the current P26 handoff. This local health check does not identify or verify the deployed Streamlit commit.

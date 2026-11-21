@@ -8,7 +8,7 @@ Issue: [P26-T1 #107](https://github.com/Artfever/AI_PROJECT/issues/107)
 | --- | --- | --- |
 | Final report | [`docs/report/p25_final_report.md`](report/p25_final_report.md) | Assembles the problem, user journey, system design, results, schedule simulation, and limitations; detailed claims link to source chapters and artifacts |
 | Editable slide source | [`docs/slides/p25_final_deck.md`](slides/p25_final_deck.md) | Version columns were added in P26-S2; exact model values are traced in [`p26_s2_claim_consistency.md`](p26_s2_claim_consistency.md) |
-| Exported slide PDF | [`output/pdf/p25_final_deck.pdf`](../output/pdf/p25_final_deck.pdf) | Existing 10-page export; P26-T2 must regenerate and inspect it after the P26-S2 version-column changes |
+| Exported slide PDF | [`output/pdf/p25_final_deck.pdf`](../output/pdf/p25_final_deck.pdf) | Refreshed by P26-T2 after the P26-S2 version-column changes; 10 pages, SHA-256 `6128FC9F6144E6344566584DE415032044178D31F7E7804ACDD490FDD4A347B7`; all pages visually inspected (see [`P25-T2 layout audit`](p25_t2_layout_reference_audit.md)) |
 | Project README | [`README.md`](../README.md) | Setup, local app launch, training/evaluation reproduction, source layout, report/slides, and this delivery map |
 | Demo procedure | [`docs/p25_live_demo_runbook.md`](p25_live_demo_runbook.md) | Timed six-screen click path, upload helper, recovery steps, and technical Q&A |
 | Public application | [https://fleetpulseai.streamlit.app/](https://fleetpulseai.streamlit.app/) | Abdullah reported checking that the public app loaded on 2026-11-21. This workspace did not independently identify the deployed commit SHA; this is owner-reported live URL evidence, not a verified revision identifier. |
