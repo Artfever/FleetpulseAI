@@ -6,8 +6,9 @@ import streamlit as st
 
 from fleetpulse import ui
 from fleetpulse.data.loader import FD001LoadError, load_engine_history
-from fleetpulse.ui_engine_replay import render_aircraft_preview
-from fleetpulse.ui_presentation import context_tags, eyebrow
+from fleetpulse.data.quality import validate_engine_history
+from fleetpulse.ui_engine_replay import check_presenter_estimate, render_aircraft_preview
+from fleetpulse.ui_presentation import eyebrow
 from fleetpulse.visualization import sensor_figure
 
 _PAGES = Path(__file__).resolve().parents[1] / "pages"
@@ -22,6 +23,15 @@ def workflow_card(
         st.page_link(st.Page(_PAGES / filename), label=action, icon=icon)
 
 
+sample_path = ui.PROJECT_ROOT / "data" / "demo" / "fd001_training_prefixes.txt"
+try:
+    sample = load_engine_history(sample_path)
+except FD001LoadError:
+    sample = []
+if sample and not validate_engine_history(sample).is_valid:
+    sample = []
+engine_ids = sorted({row["unit_id"] for row in sample})
+
 with st.container(key="fleetpulse_hero"):
     intro, instrument = st.columns([3, 2], vertical_alignment="center")
     with intro:
@@ -32,14 +42,42 @@ with st.container(key="fleetpulse_hero"):
             "estimate and compare the resulting maintenance schedules.</p>",
             unsafe_allow_html=True,
         )
-        context_tags("Simulated engine histories")
-        st.page_link(
-            st.Page(_PAGES / "2_Engine_Explorer.py"),
-            label="Launch 3D engine replay",
-            icon=":material/play_circle:",
+        st.caption(
+            "For the demo, replay Engine 4, inspect its remaining-life estimate, "
+            "then add a team to the sandbox’s worked scheduling example."
         )
+        with st.container(horizontal=True, gap="small"):
+            with st.container(key="fp_home_primary", width="content"):
+                st.page_link(
+                    st.Page(_PAGES / "2_Engine_Explorer.py"),
+                    label="Launch 3D engine replay",
+                    icon=":material/play_circle:",
+                    disabled=not sample,
+                )
+            with st.container(key="fp_home_secondary", width="content"):
+                st.page_link(
+                    st.Page(_PAGES / "4_Maintenance_Planner.py"),
+                    label="Try the scheduling sandbox",
+                    icon=":material/event:",
+                    query_params={"sandbox": "1"},
+                )
     with instrument:
         render_aircraft_preview()
+
+with st.container(key="fp_home_readiness", border=True):
+    telemetry, model = st.columns(2)
+    telemetry.markdown("**Packaged telemetry**")
+    model.markdown("**Engine 4 replay estimate**")
+    if sample:
+        telemetry.caption(f"Available · {len(engine_ids)} engines, {len(sample)} recorded cycles")
+        checkpoint, problem = check_presenter_estimate(ui.PROJECT_ROOT, sample)
+        if checkpoint is None:
+            model.warning(problem or "The Engine 4 estimate is unavailable.")
+        else:
+            model.caption(f"Verified at cycle {checkpoint['cycle']} · `{checkpoint['version']}`")
+    else:
+        telemetry.warning("Packaged FD001 training histories are missing or invalid.")
+        model.caption("The estimate check needs the packaged Engine 4 history.")
 
 st.subheader("Operations dashboard")
 with st.container(key="fleetpulse_workflows"):
@@ -93,13 +131,7 @@ with st.container(key="fleetpulse_workflows"):
         )
 
 
-sample_path = ui.PROJECT_ROOT / "data" / "demo" / "fd001_training_prefixes.txt"
-try:
-    sample = load_engine_history(sample_path)
-except FD001LoadError:
-    sample = []
 if sample:
-    engine_ids = sorted({row["unit_id"] for row in sample})
     with st.container(key="fp_signal", border=True):
         st.subheader("Packaged telemetry")
         st.caption("Recorded readings from the packaged FD001 training prefixes.")
@@ -117,8 +149,9 @@ if sample:
             alt=f"{sensor} readings by cycle for packaged training engine {engine_id}",
         )
 
-st.info(
-    "Verified model bundles and evaluation reports appear only when matching artifacts are installed."
+training = st.expander(
+    "Full FD001 training data (optional)", key="fp_home_full_training", on_change="rerun"
 )
-with st.expander("Training data preview"):
-    ui.render_training_data()
+if training.open:
+    with training:
+        ui.render_training_data()

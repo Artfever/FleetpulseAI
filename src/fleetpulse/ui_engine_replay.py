@@ -11,15 +11,10 @@ from fleetpulse.data.loader import FD001LoadError, load_engine_history
 
 ASSETS = PROJECT_ROOT / "app" / "engine_replay"
 SENSORS = ("sensor_9", "sensor_2", "sensor_11")
+PRESENTER_ENGINE_ID = 4
 
 
-def build_replay_payload(root: Path) -> dict:
-    """Bundle observed samples and past-only predictions at up to seven cutoffs per engine."""
-    from fleetpulse.deployment import prediction_manifest
-    from fleetpulse.services import PredictionArtifactError, PredictionInputError
-    from fleetpulse.services.history import replay_engine_history
-
-    records = load_engine_history(root / "data" / "demo" / "fd001_training_prefixes.txt")
+def _replay_model_source(root: Path):
     manifest = root / "artifacts" / "development" / "decision_tree_validation.json"
     supplied = None
     if not manifest.is_file():
@@ -27,40 +22,65 @@ def build_replay_payload(root: Path) -> dict:
             supplied = st.secrets.get("deployment_model")
         except StreamlitSecretNotFoundError:
             pass
+    return manifest, supplied
+
+
+def _checkpoints(rows, cutoffs, manifest, supplied) -> tuple[list[dict], str | None]:
+    if not manifest.is_file() and supplied is None:
+        return [], "Install the verified development Decision Tree bundle to show estimates."
+
+    from fleetpulse.deployment import prediction_manifest
+    from fleetpulse.services import PredictionArtifactError, PredictionInputError
+    from fleetpulse.services.history import replay_engine_history
+
+    try:
+        with prediction_manifest(manifest, supplied) as active_manifest:
+            replay = replay_engine_history(
+                rows,
+                dataset_partition="FD001/train",
+                unit_id=rows[0]["unit_id"],
+                selected_cycle=rows[-1]["cycle"],
+                replay_cutoffs=cutoffs,
+                manifest_path=active_manifest,
+            )
+    except (PredictionArtifactError, PredictionInputError):
+        return [], "The saved Decision Tree could not produce replay estimates."
+    return [
+        {
+            "cycle": point.cutoff_cycle,
+            "rul": point.prediction.displayed_rul_cycles,
+            "version": point.prediction.model_version,
+            "warnings": list(point.prediction.warnings),
+        }
+        for point in replay.points
+    ], None
+
+
+def check_presenter_estimate(root: Path, records: list[dict]) -> tuple[dict | None, str | None]:
+    """Probe just Engine 4's final replay checkpoint with the actual prediction path."""
+    rows = sorted(
+        (row for row in records if row["unit_id"] == PRESENTER_ENGINE_ID),
+        key=lambda row: row["cycle"],
+    )
+    if not rows:
+        return None, "Engine 4 is unavailable in the packaged histories."
+    checkpoints, problem = _checkpoints(rows, [rows[-1]["cycle"]], *_replay_model_source(root))
+    return checkpoints[0] if checkpoints else None, problem
+
+
+def build_replay_payload(root: Path) -> dict:
+    """Bundle observed samples and past-only predictions at up to seven cutoffs per engine."""
+    records = load_engine_history(root / "data" / "demo" / "fd001_training_prefixes.txt")
+    manifest, supplied = _replay_model_source(root)
     engines = []
     for unit_id in sorted({row["unit_id"] for row in records}):
         rows = sorted(
             (row for row in records if row["unit_id"] == unit_id), key=lambda row: row["cycle"]
         )
         cycles = [row["cycle"] for row in rows]
-        checkpoints = []
-        problem = None
-        if manifest.is_file() or supplied is not None:
-            last = len(cycles) - 1
-            cutoffs = [cycles[i * last // 6] for i in range(7)] if last >= 6 else cycles
-            try:
-                with prediction_manifest(manifest, supplied) as active_manifest:
-                    replay = replay_engine_history(
-                        rows,
-                        dataset_partition="FD001/train",
-                        unit_id=unit_id,
-                        selected_cycle=cycles[-1],
-                        replay_cutoffs=cutoffs,
-                        manifest_path=active_manifest,
-                    )
-                checkpoints = [
-                    {
-                        "cycle": point.cutoff_cycle,
-                        "rul": point.prediction.displayed_rul_cycles,
-                        "version": point.prediction.model_version,
-                        "warnings": list(point.prediction.warnings),
-                    }
-                    for point in replay.points
-                ]
-            except (PredictionArtifactError, PredictionInputError):
-                problem = "The saved Decision Tree could not produce replay estimates."
-        else:
-            problem = "Install the verified development Decision Tree bundle to show estimates."
+        last = len(cycles) - 1
+        cutoffs = [cycles[i * last // 6] for i in range(7)] if last >= 6 else cycles
+        checkpoints, problem = _checkpoints(rows, cutoffs, manifest, supplied)
         engines.append(
             {
                 "id": unit_id,
