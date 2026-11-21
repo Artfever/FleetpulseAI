@@ -805,3 +805,5 @@ P26 closure-handoff PR opened: PR #554 (https://github.com/Artfever/FleetpulseAI
 - Ruff and diff checks passed. Focused bootstrap, page shell, telemetry, replay, navigation, and sandbox tests passed (15). A final Streamlit AppTest smoke check confirmed the real Engine 4 cycle 164 checkpoint and model version, the sandbox query string, and deferred raw data. Streamlit health is `ok` at http://127.0.0.1:18511. Browser visual review: **NOT RUN**, browser access host unavailable.
 
 - The first full CI run on `a11c4a9` identified four Home dataset tests that assumed the raw preview rendered while closed. Updated them to open the optional expander and retain their valid, missing, malformed, and invalid dataset checks. The combined focused run passed all 22 tests, Ruff passed, and a local app smoke test confirmed the expander loads the raw preview on opening.
+
+- Draft PR #556 includes the finished Home and updated dataset tests. The corrected implementation revision `dcc2322` passed all five required CI checks in run `44917035303`. The local preview remains live at http://127.0.0.1:18511 with Engine 4 cycle 164 verified. Browser visual review remains unverified.
