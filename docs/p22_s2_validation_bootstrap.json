@@ -1,0 +1,248 @@
+{
+  "limits": [
+    "These are five saved development-model validation results on 20 FD001/train engine prefixes.",
+    "The interval summarizes engine-level validation MAE sampling variability; it is not an individual prediction interval or a probability that a specific engine will fail.",
+    "All five candidates share the same held-out engine sample; paired resampling keeps model rows aligned.",
+    "This resampling study is descriptive and is not a model selection, tuning, official-test or maintenance step.",
+    "NASA C-MAPSS is simulated data; these results do not establish real fleet performance."
+  ],
+  "method": {
+    "interval": "95% percentile interval, linear-interpolated quantiles",
+    "metric": "mean absolute raw RUL error in cycles",
+    "paired_across_models": true,
+    "python_version": "3.12.16",
+    "replicates": 10000,
+    "resampling": "sample 20 engine indices with replacement for each replicate",
+    "seed": 42,
+    "unit_of_resampling": "whole validation engine prefix"
+  },
+  "models": {
+    "constant-rul": {
+      "bootstrap_mean_mae_cycles": 65.6239721507946,
+      "bootstrap_replicates": 10000,
+      "bootstrap_seed": 42,
+      "bootstrap_standard_error_cycles": 7.755716205385645,
+      "display_name": "Constant mean baseline",
+      "engine_count": 20,
+      "model_version": "constant-rul-v1",
+      "observed_mae_cycles": 65.7280021507946,
+      "observed_rmse_cycles": 74.25898675423198,
+      "percentile_95_ci_mae_cycles": [
+        50.204754301589205,
+        80.21712809176724
+      ],
+      "saved_validation_mae_cycles": 65.7280021507946
+    },
+    "decision-tree-rul": {
+      "bootstrap_mean_mae_cycles": 22.48250382139059,
+      "bootstrap_replicates": 10000,
+      "bootstrap_seed": 42,
+      "bootstrap_standard_error_cycles": 4.306866004518382,
+      "display_name": "Decision Tree",
+      "engine_count": 20,
+      "model_version": "decision-tree-rul-v1",
+      "observed_mae_cycles": 22.49426974577135,
+      "observed_rmse_cycles": 29.449573581432592,
+      "percentile_95_ci_mae_cycles": [
+        14.3590522486039,
+        31.055226228366926
+      ],
+      "saved_validation_mae_cycles": 22.49426974577135
+    },
+    "dense-rul-mlp-dev": {
+      "bootstrap_mean_mae_cycles": 15.491746135821343,
+      "bootstrap_replicates": 10000,
+      "bootstrap_seed": 42,
+      "bootstrap_standard_error_cycles": 3.8396779681374604,
+      "display_name": "Dense RUL MLP development",
+      "engine_count": 20,
+      "model_version": "dense-rul-mlp-v1",
+      "observed_mae_cycles": 15.511258125305176,
+      "observed_rmse_cycles": 22.93799320625662,
+      "percentile_95_ci_mae_cycles": [
+        8.69955421566963,
+        23.681626858711244
+      ],
+      "saved_validation_mae_cycles": null
+    },
+    "random-forest-rul": {
+      "bootstrap_mean_mae_cycles": 18.825777680774312,
+      "bootstrap_replicates": 10000,
+      "bootstrap_seed": 42,
+      "bootstrap_standard_error_cycles": 3.809083147486614,
+      "display_name": "Random Forest",
+      "engine_count": 20,
+      "model_version": "random-forest-rul-v1",
+      "observed_mae_cycles": 18.833479230754712,
+      "observed_rmse_cycles": 25.24302308237894,
+      "percentile_95_ci_mae_cycles": [
+        11.699466831118855,
+        26.52437482417029
+      ],
+      "saved_validation_mae_cycles": 18.833479230754712
+    },
+    "xgboost-rul": {
+      "bootstrap_mean_mae_cycles": 15.104011758637428,
+      "bootstrap_replicates": 10000,
+      "bootstrap_seed": 42,
+      "bootstrap_standard_error_cycles": 3.324691340410011,
+      "display_name": "XGBoost",
+      "engine_count": 20,
+      "model_version": "xgboost-rul-v1",
+      "observed_mae_cycles": 15.10869665145874,
+      "observed_rmse_cycles": 21.092113293432668,
+      "percentile_95_ci_mae_cycles": [
+        9.213833734989166,
+        22.107118582725516
+      ],
+      "saved_validation_mae_cycles": 15.10869665145874
+    }
+  },
+  "provenance": {
+    "dataset_partition": "FD001/train",
+    "models": [
+      {
+        "display_name": "Decision Tree",
+        "manifest_file": "artifacts/development/decision_tree_validation.json",
+        "manifest_file_sha256": "41f16e1397e1e2780133fd8a6aae8e8990d4af260055111b595c9831c8cb13b3",
+        "manifest_payload_sha256": "fd0382e90385109ca8b67ffd6aa536383c63e8f363838c5a5a5553120d8c12f6",
+        "model_file": "artifacts/development/decision_tree_model.joblib",
+        "model_file_sha256": "2a693e6ecc09de5d9549e287a6798fdb339c7e945c700231444f0c5bcd425018",
+        "name": "decision-tree-rul",
+        "random_seed": 42,
+        "saved_validation_mae_cycles": 22.49426974577135,
+        "training_parameters": {
+          "max_depth": 8,
+          "min_samples_leaf": 5
+        },
+        "version": "decision-tree-rul-v1"
+      },
+      {
+        "display_name": "Random Forest",
+        "manifest_file": "artifacts/development/random_forest_validation.json",
+        "manifest_file_sha256": "acc5c8d4739c3f92323f6b71c1aa69be9f41a98f13e6846b63eafec72cdae171",
+        "manifest_payload_sha256": "92385dacb77b333280f63a97474c2abcbae84e50c9c75d1c64a725492a99ce96",
+        "model_file": "artifacts/development/random_forest_model.joblib",
+        "model_file_sha256": "b9a7bcf7b65ae82cf9c499170325de7b24ac5433d440f45746a07e1a4bb8c70b",
+        "name": "random-forest-rul",
+        "random_seed": 42,
+        "saved_validation_mae_cycles": 18.833479230754712,
+        "training_parameters": {
+          "bootstrap": true,
+          "max_depth": 12,
+          "max_features": 1.0,
+          "min_samples_leaf": 5,
+          "n_estimators": 100,
+          "n_jobs": 1
+        },
+        "version": "random-forest-rul-v1"
+      },
+      {
+        "display_name": "XGBoost",
+        "manifest_file": "artifacts/development/xgboost_validation.json",
+        "manifest_file_sha256": "186c88ab0dcb7e50679dbf72ca9e2163fa363bf30171ecf3168e2122ad3d76c3",
+        "manifest_payload_sha256": "33f4243b111c75881051a3d5d9b2972dd16aacea6960c10fa3034df19b5557d5",
+        "model_file": "artifacts/development/xgboost_model.joblib",
+        "model_file_sha256": "20801e897816f879c0f93f56dc199c49735c3afc3a544b595247f5c62d419612",
+        "name": "xgboost-rul",
+        "random_seed": 42,
+        "saved_validation_mae_cycles": 15.10869665145874,
+        "training_parameters": {
+          "colsample_bytree": 0.8,
+          "device": "cpu",
+          "eval_metric": "rmse",
+          "learning_rate": 0.05,
+          "max_depth": 4,
+          "min_child_weight": 1.0,
+          "n_estimators": 100,
+          "n_jobs": 1,
+          "objective": "reg:squarederror",
+          "random_state": 42,
+          "reg_lambda": 1.0,
+          "subsample": 0.8,
+          "tree_method": "hist",
+          "verbosity": 0
+        },
+        "version": "xgboost-rul-v1"
+      },
+      {
+        "display_name": "Constant mean baseline",
+        "manifest_file": "artifacts/development/constant_rul_validation.json",
+        "manifest_file_sha256": "da95d756f5f5c0a3e18cc22b58dc97c094fa13b004ed395fc9134c8306c69a71",
+        "manifest_payload_sha256": "c1a91a96338be50f0b91f45546c63722570e4db44fd7011fde71dbfdbc6027f8",
+        "model_file": null,
+        "model_file_sha256": null,
+        "name": "constant-rul",
+        "random_seed": null,
+        "saved_validation_mae_cycles": 65.7280021507946,
+        "training_parameters": null,
+        "version": "constant-rul-v1"
+      },
+      {
+        "display_name": "Dense RUL MLP development",
+        "manifest_file": "artifacts/development/mlp/mlp_training_manifest.json",
+        "manifest_file_sha256": "3bacca3ff3da8bcccc580f99cd3a8bd5d2aa1607655eeb9f9ab13b020f71072b",
+        "manifest_payload_sha256": "e667cdfb8e561f8f417a900712fa90612739da31120bf8c614e4c2ff51c13065",
+        "model_file": "artifacts/development/mlp/mlp_best_state.pt",
+        "model_file_sha256": "a5dcf637a1178f44c837688646295250971dca5862cd934e3935293be53e6273",
+        "name": "dense-rul-mlp-dev",
+        "random_seed": 42,
+        "saved_validation_mae_cycles": null,
+        "training_parameters": {
+          "activation": "ReLU",
+          "batch_size": 128,
+          "device": "cpu",
+          "epoch_budget": 20,
+          "epochs_trained": 15,
+          "hidden_dims": [
+            64,
+            32
+          ],
+          "learning_rate": 0.001,
+          "loss": "mean_squared_error",
+          "max_epochs": 20,
+          "min_delta": 0.0,
+          "patience": 3,
+          "scaler": "StandardScaler"
+        },
+        "version": "dense-rul-mlp-v1"
+      }
+    ],
+    "split_manifest_sha256": "6fd1d32f7570f70f5a9513d900fbb9d26b182359aced425e2276700c84f08d92",
+    "train_source_sha256": "963b5e22825b34d8b21c69e1aeb4af3e647050eb672ee8834ba4b5d91d2de0f8",
+    "validation_engine_count": 20,
+    "validation_feature_config": {
+      "channels": [
+        "setting_1",
+        "setting_2",
+        "setting_3",
+        "sensor_1",
+        "sensor_2",
+        "sensor_3",
+        "sensor_4",
+        "sensor_5",
+        "sensor_6",
+        "sensor_7",
+        "sensor_8",
+        "sensor_9",
+        "sensor_10",
+        "sensor_11",
+        "sensor_12",
+        "sensor_13",
+        "sensor_14",
+        "sensor_15",
+        "sensor_16",
+        "sensor_17",
+        "sensor_18",
+        "sensor_19",
+        "sensor_20",
+        "sensor_21"
+      ],
+      "version": "past-only-v1",
+      "window_cycles": 30
+    },
+    "validation_features_file_sha256": "b241a6ec5a72cade8925ed40802e2d118871f71eee1622beec18f6dc8b869487",
+    "validation_features_payload_sha256": "f843a342a3f8799a22a1d386936e9f4c2ab57b6f7cb30cc21885a2b989fcdff7"
+  },
+  "schema_version": "p22-s2-engine-bootstrap-v1"
+}

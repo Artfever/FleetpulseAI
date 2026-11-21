@@ -9,9 +9,14 @@ import pytest
 from fleetpulse.data.quality import READING_COLUMNS
 from fleetpulse.data.split_manifest import build_split_manifest
 from fleetpulse.evaluation import build_metrics_record, save_metrics_record, score_constant_baseline
-from fleetpulse.evaluation.model_comparison import load_model_comparison
+from fleetpulse.evaluation.model_comparison import (
+    load_model_comparison,
+    load_verified_forest_scores,
+)
 from fleetpulse.features import FeatureConfig
 from fleetpulse.features.build_dataset import build_fitting_dataset, build_validation_dataset
+from fleetpulse.models.forest_artifact import save_random_forest_artifact
+from fleetpulse.models.train_forest import train_random_forest
 from fleetpulse.models.train_tree import train_decision_tree
 from fleetpulse.models.tree_artifact import save_decision_tree_artifact
 
@@ -99,11 +104,22 @@ def verified_outputs(tmp_path):
         fitting_dataset_sha256=fitting_sha,
         validation_dataset_sha256=validation_sha,
     )
-    return tmp_path, fitting, validation, fitting_sha, validation_sha
+    forest_result = train_random_forest(
+        fitting, validation, n_estimators=8, max_depth=4, min_samples_leaf=1
+    )
+    save_random_forest_artifact(
+        forest_result,
+        fitting,
+        validation,
+        tmp_path,
+        fitting_dataset_sha256=fitting_sha,
+        validation_dataset_sha256=validation_sha,
+    )
+    return tmp_path, fitting, validation, fitting_sha, validation_sha, forest_result
 
 
 def test_comparison_aligns_per_engine_outputs_and_reports_both_metrics(verified_outputs):
-    directory, fitting, validation, fitting_sha, validation_sha = verified_outputs
+    directory, fitting, validation, fitting_sha, validation_sha, _ = verified_outputs
 
     comparison = load_model_comparison(
         directory,
@@ -133,7 +149,7 @@ def test_comparison_aligns_per_engine_outputs_and_reports_both_metrics(verified_
 
 
 def test_comparison_rejects_altered_baseline_engine_prediction(verified_outputs):
-    directory, fitting, validation, fitting_sha, validation_sha = verified_outputs
+    directory, fitting, validation, fitting_sha, validation_sha, _ = verified_outputs
     path = directory / "constant_rul_validation.json"
     payload = json.loads(path.read_text(encoding="utf-8"))["payload"]
     payload["evaluation"]["predictions"][0]["prediction_cycles"] += 1
@@ -147,6 +163,50 @@ def test_comparison_rejects_altered_baseline_engine_prediction(verified_outputs)
             fitting_dataset_sha256=fitting_sha,
             validation_dataset_sha256=validation_sha,
         )
+
+
+def test_forest_scores_are_verified_and_match_the_shared_split(verified_outputs):
+    directory, _, validation, fitting_sha, validation_sha, forest_result = verified_outputs
+
+    scores = load_verified_forest_scores(
+        directory,
+        validation,
+        fitting_dataset_sha256=fitting_sha,
+        validation_dataset_sha256=validation_sha,
+    )
+
+    assert scores is not None
+    assert scores.model_name == "random-forest-rul"
+    assert scores.model_version == "random-forest-rul-v1"
+    assert scores.sample_count == len(validation.rows) == 2
+    assert scores.mae_cycles == pytest.approx(forest_result.metrics.mae)
+    assert scores.rmse_cycles == pytest.approx(forest_result.metrics.rmse)
+
+
+def test_forest_scores_reject_a_different_fitting_table_hash(verified_outputs):
+    directory, _, validation, _, validation_sha, _ = verified_outputs
+
+    with pytest.raises(ValueError, match="forest fitting table hash mismatch"):
+        load_verified_forest_scores(
+            directory,
+            validation,
+            fitting_dataset_sha256="d" * 64,
+            validation_dataset_sha256=validation_sha,
+        )
+
+
+def test_forest_scores_are_optional_when_the_bundle_is_missing(verified_outputs, tmp_path):
+    _, _, validation, fitting_sha, validation_sha, _ = verified_outputs
+
+    assert (
+        load_verified_forest_scores(
+            tmp_path / "missing",
+            validation,
+            fitting_dataset_sha256=fitting_sha,
+            validation_dataset_sha256=validation_sha,
+        )
+        is None
+    )
 
 
 def _save_hashed(payload, path):

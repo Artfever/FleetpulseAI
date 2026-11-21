@@ -2,7 +2,13 @@
 
 **Status:** Development candidate; not approved for real maintenance decisions
 **Model:** `decision-tree-rul` / `decision-tree-rul-v1`
-**Last checked:** 13 November 2026
+**Last checked:** 18 November 2026
+
+This card's metrics and fitting split describe the P06 development candidate
+only. The P12 full-training refit shares its model name/version but has a
+different serialized artifact and 100-engine fit provenance; do not interpret
+the validation scores below as scores for that final refit. See the
+[artifact inventory](artifact_inventory.md) and [P12 refit report](p12_a1_final_tree_refit.md).
 
 ## Summary
 
@@ -94,6 +100,20 @@ generalization result.
   <https://fleetpulseai.streamlit.app/> as its URL; an anonymous HTTP check on
   13 November 2026 redirected to Streamlit's `/-/login` route, so public access
   and remote parity were not verified. See P07-T3 [issue #245](https://github.com/Artfever/FleetpulseAI/issues/245).
+
+## P12 final refit identity
+
+P12 created a separate Decision Tree final bundle at
+`artifacts/final/tree/bundles/decision-tree-rul_manifest.json`, version
+`decision-tree-rul-v1`, with weights SHA-256
+`c33021cb9cf5931aba545b6a327d0547f14be1363cbd0c24d57f0ad923dd7bb3`.
+It was refit from all 100 FD001/train engines (20,631 cycle rows) using the
+P11-frozen `past-only-v1` 30-cycle/96-feature contract, `max_depth=8`,
+`min_samples_leaf=5`, and seed 42. It was clean-process smoke-tested on the
+training history for engine 4 through cycle 164, producing `29.79411765`
+cycles. That value is a reload/inference check on a training row, not a
+validation or test metric. The local final bundle is Git-ignored and the
+development app path does not load it.
 
 ## Reproduction and provenance
 

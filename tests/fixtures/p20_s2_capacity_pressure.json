@@ -1,0 +1,12 @@
+{
+  "dataset_partition": "synthetic/p20-s2-v1",
+  "team_count": 1,
+  "buffer_cycles": 2,
+  "horizon_cycles": 6,
+  "jobs": [
+    {"unit_id": 1, "predicted_rul_cycles": 1, "duration_cycles": 3, "priority_weight": 1},
+    {"unit_id": 2, "predicted_rul_cycles": 4, "duration_cycles": 1, "priority_weight": 5},
+    {"unit_id": 3, "predicted_rul_cycles": 6, "duration_cycles": 4, "priority_weight": 1},
+    {"unit_id": 4, "predicted_rul_cycles": 6, "duration_cycles": 2, "priority_weight": 1}
+  ]
+}

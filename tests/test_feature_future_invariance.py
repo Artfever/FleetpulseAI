@@ -10,6 +10,7 @@ from fleetpulse import PROJECT_ROOT
 from fleetpulse.data.loader import load_engine_history
 from fleetpulse.data.quality import READING_COLUMNS
 from fleetpulse.features import FeatureConfig, engineer_features
+from scripts.check_future_prediction_invariance import run_invariance_check
 
 TRAIN_SHA256 = "963b5e22825b34d8b21c69e1aeb4af3e647050eb672ee8834ba4b5d91d2de0f8"
 
@@ -116,3 +117,17 @@ def test_saved_real_validation_cutoffs_ignore_all_hidden_future_readings():
         altered = _replace_future_and_append(history, cutoff)
         assert _features(altered, cutoff, unit=unit, partition="FD001/train") == reference
     assert hashlib.sha256(source.read_bytes()).hexdigest() == before
+
+
+def test_saved_development_model_predictions_ignore_replaced_future_rows():
+    source = PROJECT_ROOT / "data/raw/train_FD001.txt"
+    manifest = PROJECT_ROOT / "artifacts/development/decision_tree_validation.json"
+    model = manifest.parent / "decision_tree_model.joblib"
+    if not (source.is_file() and manifest.is_file() and model.is_file()):
+        pytest.skip("Install the reviewed FD001/train source and P06 development model bundle.")
+
+    result = run_invariance_check()
+
+    assert result["compared_prefixes"] == 20
+    assert result["exact_matches"] == 20
+    assert result["max_abs_difference_cycles"] == 0.0

@@ -27,6 +27,9 @@ def test_ground_truth_is_separate_and_changes_with_training_engine(tmp_path, mon
 
     assert not page.exception
     assert [tab.label for tab in page.tabs] == ["Sensor histories", "Training ground truth", "Development feature preview"]
+    assert any(
+        heading.value == "Known training RUL (analysis only)" for heading in page.subheader
+    )
     raw_engine = page.dataframe[1].value
     truth = page.dataframe[2].value
     assert list(raw_engine.columns) == list(HISTORY_COLUMNS)
