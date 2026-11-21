@@ -1398,3 +1398,5 @@ P25-S2 verification update before commit (2026-11-21): P25-S1 #103 was closed af
 - New deliverable `docs/report/p25_s2_evidence_captions.md` has actual source-linked model results/figures, units and limitations, P17 attribution values, and P22 scheduler ties/improvements. README links the report. The exact checks are listed in the PR body and preceding handoff entry.
 - Current PR checks/conversations need a fresh audit after the following handoff update is pushed. Human teammate check and rehearsal are pending confirmation; no review is claimed yet.
 - Next: monitor latest CI and conversations, merge when five checks pass and threads are resolved, then close #180 only with its human evidence recorded. P25-S3 #234 follows this issue.
+
+P25-S2 human check update (2026-11-21): Abdullah reports that Shaheer or Taha checked and accepted the figures/limitations, and confirms oral rehearsal; the exact teammate was not specified. No formal GitHub approval event is claimed. Required CI must still pass on the latest revision.
