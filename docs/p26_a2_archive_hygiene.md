@@ -47,5 +47,11 @@ P26-A3/P26-T3 to use after the package file list is frozen.
 
 A temporary source snapshot containing 482 entries (with owner handoffs
 excluded and the A2 audit files included) passed with zero findings. This
-demonstrates the detector against a realistic repository snapshot, but it is not
-the final submission ZIP and has not been run from an extracted directory.
+demonstrated the detector before final package assembly.
+
+The current candidate at `dist/fleetpulse-submission.zip` was assembled from
+the tracked repository files with all three owner handoffs omitted. Its exact
+archive hygiene and extracted-copy results are recorded in
+[`P26-A3 archive run`](p26_a3_archive_run.md). P26-T3 should preserve that same
+ZIP and SHA when it records the final package and submitter procedure; any
+change to archive contents requires repeating the A3 audit and extraction run.
