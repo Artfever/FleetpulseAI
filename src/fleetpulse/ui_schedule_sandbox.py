@@ -37,8 +37,8 @@ def _timeline(result: ScheduleMethodResult, labels: dict, axis_end: float) -> go
             text=[label],
             textposition="inside",
             insidetextanchor="middle",
-            marker_color="#fb9f83" if late else "#58e1d0",
-            insidetextfont={"color": "#0b1523"},
+            marker_color="#c99687" if late else "#a8c5df",
+            insidetextfont={"color": "#17212b"},
             orientation="h",
             hovertemplate=(
                 "%{text}<br>%{y}<br>"
@@ -208,7 +208,7 @@ def render_scheduling_sandbox(saved_fleet: SchedulingScenario | None) -> None:
             column.plotly_chart(
                 _timeline(result, labels, axis_end), key=f"fp_sandbox_{title.lower()}",
             )
-        st.caption("Coral bars finish late. The dotted line is the shared soft horizon.")
+        st.caption("Clay bars finish late. The dotted line is the shared soft horizon.")
         changes = _job_changes(before, after, labels)
         moved = sum(row["Moved"] == "Yes" for row in changes)
         st.markdown(f"#### Job changes · {moved} of {len(changes)} moved")

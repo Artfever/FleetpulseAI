@@ -31,9 +31,9 @@ function mesh() {
   };
 }
 
-const alloy = ["#4a6986", "#7898b3", "#acc5d9", "#d3e6f1"];
-const dark = ["#1b3048", "#2b4d68", "#436c85"];
-const mint = ["#2c888a", "#47bfb8", "#8af5dd"];
+const alloy = ["#575f68", "#7b858e", "#aab4bd", "#dbe0e3"];
+const dark = ["#2c3238", "#414d58", "#566675"];
+const steel = ["#546c81", "#7d9ab2", "#b8cfe2"];
 
 function aircraftMesh() {
   const m = mesh();
@@ -43,23 +43,23 @@ function aircraftMesh() {
   for (const side of [-1, 1]) {
     const x = n => n * side;
     m.face([[x(.48), -.13, -1.9], [x(5.7), -.03, 1.5],
-      [x(5.42), -.12, 2.04], [x(.52), -.22, 1.73]], "#a6c5dc");
+      [x(5.42), -.12, 2.04], [x(.52), -.22, 1.73]], "#b4bec7");
     m.face([[x(.52), -.22, 1.73], [x(5.42), -.12, 2.04],
-      [x(5.7), -.03, 1.5], [x(.48), -.27, -1.83]], "#476783");
+      [x(5.7), -.03, 1.5], [x(.48), -.27, -1.83]], "#56616c");
     m.face([[x(5.38), -.04, 1.45], [x(5.74), .43, 1.61],
-      [x(5.56), -.11, 2.03]], "#74edda");
+      [x(5.56), -.11, 2.03]], "#a8c5df");
     m.face([[x(.24), .12, 3.0], [x(2.33), .28, 4.48],
-      [x(2.22), .24, 4.81], [x(.28), .1, 4.36]], "#94b9d2");
+      [x(2.22), .24, 4.81], [x(.28), .1, 4.36]], "#9ba9b5");
     m.face([[x(.15), .32, 2.65], [x(.086), 2.23, 4.31],
-      [x(.086), 2.29, 5.04], [x(.15), .31, 4.78]], "#72d1cc");
+      [x(.086), 2.29, 5.04], [x(.15), .31, 4.78]], "#a8c5df");
     for (let z = -3.47; z < 2.65; z += .40) {
       m.face([[x(.675), .275, z], [x(.675), .275, z + .145],
-        [x(.711), .177, z + .145], [x(.711), .177, z]], "#254963");
+        [x(.711), .177, z + .145], [x(.711), .177, z]], "#3c4956");
     }
   }
   for (const center of motorCenters) {
     m.tube(center, [[-.88, .43], [-.75, .49], [.38, .47], [.8, .26]], alloy);
-    m.tube(center, [[-.89, .44], [-.90, .32], [-.77, .29]], mint);
+    m.tube(center, [[-.89, .44], [-.90, .32], [-.77, .29]], steel);
     m.tube(center, [[-.76, .32], [-.72, 0]], dark);
   }
   return m.faces;
@@ -73,16 +73,16 @@ function cutawayMesh() {
     [.6, 1.25], [2.1, .99], [2.62, .72]], alloy, Math.PI, TAU);
   for (const side of [-1, 1]) {
     m.face([[side * 1.39, 0, -2.65], [side * 1.6, 0, -1.45], [side * 1.25, 0, .60],
-      [side * .72, 0, 2.62], [side * .54, 0, 2.62], [side * 1.35, 0, -1.45]], "#60ddd2");
+      [side * .72, 0, 2.62], [side * .54, 0, 2.62], [side * 1.35, 0, -1.45]], "#a8c5df");
   }
   m.group = "fan";
-  m.tube(origin, [[-2.66, 1.4], [-2.71, 1.23], [-2.5, 1.2]], mint);
+  m.tube(origin, [[-2.66, 1.4], [-2.71, 1.23], [-2.5, 1.2]], steel);
   m.group = "shaft";
   m.tube(origin, [[-2.8, 0], [-2.63, .2], [-2.14, .31], [-1.4, .39],
     [.6, .57], [1.55, .48], [2.68, .36], [2.77, .25]], dark);
-  for (const [z, radius, color] of [[-.95, .93, mint], [-.49, .85, alloy], [-.05, .79, mint],
-    [.38, .75, alloy], [1.12, .65, ["#a25850", "#d67b62", "#ffc08a"]],
-    [1.65, .53, alloy], [2.3, .68, mint]]) {
+  for (const [z, radius, color] of [[-.95, .93, steel], [-.49, .85, alloy], [-.05, .79, steel],
+    [.38, .75, alloy], [1.12, .65, ["#755f4d", "#a18364", "#d5ae77"]],
+    [1.65, .53, alloy], [2.3, .68, steel]]) {
     m.group = z < 1 ? "compressor" : "turbine";
     m.tube(origin, [[z - .12, .34], [z - .08, radius], [z + .095, radius],
       [z + .21, .37]], color);
@@ -97,7 +97,7 @@ function fanMesh(angle) {
     const a = angle + TAU * i / 18;
     const p = (r, offset, z) => [r * Math.cos(a + offset), r * Math.sin(a + offset), z];
     m.face([p(.20, 0, -2.42), p(1.16, .29, -2.56),
-      p(1.15, .125, -2.63), p(.26, -.17, -2.49)], i % 3 ? "#8fbcd0" : "#64e6d5");
+      p(1.15, .125, -2.63), p(.26, -.17, -2.49)], i % 3 ? "#acb8c3" : "#a8c5df");
   }
   return m.faces;
 }
@@ -153,7 +153,7 @@ function drawAirflow(ctx, project) {
     const radius = .62 + .18 * Math.cos(phase * TAU);
     const [x, y] = [Math.cos(angle) * radius, .45 + Math.sin(angle) * radius];
     const [a, b] = [project([x, y, z - .34]), project([x, y, z])];
-    ctx.strokeStyle = z < .65 ? "#78f9e1bd" : "#ffc18abd";
+    ctx.strokeStyle = z < .65 ? "#a8c5dfbd" : "#e2bd89bd";
     ctx.beginPath();
     ctx.moveTo(a[0], a[1]);
     ctx.lineTo(b[0], b[1]);
@@ -173,7 +173,7 @@ function drawScene() {
   if (!surface) return;
   const [ctx, w, h] = surface, project = projection(w, h);
   ctx.lineWidth = 1;
-  ctx.strokeStyle = "#4665805c";
+  ctx.strokeStyle = "#626d785c";
   ctx.beginPath();
   for (let tick = -8; tick <= 8; tick++) {
     const guides = [[[tick, -1.7, -8], [tick, -1.7, 8]], [[-8, -1.7, tick], [8, -1.7, tick]]];
@@ -206,14 +206,14 @@ function drawScene() {
   for (const [x, y] of hotspots) {
     ctx.beginPath();
     ctx.arc(x, y, 10, 0, TAU);
-    ctx.fillStyle = "#10293f";
+    ctx.fillStyle = "#242a30";
     ctx.fill();
-    ctx.strokeStyle = "#6af3dc";
+    ctx.strokeStyle = "#a8c5df";
     ctx.lineWidth = 2;
     ctx.stroke();
     ctx.beginPath();
     ctx.arc(x, y, 3, 0, TAU);
-    ctx.fillStyle = "#6af3dc";
+    ctx.fillStyle = "#a8c5df";
     ctx.fill();
   }
 }
@@ -225,31 +225,31 @@ function drawTrace() {
   const min = Math.min(...chartValues), spread = Math.max(...chartValues) - min;
   const x = i => 8 + i * (w - 16) / Math.max(chartValues.length - 1, 1);
   const y = value => h - 13 - (spread ? (value - min) / spread : .5) * (h - 24);
-  ctx.strokeStyle = "#56748f";
+  ctx.strokeStyle = "#788693";
   ctx.lineWidth = 1.4;
   ctx.beginPath();
   chartValues.forEach((value, i) => i ? ctx.lineTo(x(i), y(value)) : ctx.moveTo(x(i), y(value)));
   ctx.stroke();
-  ctx.strokeStyle = "#6af3dc";
+  ctx.strokeStyle = "#a8c5df";
   ctx.beginPath();
   ctx.moveTo(x(0), y(chartValues[0]));
   for (let i = 1; i <= index; i++) ctx.lineTo(x(i), y(chartValues[i]));
   ctx.stroke();
-  ctx.fillStyle = "#ffc18a";
+  ctx.fillStyle = "#e2bd89";
   for (const point of engine.checkpoints) {
     const at = engine.cycles.indexOf(point.cycle);
     ctx.beginPath();
     ctx.arc(x(at), h - 5, at === index ? 4.5 : 2.5, 0, TAU);
     ctx.fill();
   }
-  ctx.strokeStyle = "#6af3dc";
+  ctx.strokeStyle = "#a8c5df";
   ctx.beginPath();
   ctx.moveTo(x(index), 5);
   ctx.lineTo(x(index), h - 5);
   ctx.stroke();
   ctx.beginPath();
   ctx.arc(x(index), y(chartValues[index]), 4, 0, TAU);
-  ctx.fillStyle = "#6af3dc";
+  ctx.fillStyle = "#a8c5df";
   ctx.fill();
 }
 
@@ -260,8 +260,8 @@ function readings() {
   estimate.classList.toggle("checkpoint", Boolean(point));
   if (point && point !== previousCheckpoint && !reducedMotion.matches) {
     estimate.animate?.([
-      {boxShadow: "0 0 18px #ffc18a55", backgroundColor: "#2c2c32"},
-      {boxShadow: "none", backgroundColor: "#132237"},
+      {boxShadow: "0 0 18px #e2bd8933", backgroundColor: "#3a342b"},
+      {boxShadow: "none", backgroundColor: "#2a3037"},
     ], {duration: 650, easing: "ease-out"});
   }
   previousCheckpoint = point;

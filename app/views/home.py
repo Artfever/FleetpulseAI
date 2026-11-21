@@ -17,7 +17,6 @@ def workflow_card(
     group: str, title: str, description: str, filename: str, action: str, icon: str
 ) -> None:
     with st.container(key=f"fp_card_{group.lower()}", border=True):
-        st.markdown(f'<p class="fp-card-label">{group}</p>', unsafe_allow_html=True)
         st.markdown(f"### {title}")
         st.caption(description)
         st.page_link(st.Page(_PAGES / filename), label=action, icon=icon)
@@ -26,20 +25,21 @@ def workflow_card(
 with st.container(key="fleetpulse_hero"):
     intro, instrument = st.columns([3, 2], vertical_alignment="center")
     with intro:
-        eyebrow("Turbofan simulation workspace")
+        eyebrow("NASA C-MAPSS / FD001")
         st.title("FleetPulse AI", anchor=False)
         st.markdown(
             '<p class="fp-lead">Follow an engine from sensor history to a remaining-life '
             "estimate and compare the resulting maintenance schedules.</p>",
             unsafe_allow_html=True,
         )
-        context_tags("NASA C-MAPSS · FD001", "Simulated engine histories")
-    with instrument:
-        st.markdown(
-            '<div class="fp-radar" aria-hidden="true"></div>'
-            '<div class="fp-radar-label">Radar illustration</div>',
-            unsafe_allow_html=True,
+        context_tags("Simulated engine histories")
+        st.page_link(
+            st.Page(_PAGES / "2_Engine_Explorer.py"),
+            label="Launch 3D engine replay",
+            icon=":material/play_circle:",
         )
+    with instrument:
+        render_aircraft_preview()
 
 st.subheader("Operations dashboard")
 with st.container(key="fleetpulse_workflows"):
@@ -109,16 +109,13 @@ if sample:
             "Sensor channel", ("sensor_9", "sensor_2", "sensor_11"), key="fp_preview_sensor"
         )
         engine_rows = [row for row in sample if row["unit_id"] == engine_id]
-        chart, aircraft = st.columns([2, 1], vertical_alignment="center")
         figure = sensor_figure(engine_rows, sensor)
         figure.update_layout(height=282)
-        chart.plotly_chart(
+        st.plotly_chart(
             figure,
             width="stretch",
             alt=f"{sensor} readings by cycle for packaged training engine {engine_id}",
         )
-        with aircraft:
-            render_aircraft_preview()
 
 st.info(
     "Verified model bundles and evaluation reports appear only when matching artifacts are installed."
