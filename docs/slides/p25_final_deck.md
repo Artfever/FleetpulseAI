@@ -85,13 +85,13 @@ One-job demo: EDD and GA both had zero tardiness and one-cycle makespan. One tea
 
 ## Model evaluation: two useful error summaries
 
-| Frozen model | MAE (cycles) | RMSE (cycles) |
-| --- | ---: | ---: |
-| Decision Tree | 24.5133 | 33.9522 |
-| Random Forest | 20.3497 | 27.5200 |
-| XGBoost | 18.4489 | **24.1664** |
-| Constant mean | 40.8793 | 52.6249 |
-| Dense MLP | **18.1605** | 25.5735 |
+| Frozen model | Version | MAE (cycles) | RMSE (cycles) |
+| --- | --- | ---: | ---: |
+| Decision Tree | `decision-tree-rul-v1` | 24.5133 | 33.9522 |
+| Random Forest | `random-forest-rul-v1` | 20.3497 | 27.5200 |
+| XGBoost | `xgboost-rul-v1` | 18.4489 | **24.1664** |
+| Constant mean | `constant-rul-v1` | 40.8793 | 52.6249 |
+| Dense MLP | `dense-rul-mlp-final-v1` | **18.1605** | 25.5735 |
 
 100 simulated held-out FD001/test engines. MLP has lowest MAE; XGBoost has lowest RMSE. Final test scores are reporting only; XGBoost selection used development validation RMSE.
 
