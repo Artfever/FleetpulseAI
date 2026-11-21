@@ -8,6 +8,7 @@ from fleetpulse import ui
 from fleetpulse.data.quality import SENSOR_COLUMNS
 from fleetpulse.data.targets import calculate_training_rul
 from fleetpulse.services import build_engine_feature_preview, summarize_sensor_history
+from fleetpulse.ui_engine_replay import render_engine_replay
 from fleetpulse.ui_presentation import module_header, module_links
 from fleetpulse.visualization import sensor_figure
 
@@ -25,6 +26,12 @@ module_links(
     (_app_dir / "pages" / "3_RUL_Prediction.py", "Continue to RUL Prediction", ":material/insights:"),
     (_app_dir / "pages" / "1_Fleet_Overview.py", "Open Fleet Overview", ":material/grid_view:"),
 )
+if render_engine_replay(ui.PROJECT_ROOT):
+    st.page_link(
+        st.Page(_app_dir / "pages" / "4_Maintenance_Planner.py"),
+        label="Compare maintenance schedules",
+        icon=":material/event:",
+    )
 records = ui.render_training_data()
 if records is not None:
     engine_ids = sorted({int(record["unit_id"]) for record in records})

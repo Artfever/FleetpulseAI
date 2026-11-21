@@ -6,6 +6,7 @@ import streamlit as st
 
 from fleetpulse import ui
 from fleetpulse.data.loader import FD001LoadError, load_engine_history
+from fleetpulse.ui_engine_replay import render_aircraft_preview
 from fleetpulse.ui_presentation import context_tags, eyebrow
 from fleetpulse.visualization import sensor_figure
 
@@ -56,7 +57,7 @@ with st.container(key="fleetpulse_workflows"):
         workflow_card(
             "TELEMETRY",
             "Engine explorer",
-            "Inspect sensor readings and trends across an engine’s cycles.",
+            "Orbit the aircraft in 3D and replay an engine’s recorded sensor history.",
             "2_Engine_Explorer.py",
             "Explore an engine history",
             ":material/timeline:",
@@ -108,11 +109,16 @@ if sample:
             "Sensor channel", ("sensor_9", "sensor_2", "sensor_11"), key="fp_preview_sensor"
         )
         engine_rows = [row for row in sample if row["unit_id"] == engine_id]
-        st.plotly_chart(
-            sensor_figure(engine_rows, sensor),
+        chart, aircraft = st.columns([2, 1], vertical_alignment="center")
+        figure = sensor_figure(engine_rows, sensor)
+        figure.update_layout(height=282)
+        chart.plotly_chart(
+            figure,
             width="stretch",
             alt=f"{sensor} readings by cycle for packaged training engine {engine_id}",
         )
+        with aircraft:
+            render_aircraft_preview()
 
 st.info(
     "Verified model bundles and evaluation reports appear only when matching artifacts are installed."

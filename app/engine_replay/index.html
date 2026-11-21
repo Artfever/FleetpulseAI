@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>FleetPulse 3D Engine Replay</title>
+  <style>/* STYLES */</style>
+</head>
+<body>
+  <main>
+    <section class="scene" aria-label="Interactive aircraft and turbofan illustration">
+      <canvas id="scene" aria-label="Rotatable 3D aircraft and illustrative turbofan cutaway"></canvas>
+      <header><span class="eyebrow">FLEETPULSE / ENGINE REPLAY</span><h1 id="view-title">Aircraft overview</h1></header>
+      <div class="views" aria-label="Scene views">
+        <button id="aircraft" aria-pressed="true">Aircraft</button>
+        <button id="cutaway" aria-pressed="false">Engine cutaway</button>
+        <button id="rotate" aria-label="Rotate 3D view">Rotate</button>
+      </div>
+      <div id="parts" class="parts" hidden aria-label="Illustrative engine parts">
+        <span>Intake fan</span><span>Compressor stages</span><span>Turbine stages</span>
+      </div>
+      <p class="scene-hint" id="hint">Drag to orbit · Select a highlighted engine to inspect</p>
+    </section>
+    <section class="console" aria-label="Recorded telemetry replay">
+      <div class="selectors">
+        <label>FD001 training engine <select id="engine"></select></label>
+        <label>Sensor channel <select id="sensor"></select></label>
+      </div>
+      <div class="metrics">
+        <div><span>Observed cycle</span><strong id="cycle"></strong></div>
+        <div><span>Sensor reading</span><strong id="reading"></strong></div>
+        <div><span>Estimated remaining cycles</span><strong id="rul"></strong></div>
+      </div>
+      <canvas id="trace" aria-label="Recorded sensor values with current cycle and prediction checkpoints"></canvas>
+      <div class="controls">
+        <button id="play">Play</button>
+        <label class="timeline"><span>Replay position</span><input id="scrub" type="range" min="0" value="0"></label>
+        <button id="last">Final cycle</button>
+      </div>
+      <p id="model"></p>
+      <p class="scope">Packaged NASA FD001 training prefixes. The aircraft, fan speed, and cutaway are illustrations. RUL estimates apply to the simulated engine history.</p>
+    </section>
+  </main>
+  <script id="payload" type="application/json">/* DATA */</script>
+  <script>/* SCRIPT */</script>
+</body>
+</html>
