@@ -807,3 +807,9 @@ P26 closure-handoff PR opened: PR #554 (https://github.com/Artfever/FleetpulseAI
 - The first full CI run on `a11c4a9` identified four Home dataset tests that assumed the raw preview rendered while closed. Updated them to open the optional expander and retain their valid, missing, malformed, and invalid dataset checks. The combined focused run passed all 22 tests, Ruff passed, and a local app smoke test confirmed the expander loads the raw preview on opening.
 
 - Draft PR #556 includes the finished Home and updated dataset tests. The corrected implementation revision `dcc2322` passed all five required CI checks in run `44917035303`. The local preview remains live at http://127.0.0.1:18511 with Engine 4 cycle 164 verified. Browser visual review remains unverified.
+
+## Fleet Overview simplification (2026-11-21)
+
+- User approved a minimalist Fleet Overview on the existing UI branch and draft PR #556. Added three selection summary metrics, a ranked RUL chart, and a four-column review table. Source, model versions, raw estimates, fitting membership and diagnostics are under Source and model details. The primary Planner action names the exact count and explains when the threshold display filter hides part of the saved selection.
+- The review filter remains display-only. The saved data and provenance schema are preserved, including selected records without an estimate so the Planner can explain why they cannot be scheduled. The packaged real-model handoff reached both schedulers in tests.
+- Changed `app/pages/1_Fleet_Overview.py`, `tests/test_fleet_overview_page.py` and `tests/test_p20_workflow_gate.py`. Broader affected suite: 29 passed. Final targeted page, navigation and Planner run: 8 passed; Ruff and diff checks passed. A live Streamlit session on port 18511 rendered the chart, Engine 4 lowest estimate and Save 3 engines action without exceptions. Browser visual review: **NOT RUN**, browser access host unavailable.

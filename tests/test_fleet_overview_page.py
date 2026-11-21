@@ -1,5 +1,6 @@
 """Fleet Overview displays ID-attached saved-model predictions and limits."""
 
+import json
 import math
 from contextlib import contextmanager
 
@@ -93,18 +94,19 @@ def test_fleet_overview_displays_prediction_identity_cycle_model_and_version(
         )
     ]
     table = page.dataframe[0].value
+    assert list(table) == ["Engine ID", "Observed cycle", "Predicted RUL (cycles)", "Threshold status"]
     assert table["Engine ID"].tolist() == [4, 5, 9]
     assert table["Observed cycle"].tolist()[:2] == [164, 58]
     assert math.isnan(table["Observed cycle"].tolist()[2])
     assert table["Predicted RUL (cycles)"].tolist()[:2] == [34.196, 158.16]
     assert math.isnan(table["Predicted RUL (cycles)"].tolist()[2])
-    assert table["Model"].tolist()[:2] == ["Decision Tree"] * 2
-    assert table["Version"].tolist()[:2] == ["decision-tree-rul-v1"] * 2
-    assert table["Fit membership"].tolist() == ["Unknown (split unavailable)"] * 3
-    assert table["Warnings"].tolist() == ["", "cycle_gaps", ""]
-    assert "non_finite_reading" in table["Error"].tolist()[2]
-    assert any("same saved Decision Tree model and version" in item.value for item in page.caption)
-    assert any("Rows with a validation or prediction error" in item.value for item in page.warning)
+    details = page.dataframe[1].value
+    assert details["Model"].tolist()[:2] == ["Decision Tree"] * 2
+    assert details["Version"].tolist()[:2] == ["decision-tree-rul-v1"] * 2
+    assert details["Fit membership"].tolist() == ["Unknown (split unavailable)"] * 3
+    assert details["Warnings"].tolist() == ["", "cycle_gaps", ""]
+    assert "non_finite_reading" in details["Error"].tolist()[2]
+    assert any("Missing estimates: 1" in item.value for item in page.warning)
 
 
 def test_fleet_overview_explains_missing_saved_model_without_fake_predictions(
@@ -193,6 +195,11 @@ def test_fleet_overview_sorts_selects_and_filters_without_losing_ids(monkeypatch
     page.run()
     assert not page.exception
     assert page.dataframe[0].value["Engine ID"].tolist() == [12, 4, 5, 9]
+    assert page.metric[0].value == "3 / 4"
+    assert page.metric[1].value == "2"
+    assert page.metric[2].value == "20.00 cycles"
+    figure = json.loads(page.get("plotly_chart")[0].proto.spec)
+    assert figure["data"][0]["y"] == ["Engine 12", "Engine 4", "Engine 5"]
     assert page.dataframe[0].value["Threshold status"].tolist() == [
         "At or below threshold",
         "At or below threshold",
@@ -203,9 +210,14 @@ def test_fleet_overview_sorts_selects_and_filters_without_losing_ids(monkeypatch
     page.number_input[0].set_value(35.0).run()
     page.checkbox[0].set_value(True).run()
     assert page.dataframe[0].value["Engine ID"].tolist() == [12, 4, 9]
+    assert page.button(key="fp_fleet_save").label == "Save 4 engines to planner"
+    assert any("including 1 hidden by the filter" in item.value for item in page.caption)
+    page.button(key="fp_fleet_save").click().run()
+    saved = page.session_state[ui.P15_SELECTED_FLEET_STATE_KEY]
+    assert [row["Engine ID"] for row in saved] == [4, 5, 12, 9]
 
     page.multiselect[0].set_value([4, 9]).run()
     filtered = page.dataframe[0].value
     assert filtered["Engine ID"].tolist() == [4, 9]
     assert filtered["Predicted RUL (cycles)"].tolist()[0] == 30.0
-    assert "non_finite_reading" in filtered["Error"].tolist()[1]
+    assert "non_finite_reading" in page.dataframe[1].value["Error"].tolist()[1]

@@ -18,7 +18,8 @@ def test_real_saved_model_fleet_selection_reaches_both_schedulers():
     fleet = app.switch_page("pages/1_Fleet_Overview.py").run()
 
     assert not fleet.exception
-    predictions = fleet.dataframe[0].value
+    assert fleet.dataframe[0].value["Engine ID"].tolist() == [4, 5, 12]
+    predictions = fleet.dataframe[1].value
     assert predictions["Dataset"].tolist() == ["FD001/train"] * 3
     assert predictions["Engine ID"].tolist() == [4, 5, 12]
     assert predictions["Observed cycle"].tolist() == [164, 58, 7]
