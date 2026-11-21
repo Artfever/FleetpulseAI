@@ -28,6 +28,7 @@ from fleetpulse.services import (
     compare_schedules,
 )
 from fleetpulse.ui_presentation import module_header, module_links
+from fleetpulse.ui_schedule_sandbox import render_scheduling_sandbox
 
 module_header(
     "planner",
@@ -43,6 +44,7 @@ module_links(
     (_app_dir / "pages" / "1_Fleet_Overview.py", "Return to Fleet Overview", ":material/grid_view:"),
     (_app_dir / "pages" / "5_Model_Laboratory.py", "Review model evidence", ":material/science:"),
 )
+sandbox_panel = st.container()
 
 
 def _prediction_from_saved_row(row: dict) -> FleetPredictionResult:
@@ -422,6 +424,9 @@ if saved_scenario is not None:
             row_labels,
             heading="Compare schedules on the saved synthetic scenario",
         )
+
+with sandbox_panel:
+    render_scheduling_sandbox(st.session_state.get(ui.P20_FLEET_SCENARIO_STATE_KEY))
 
 st.divider()
 st.subheader("Saved P22 scheduling studies")
