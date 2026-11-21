@@ -27,12 +27,24 @@ from fleetpulse.services import (
     build_planning_scenario,
     compare_schedules,
 )
+from fleetpulse.ui_presentation import module_header, module_links
+from fleetpulse.ui_schedule_sandbox import render_scheduling_sandbox
 
-st.title("Maintenance Planner")
+module_header(
+    "planner",
+    "Schedule simulation",
+    "Maintenance Planner",
+    "Configure a simulated maintenance scenario and compare schedules under the same constraints.",
+    "Earliest due date",
+    "Genetic algorithm",
+    "Weighted tardiness",
+)
 _app_dir = Path(__file__).resolve().parents[1]
-st.page_link(st.Page(_app_dir / "pages" / "1_Fleet_Overview.py"), label="Return to Fleet Overview")
-st.page_link(st.Page(_app_dir / "pages" / "5_Model_Laboratory.py"), label="Review model evidence")
-st.caption("Review selected fleet estimates and configure a simulated maintenance scenario.")
+module_links(
+    (_app_dir / "pages" / "1_Fleet_Overview.py", "Return to Fleet Overview", ":material/grid_view:"),
+    (_app_dir / "pages" / "5_Model_Laboratory.py", "Review model evidence", ":material/science:"),
+)
+sandbox_panel = st.container()
 
 
 def _prediction_from_saved_row(row: dict) -> FleetPredictionResult:
@@ -412,6 +424,9 @@ if saved_scenario is not None:
             row_labels,
             heading="Compare schedules on the saved synthetic scenario",
         )
+
+with sandbox_panel:
+    render_scheduling_sandbox(st.session_state.get(ui.P20_FLEET_SCENARIO_STATE_KEY))
 
 st.divider()
 st.subheader("Saved P22 scheduling studies")

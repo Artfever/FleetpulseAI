@@ -74,6 +74,7 @@ artifacts/experiments/*
 Thumbs.db
 
 # Local secrets and tooling caches
+/.streamlit/secrets.toml
 .env
 .env.*
 !.env.example

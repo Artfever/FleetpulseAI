@@ -33,17 +33,29 @@ from fleetpulse.evaluation.selection_manifest import load_selection_manifest
 from fleetpulse.features import FeatureConfig
 from fleetpulse.features.build_dataset import manifest_digest
 from fleetpulse.features.dataset_io import load_feature_dataset
-from fleetpulse.ui import render_page
+from fleetpulse.ui_presentation import module_header, module_links
 
-render_page(
+module_header(
+    "laboratory",
+    "Evaluation and evidence",
     "Model Laboratory",
-    "Inspect model development and evaluation.",
+    "Inspect model development and evaluation, from validation to official held-out results.",
+    "Development validation",
+    "Official held-out test",
+    "MAE and RMSE",
+)
+st.info(
     "Development validation and final test results are separated into distinct sections.",
-    "Development validation informs model work. The official test section is held out and for final reporting only.",
+)
+st.write(
+    "Development validation informs model work. "
+    "The official test section is held out and for final reporting only."
 )
 _app_dir = Path(__file__).resolve().parents[1]
-st.page_link(st.Page(_app_dir / "pages" / "3_RUL_Prediction.py"), label="Continue to RUL Prediction")
-st.page_link(st.Page(_app_dir / "views" / "home.py", title="Home"), label="Return Home")
+module_links(
+    (_app_dir / "pages" / "3_RUL_Prediction.py", "Continue to RUL Prediction", ":material/insights:"),
+    (_app_dir / "views" / "home.py", "Return Home", ":material/home:"),
+)
 
 st.subheader("Development validation and selection (FD001/train)")
 st.subheader("P11 candidate selection comparison")

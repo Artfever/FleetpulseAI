@@ -42,15 +42,23 @@ from fleetpulse.services import (
     predict_uploaded_csv,
 )
 from fleetpulse.services.history import MAX_REPLAY_POINTS, replay_engine_history
+from fleetpulse.ui_presentation import module_header, module_links
 
-st.title("RUL Prediction")
-st.caption(
+module_header(
+    "prediction",
+    "Remaining useful life",
+    "RUL Prediction",
     "Estimate remaining useful life in operating cycles using a saved development model. "
-    "On request, the separate contribution panel explains the frozen final Decision Tree."
+    "On request, the separate contribution panel explains the frozen final Decision Tree.",
+    "Packaged history or CSV",
+    "Operating cycles",
+    "Feature contributions",
 )
 _app_dir = Path(__file__).resolve().parents[1]
-st.page_link(st.Page(_app_dir / "pages" / "1_Fleet_Overview.py"), label="Continue to Fleet Overview")
-st.page_link(st.Page(_app_dir / "pages" / "2_Engine_Explorer.py"), label="Return to Engine Explorer")
+module_links(
+    (_app_dir / "pages" / "1_Fleet_Overview.py", "Continue to Fleet Overview", ":material/grid_view:"),
+    (_app_dir / "pages" / "2_Engine_Explorer.py", "Return to Engine Explorer", ":material/timeline:"),
+)
 
 ui.prepare_selection(
     ui.P21_HISTORY_SOURCE_STATE_KEY,
