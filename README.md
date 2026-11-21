@@ -87,3 +87,5 @@ Start with the [contributing guide](docs/CONTRIBUTING.md), [repository instructi
 The repository currently has no license file. Contact the repository owner before assuming permission to reuse or redistribute its contents.
 
 P25-S1's [model, evaluation, explanation, and scheduling chapter](docs/report/p25_s1_model_evaluation_scheduling.md) brings together the frozen model rationale, checked results, and simulation limits.
+
+P25-S2's [captioned evidence and limitations](docs/report/p25_s2_evidence_captions.md) maps report figures and claims to their saved source outputs.
