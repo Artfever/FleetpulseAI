@@ -79,6 +79,25 @@ Thumbs.db
 !.env.example
 .ruff_cache/
 
+# Additional local caches, scratch outputs, and credential material
+.mypy_cache/
+.nox/
+.tox/
+.cache/
+.ipynb_checkpoints/
+*.tmp
+*.bak
+*.log
+*.pem
+*.p12
+*.pfx
+*.key
+id_rsa
+id_ed25519
+.netrc
+secrets.json
+credentials.json
+
 # Private planning files supplied in docs/
 /docs/taha.md
 /docs/implementationplan.md

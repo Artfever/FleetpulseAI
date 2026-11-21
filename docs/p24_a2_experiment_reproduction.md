@@ -16,8 +16,8 @@ added to Git. Its SHA-256 matched the pinned source digest:
 
 ## Commands and provenance
 
-Executed from `C:\Users\hp\AppData\Local\Temp\fleetpulse-p24-a1-full-final`,
-a separate clone with a new Python 3.12.16 environment:
+Executed from a separate temporary clone with a new Python 3.12.16 environment.
+The local temporary-directory name is omitted because it is machine-specific:
 
 ```powershell
 .venv/Scripts/python.exe scripts/build_feature_datasets.py
