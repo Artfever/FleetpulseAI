@@ -25,5 +25,6 @@ Issue: [P26-T1 #107](https://github.com/Artfever/AI_PROJECT/issues/107)
 
 This map prepares the materials for final review. It does not record a new
 human scientific/layout review, all-three-member sign-off, course-platform
-submission, or a current cloud revision SHA. Those checks remain open until the
-actual final package and refreshed PDF are ready.
+submission, or a current cloud revision SHA. The refreshed PDF and extracted
+ZIP candidate are ready for review; those human decisions and hosted-SHA check
+remain open.

@@ -76,5 +76,7 @@ The final result JSON preserves all 500 per-engine rows, but its original
 Plotly HTML files are local/ignored intermediates. P22's tracked SVGs and JSON
 provide the included figures and diagnostics. Full raw FD001 files remain
 untracked; their source and verification instructions are in
-`docs/fd001_provenance.md`. The exact assembled submission ZIP has not yet been
-inspected; P26-A3 performs that package-level check after Taha's archive exists.
+`docs/fd001_provenance.md`. The exact candidate submission ZIP has now been
+audited and run from a fresh extraction; see
+[`p26_a3_archive_run.md`](p26_a3_archive_run.md) for the package-level evidence.
+P26-T3 records the candidate's exact hash and submission procedure separately.

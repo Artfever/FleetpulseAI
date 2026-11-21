@@ -41,10 +41,6 @@ machine-specific paths embedded in text files. Synthetic unit tests exercise
 both the allowed `.env.example` case and representative violations. This tool
 does not replace the later exact-archive extraction and runtime test in P26-A3.
 
-At this point the final ZIP has not yet been assembled, so no clean result is
-claimed for the final archive. The audit contract and detector are ready for
-P26-A3/P26-T3 to use after the package file list is frozen.
-
 A temporary source snapshot containing 482 entries (with owner handoffs
 excluded and the A2 audit files included) passed with zero findings. This
 demonstrated the detector before final package assembly.
