@@ -85,7 +85,7 @@ Related remote checks during the same session:
   not uncertainty or confidence.
 - The final Decision Tree feature explanation did not run. The app displayed
   `FD001 training histories are unavailable` for
-  `/mount/src/fleetpulseai/data/raw/train_FD001.txt`. Thus P23-S2’s explanation
+  `<deployment checkout>/data/raw/train_FD001.txt`. Thus P23-S2’s explanation
   portion is blocked by a missing hosted dataset file even though the model
   comparison portion works.
 - The live Model Laboratory showed P22-S1/P22-S2/P22-S3 study sections, but
