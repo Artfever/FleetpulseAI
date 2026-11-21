@@ -6,7 +6,7 @@ Issue: [P26-A3 #236](https://github.com/Artfever/FleetpulseAI/issues/236)
 
 The candidate group package is `dist/fleetpulse-submission.zip`. It contains the tracked project files and excludes the three owner handoffs and all ignored local files. Raw NASA files are not included; their documented source and checksums remain in `docs/fd001_provenance.md`. The file is a software project package for the simulated FD001 course scope, not a standalone installer.
 
-The exact archive hygiene audit and its SHA-256 are captured in the P26-T3 package manifest after this check. If any archive member changes, regenerate this record and rerun the audit and extracted-copy checks.
+The exact archive hygiene audit and its SHA-256 are captured in the P26-T3 package manifest, which is a repository review record kept outside the ZIP to avoid a self-referential archive hash. If any archive member changes, regenerate this record and rerun the audit and extracted-copy checks.
 
 ## Fresh extraction and setup
 

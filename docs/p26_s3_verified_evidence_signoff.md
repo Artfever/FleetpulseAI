@@ -37,13 +37,15 @@ reproduction on another machine.
 
 ## Items deliberately left unsigned
 
-- No final submission ZIP has been assembled or extracted yet. Its exact member
-  list, audit SHA-256, and clean extracted-copy run remain open for P26-A3/T3.
+- The candidate ZIP was audited and run from a fresh extraction for P26-A3.
+  `docs/p26_a3_archive_run.md` records the extraction and checks; P26-T3 records
+  the exact SHA-256 and package path. The final phase gate still needs real
+  three-member review/sign-off of that exact archive.
 - The deployed Streamlit Cloud SHA is not independently identified in this
   workspace. Local AppTest is not remote deployment evidence.
-- No additional teammate approval or three-person archive sign-off is claimed.
-  Those are deferred until the nine task deliverables and exact archive are
-  ready for the final review requested by Abdullah.
+- No teammate approval or three-person archive sign-off is claimed. Those
+  remain human checks for the final phase gate after the nine task deliverables
+  and exact archive are ready for review.
 
 The evidence listed above can be relied on within its stated scope. The open
 items must be resolved or explicitly accepted before closing P26 gate #31.
