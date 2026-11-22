@@ -29,7 +29,7 @@ def _row(unit_id, cycle):
 def _page(monkeypatch, tmp_path):
     monkeypatch.setattr(ui, "PROJECT_ROOT", tmp_path)
     return AppTest.from_file(
-        str(PROJECT_ROOT / "app/pages/3_RUL_Prediction.py"), default_timeout=30
+        str(PROJECT_ROOT / "app/modules/3_RUL_Prediction.py"), default_timeout=30
     )
 
 
@@ -59,7 +59,8 @@ def test_upload_page_selects_engine_and_previews_only_its_rows_without_predictio
     preview = page.dataframe[0].value
     assert set(preview["unit_id"]) == {5}
     assert list(preview["cycle"]) == [1.0, 2.0]
-    assert any("2 of 4 rows" in element.value for element in page.success)
+    assert any("CSV ready" in element.value for element in page.success)
+    assert any("2 of 4 rows" in element.value for element in page.caption)
     assert prediction_calls == []
 
 
@@ -106,7 +107,6 @@ def test_upload_prediction_uses_shared_service_and_shows_short_history_limits(
     page.selectbox[0].select("Upload CSV").run()
     page.file_uploader[0].set_value(("histories.csv", contents, "text/csv")).run()
     page.selectbox[2].select("5").run()
-    assert any("outside the model's domain" in item.value for item in page.info)
     page.button[0].click().run()
 
     assert not page.exception
@@ -121,11 +121,9 @@ def test_upload_prediction_uses_shared_service_and_shows_short_history_limits(
         )
     ]
     assert page.metric[0].value == "12.50"
-    assert any(
-        "Engine fit membership: Not verified for the uploaded history." in item.value
-        for item in page.markdown
-    )
-    assert any("test-model" in item.value and "test-v1" in item.value for item in page.markdown)
+    assert any("outside the model's domain" in item.value for item in page.caption)
+    assert any("Uploaded history fit membership is not verified" in item.value for item in page.caption)
+    assert any("test-model" in item.value and "test-v1" in item.value for item in page.caption)
     assert any("short" in item.value for item in page.warning)
     assert any("gaps" in item.value for item in page.warning)
 

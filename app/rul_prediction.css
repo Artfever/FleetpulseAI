@@ -1,0 +1,108 @@
+:is(.st-key-fp_rul_header, [class*="st-key-fp_rul_estimate_"]) {
+  --fp-rul-panel: var(--fp-panel, light-dark(#fffefa, #22272d));
+  --fp-rul-divider: var(--fp-divider, light-dark(#c3c7c9, #454e58));
+  --fp-rul-accent: var(--fp-accent, light-dark(#285777, #a8c5df));
+}
+
+.st-key-fp_rul_header h1 {
+  font-size: clamp(2.15rem, 4.8vw, 3.25rem);
+  line-height: 1.08;
+  padding-block: 0;
+}
+.st-key-fp_rul_header::after {
+  content: "";
+  display: block;
+  height: 2px;
+  background: linear-gradient(90deg, var(--fp-rul-accent), var(--fp-rul-divider) 42%, transparent);
+  transform-origin: left;
+}
+[class*="st-key-fp_rul_estimate_"] {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--fp-rul-divider);
+  border-inline-start: 3px solid var(--fp-rul-accent);
+  border-radius: 8px;
+  background: var(--fp-rul-panel);
+  padding: clamp(1rem, 3.5vw, 1.65rem);
+}
+[class*="st-key-fp_rul_estimate_"]::before,
+[class*="st-key-fp_rul_estimate_"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+[class*="st-key-fp_rul_estimate_"]::before {
+  background:
+    linear-gradient(90deg, var(--fp-rul-panel) 35%, transparent 85%),
+    repeating-linear-gradient(90deg, transparent 0 23px,
+      color-mix(in srgb, var(--fp-rul-accent) 15%, transparent) 23px 24px);
+}
+[class*="st-key-fp_rul_estimate_"] [data-testid="stMetric"] {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+[class*="st-key-fp_rul_estimate_"] [data-testid="stMetricValue"] {
+  color: var(--fp-rul-accent);
+  font-size: clamp(2.35rem, 7vw, 4.4rem);
+  font-weight: 700;
+  letter-spacing: -.05em;
+  line-height: 1.1;
+}
+[class*="st-key-fp_rul_estimate_"] [data-testid="stCaptionContainer"] {
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .st-key-fp_rul_header h1 {
+    animation: fp-rul-enter 440ms cubic-bezier(.19, 1, .22, 1) both;
+  }
+  .st-key-fp_rul_header::after {
+    animation: fp-rul-draw 760ms cubic-bezier(.22, 1, .36, 1) both;
+  }
+  [class*="st-key-fp_rul_estimate_"] {
+    animation: fp-rul-enter 520ms cubic-bezier(.19, 1, .22, 1) both;
+  }
+  [class*="st-key-fp_rul_estimate_"]::after {
+    background: linear-gradient(105deg, transparent 35%,
+      color-mix(in srgb, var(--fp-rul-accent) 30%, transparent) 50%, transparent 65%);
+    animation: fp-rul-sweep 950ms cubic-bezier(.22, .61, .36, 1) both;
+  }
+  [class*="st-key-fp_rul_estimate_"] [data-testid="stMetricValue"] {
+    animation: fp-rul-value 680ms cubic-bezier(.16, 1, .3, 1) 95ms both;
+  }
+  [class*="st-key-fp_rul_estimate_"] [data-testid="stCaptionContainer"] {
+    animation: fp-rul-enter 370ms ease-out 245ms both;
+  }
+}
+@keyframes fp-rul-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fp-rul-draw {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes fp-rul-sweep {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+@keyframes fp-rul-value {
+  from { opacity: 0; transform: translateY(.42em); clip-path: inset(0 100% 0 0); }
+  to { opacity: 1; transform: translateY(0); clip-path: inset(0); }
+}
+
+@media (max-width: 900px) {
+  [class*="st-key-fp_rul_controls"] [data-testid="stHorizontalBlock"] {
+    flex-direction: column;
+    gap: .65rem;
+  }
+  [class*="st-key-fp_rul_controls"] [data-testid="stHorizontalBlock"] > [data-testid="column"] {
+    width: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}

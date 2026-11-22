@@ -9,7 +9,7 @@ from fleetpulse import PROJECT_ROOT, ui
 
 def _page():
     return AppTest.from_file(
-        str(PROJECT_ROOT / "app/pages/4_Maintenance_Planner.py"), default_timeout=30
+        str(PROJECT_ROOT / "app/modules/4_Maintenance_Planner.py"), default_timeout=30
     ).run()
 
 

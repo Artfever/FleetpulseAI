@@ -19,35 +19,35 @@ def test_six_screen_journey_links_connect_all_pages(tmp_path, monkeypatch):
         ("Review model evidence", "Model_Laboratory"),
     } <= _links(app)
 
-    fleet = app.switch_page("pages/1_Fleet_Overview.py").run()
+    fleet = app.switch_page("modules/1_Fleet_Overview.py").run()
     assert not fleet.exception
     assert {
         ("Inspect an engine history", "Engine_Explorer"),
         ("Open RUL Prediction", "RUL_Prediction"),
     } <= _links(fleet)
 
-    explorer = app.switch_page("pages/2_Engine_Explorer.py").run()
+    explorer = app.switch_page("modules/2_Engine_Explorer.py").run()
     assert not explorer.exception
     assert {
         ("Continue to RUL Prediction", "RUL_Prediction"),
         ("Open Fleet Overview", "Fleet_Overview"),
     } <= _links(explorer)
 
-    prediction = app.switch_page("pages/3_RUL_Prediction.py").run()
+    prediction = app.switch_page("modules/3_RUL_Prediction.py").run()
     assert not prediction.exception
     assert {
         ("Continue to Fleet Overview", "Fleet_Overview"),
         ("Return to Engine Explorer", "Engine_Explorer"),
     } <= _links(prediction)
 
-    planner = app.switch_page("pages/4_Maintenance_Planner.py").run()
+    planner = app.switch_page("modules/4_Maintenance_Planner.py").run()
     assert not planner.exception
     assert {
         ("Return to Fleet Overview", "Fleet_Overview"),
         ("Review model evidence", "Model_Laboratory"),
     } <= _links(planner)
 
-    laboratory = app.switch_page("pages/5_Model_Laboratory.py").run()
+    laboratory = app.switch_page("modules/5_Model_Laboratory.py").run()
     assert not laboratory.exception
     assert {
         ("Continue to RUL Prediction", "RUL_Prediction"),

@@ -44,7 +44,7 @@ def test_real_uploaded_prefix_reaches_planner_with_saved_model_provenance():
     selected = [row for row in records if row["unit_id"] == 4]
     contents = _upload_bytes(selected)
     app = AppTest.from_file(str(PROJECT_ROOT / "app/Home.py"), default_timeout=60).run()
-    upload_page = app.switch_page("pages/3_RUL_Prediction.py").run()
+    upload_page = app.switch_page("modules/3_RUL_Prediction.py").run()
     upload_page.selectbox[0].select("Upload CSV").run()
     upload_page.file_uploader[0].set_value(("fd001_engine_4.csv", contents, "text/csv")).run()
     upload_page.button[0].click().run()
@@ -58,7 +58,7 @@ def test_real_uploaded_prefix_reaches_planner_with_saved_model_provenance():
     assert result["raw_rul_cycles"] == pytest.approx(34.19607843137255, rel=1e-12)
 
     upload_page.button[1].click().run()
-    planner = app.switch_page("pages/4_Maintenance_Planner.py").run()
+    planner = app.switch_page("modules/4_Maintenance_Planner.py").run()
     planner.button[0].click().run()
     assert not planner.exception
     scenario = planner.session_state[ui.P20_FLEET_SCENARIO_STATE_KEY]
@@ -101,7 +101,7 @@ def test_uploaded_prediction_is_saved_with_provenance_and_reaches_both_scheduler
 
     contents = _upload_bytes(_upload_rows())
     app = AppTest.from_file(str(PROJECT_ROOT / "app/Home.py"), default_timeout=45).run()
-    upload_page = app.switch_page("pages/3_RUL_Prediction.py").run()
+    upload_page = app.switch_page("modules/3_RUL_Prediction.py").run()
     upload_page.selectbox[0].select("Upload CSV").run()
     upload_page.file_uploader[0].set_value(("histories.csv", contents, "text/csv")).run()
     upload_page.selectbox[2].select("4").run()
@@ -143,7 +143,7 @@ def test_uploaded_prediction_is_saved_with_provenance_and_reaches_both_scheduler
     assert len(provenance["source"]["source_records_sha256"]) == 64
     assert provenance["source"]["source_file_sha256"]
 
-    planner = app.switch_page("pages/4_Maintenance_Planner.py").run()
+    planner = app.switch_page("modules/4_Maintenance_Planner.py").run()
     assert not planner.exception
     planner.button[0].click().run()
     assert not planner.exception
@@ -163,7 +163,7 @@ def test_uploaded_prediction_is_invalidated_when_selected_engine_changes(monkeyp
     monkeypatch.setattr(ui, "PROJECT_ROOT", tmp_path)
     contents = _upload_bytes(_upload_rows())
     app = AppTest.from_file(
-        str(PROJECT_ROOT / "app/pages/3_RUL_Prediction.py"), default_timeout=30
+        str(PROJECT_ROOT / "app/modules/3_RUL_Prediction.py"), default_timeout=30
     )
     page = app.run()
     page.selectbox[0].select("Upload CSV").run()

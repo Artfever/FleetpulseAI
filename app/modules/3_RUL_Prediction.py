@@ -25,7 +25,6 @@ from fleetpulse.models.mlp_contract import (
 from fleetpulse.models.mlp_contract import (
     WEIGHTS_FILENAME as MLP_WEIGHTS_FILENAME,
 )
-from fleetpulse.models.registry import DEVELOPMENT_MODEL_REGISTRY, FINAL_MODEL_REGISTRY
 from fleetpulse.models.usage_scope import classify_training_engine
 from fleetpulse.models.xgboost_artifact import (
     MANIFEST_FILENAME as XGBOOST_MANIFEST_FILENAME,
@@ -42,16 +41,21 @@ from fleetpulse.services import (
     predict_uploaded_csv,
 )
 from fleetpulse.services.history import MAX_REPLAY_POINTS, replay_engine_history
+from fleetpulse.ui_forecast_scene import render_prediction_trace
 
-st.title("RUL Prediction")
-st.caption(
-    "Estimate remaining useful life in operating cycles using a saved development model. "
-    "On request, the separate contribution panel explains the frozen final Decision Tree."
-)
 _app_dir = Path(__file__).resolve().parents[1]
-st.page_link(st.Page(_app_dir / "pages" / "1_Fleet_Overview.py"), label="Continue to Fleet Overview")
-st.page_link(st.Page(_app_dir / "pages" / "2_Engine_Explorer.py"), label="Return to Engine Explorer")
+st.html(_app_dir / "rul_prediction.css")
+with st.container(key="fp_rul_header"):
+    st.title("RUL Prediction", anchor=False)
 
+source_column, model_column = st.container(key="fp_rul_controls_source").columns(2)
+
+default_source = None
+if (
+    not (ui.PROJECT_ROOT / "data" / "raw" / "train_FD001.txt").is_file()
+    and (ui.PROJECT_ROOT / "data" / "demo" / "fd001_training_prefixes.txt").is_file()
+):
+    default_source = "Packaged FD001/train parity subset"
 ui.prepare_selection(
     ui.P21_HISTORY_SOURCE_STATE_KEY,
     ui.P21_HISTORY_SOURCE_WIDGET_KEY,
@@ -61,8 +65,9 @@ ui.prepare_selection(
         "Illustrative synthetic example",
         "Upload CSV",
     ],
+    default=default_source,
 )
-source = st.selectbox(
+source = source_column.selectbox(
     "History source",
     [
         "Local FD001 training data",
@@ -87,56 +92,39 @@ xgboost_model = artifact_dir / XGBOOST_MODEL_FILENAME
 model_options = ["Decision Tree"]
 if forest_manifest.is_file() and forest_model.is_file():
     model_options.append("Random Forest")
-else:
-    st.info(
-        "Random Forest is unavailable in this workspace until its verified model bundle "
-        "is present in `artifacts/development/`."
-    )
 if xgboost_manifest.is_file() and xgboost_model.is_file():
     model_options.append("XGBoost")
-else:
-    st.info(
-        "XGBoost is unavailable in this workspace until its verified model bundle "
-        "is present in `artifacts/development/`."
-    )
 if mlp_manifest.is_file() and mlp_weights.is_file():
     model_options.append("Dense MLP (CPU)")
-else:
-    st.info(
-        "Dense MLP is unavailable in this workspace until its verified checkpoint, "
-        "architecture and scaler are present in `artifacts/development/mlp/`."
-    )
-development_versions = {
-    "Decision Tree": DEVELOPMENT_MODEL_REGISTRY["decision-tree-rul"].version,
-    "Random Forest": DEVELOPMENT_MODEL_REGISTRY["random-forest-rul"].version,
-    "XGBoost": DEVELOPMENT_MODEL_REGISTRY["xgboost-rul"].version,
-    "Dense MLP (CPU)": DEVELOPMENT_MODEL_REGISTRY["dense-rul-mlp"].version,
-}
-final_registry_names = {
-    "Decision Tree": "decision-tree-rul",
-    "Random Forest": "random-forest-rul",
-    "XGBoost": "xgboost-rul",
-    "Dense MLP (CPU)": "dense-rul-mlp-final",
-}
 ui.prepare_selection(
     ui.P21_SELECTED_MODEL_STATE_KEY,
     ui.P21_SELECTED_MODEL_WIDGET_KEY,
     model_options,
 )
-selected_model = st.selectbox(
+selected_model = model_column.selectbox(
     "RUL model",
     model_options,
-    format_func=lambda name: f"{name} · Development · {development_versions[name]}",
     key=ui.P21_SELECTED_MODEL_WIDGET_KEY,
     on_change=ui.remember_selection,
     args=(ui.P21_SELECTED_MODEL_STATE_KEY, ui.P21_SELECTED_MODEL_WIDGET_KEY),
 )
-final_model_spec = FINAL_MODEL_REGISTRY[final_registry_names[selected_model]]
-st.caption(
-    f"Selected: Development candidate `{development_versions[selected_model]}`. "
-    f"Final refit `{final_model_spec.version}` is separate; the optional contribution panel uses "
-    "the frozen final Decision Tree without replacing this development estimate."
-)
+
+
+def _render_estimate(
+    engine: int,
+    cycle: int,
+    value: float,
+    model_name: str,
+    model_version: str,
+    *,
+    history_id: str,
+) -> None:
+    """Restart the card's reveal when its prediction context changes."""
+    signature = (history_id, engine, cycle, value, model_name, model_version)
+    card_id = hashlib.sha256(repr(signature).encode()).hexdigest()[:16]
+    with st.container(key=f"fp_rul_estimate_{card_id}"):
+        st.metric("Estimated remaining cycles", f"{value:.2f}")
+        st.caption(f"Engine {engine} · Cycle {cycle} · {model_name} {model_version}")
 
 
 def _clear_saved_upload_from_planner() -> None:
@@ -156,15 +144,12 @@ if source != "Upload CSV":
     st.session_state.pop(ui.P21_UPLOADED_PREDICTION_STATE_KEY, None)
     _clear_saved_upload_from_planner()
 if source == "Local FD001 training data":
-    records = ui.render_training_data()
+    records = ui.render_training_data(compact=True)
 elif source == "Packaged FD001/train parity subset":
-    records = ui.render_packaged_training_subset()
+    records = ui.render_packaged_training_subset(compact=True)
 elif source == "Upload CSV":
     records = None
-    st.caption(
-        "Upload a headered CSV with the 26 raw-history fields. Target/RUL columns are not accepted; "
-        "files are limited to 1 MiB."
-    )
+    st.caption("Upload an FD001 history CSV (up to 1 MiB).")
     uploaded_file = st.file_uploader("Engine history CSV", type=["csv"], max_upload_size=1)
     if uploaded_file is not None:
         upload_bytes = uploaded_file.getvalue()
@@ -219,25 +204,14 @@ elif source == "Upload CSV":
                 _clear_saved_upload_from_planner()
                 st.session_state.pop(ui.P21_UPLOADED_PREDICTION_STATE_KEY, None)
                 saved_upload_prediction = None
-            st.success(
-                f"CSV passed validation. Showing engine {selected_engine} "
-                f"({len(selected_history)} of {len(uploaded_records)} rows)."
-            )
+            st.success(f"CSV ready · engine {selected_engine}")
             upload_report = validate_engine_history(selected_history)
             for finding in upload_report.warnings:
                 st.warning(finding.message)
             preview_rows = selected_history[:10]
-            st.caption(
-                f"Preview: first {len(preview_rows)} rows for engine {selected_engine}; "
-                "the file remains unchanged."
-            )
-            st.dataframe(preview_rows, hide_index=True, width="stretch")
-            st.info(
-                "Prediction uses the latest observed cycle for the selected engine and the saved "
-                "development model. The upload must follow the FD001 sensor contract; other fleets, "
-                "sensor definitions or operating conditions may be outside the model's domain. "
-                "This is a software estimate, not maintenance advice."
-            )
+            with st.expander("Preview uploaded rows"):
+                st.caption(f"{len(selected_history)} of {len(uploaded_records)} rows · first 10 shown")
+                st.dataframe(preview_rows, hide_index=True, width="stretch")
             if st.button("Predict remaining cycles", key="predict_uploaded_csv"):
                 try:
                     supplied = None
@@ -299,14 +273,28 @@ elif source == "Upload CSV":
 
             if saved_upload_prediction is not None:
                 result = saved_upload_prediction["prediction"]
-                st.metric("Estimated remaining cycles", f"{result['displayed_rul_cycles']:.2f}")
-                st.write(f"Model: {result['model_name']} ({result['model_version']})")
-                st.caption(
-                    f"Uploaded engine {selected_engine}, observed cycle {result['observed_cycle']}; "
-                    f"{result['input_window_rows']} observed rows in the feature window. "
-                    f"Raw estimate: {result['raw_rul_cycles']:.2f} cycles."
+                _render_estimate(
+                    selected_engine,
+                    result["observed_cycle"],
+                    result["displayed_rul_cycles"],
+                    result["model_name"],
+                    result["model_version"],
+                    history_id=upload_identity["upload_sha256"],
                 )
-                st.write("Engine fit membership: Not verified for the uploaded history.")
+                render_prediction_trace(
+                    [(result["observed_cycle"], result["displayed_rul_cycles"])],
+                    engine=selected_engine,
+                )
+                with st.expander("Prediction details"):
+                    st.caption(
+                        f"{result['input_window_rows']} rows used · "
+                        f"Raw estimate: {result['raw_rul_cycles']:.2f} cycles · "
+                        "Uploaded history fit membership is not verified."
+                    )
+                    st.caption(
+                        "FD001 estimates are software demonstrations, not maintenance advice; "
+                        "other fleets or operating conditions may be outside the model's domain."
+                    )
                 if "short_window" in result["warnings"]:
                     st.warning(
                         "The available feature window is short; the estimate uses fewer observations."
@@ -343,16 +331,13 @@ elif source == "Upload CSV":
                     st.session_state.pop(ui.P20_FLEET_COMPARISON_STATE_KEY, None)
                     st.session_state.pop(ui.P20_FLEET_COMPARISON_ARTIFACT_STATE_KEY, None)
                     st.success("Saved the uploaded prediction for Maintenance Planner.")
-                    st.page_link(st.Page(_app_dir / "pages" / "4_Maintenance_Planner.py"), label="Open Maintenance Planner")
+                    st.page_link(st.Page(_app_dir / "modules" / "4_Maintenance_Planner.py"), label="Open Maintenance Planner")
     else:
         st.session_state.pop(ui.P21_UPLOADED_PREDICTION_STATE_KEY, None)
         _clear_saved_upload_from_planner()
 else:
     partition = "illustrative/synthetic"
-    st.warning(
-        "Artificial example, not NASA data or a real engine history. The model was not "
-        "validated on these invented readings; its output is only a software demonstration."
-    )
+    st.caption("Illustrative synthetic data")
     try:
         records = load_engine_history(ui.PROJECT_ROOT / "data/demo/illustrative_history.txt")
         if not validate_engine_history(records).is_valid:
@@ -362,13 +347,14 @@ else:
         records = None
 
 if records is not None:
+    engine_column, cycle_column = st.container(key="fp_rul_controls_engine").columns(2)
     engine_ids = sorted({int(row["unit_id"]) for row in records})
     ui.prepare_selection(
         ui.P21_SELECTED_ENGINE_STATE_KEY,
         ui.P21_SELECTED_ENGINE_PREDICTION_WIDGET_KEY,
         engine_ids,
     )
-    engine = st.selectbox(
+    engine = engine_column.selectbox(
         "Engine ID",
         engine_ids,
         key=ui.P21_SELECTED_ENGINE_PREDICTION_WIDGET_KEY,
@@ -389,34 +375,18 @@ if records is not None:
             usage = classify_training_engine(
                 split_manifest, dataset_partition=partition, unit_id=engine
             )
-        except (OSError, ValueError, TypeError) as error:
-            st.warning(
-                "Training-set membership for this model cannot be verified from the saved "
-                f"development split ({error}). Do not treat this replay as held-out evidence."
-            )
+        except (OSError, ValueError, TypeError):
+            st.warning("Training split unavailable; holdout status is unknown.")
         else:
             training_usage = usage
             if usage == "fitting":
-                st.warning(
-                    "In-sample illustration: according to the saved development split, this engine "
-                    "was used to fit the saved development model. Its prediction is not held-out evidence."
-                )
+                st.warning("In-sample estimate · this engine was used to fit the model.")
             elif usage == "validation":
-                st.info(
-                    "Held-out development engine: according to the saved development split, this "
-                    "engine was not used to fit the saved development model. This is development "
-                    "evidence, not official-test performance."
-                )
+                st.caption("Development holdout · not an official test result.")
             else:
-                st.warning(
-                    "This engine is not listed in the saved development split, so its fit/holdout "
-                    "status is unknown. Do not treat this replay as held-out evidence."
-                )
+                st.warning("Engine fit status unknown · not held-out evidence.")
     else:
-        st.info(
-            "Illustrative synthetic example: it is not a NASA engine, held-out evaluation, "
-            "or maintenance result."
-        )
+        st.warning("Synthetic demo only · not a real engine or maintenance result.")
     cycle_options = [int(row["cycle"]) for row in history]
     ui.prepare_selection(
         ui.P21_SELECTED_CYCLE_STATE_KEY,
@@ -424,10 +394,9 @@ if records is not None:
         cycle_options,
         default=cycle_options[-1],
     )
-    cycle = st.select_slider(
+    cycle = cycle_column.select_slider(
         "Observed cycle",
         options=cycle_options,
-        value=cycle_options[-1],
         key=ui.P21_SELECTED_CYCLE_PREDICTION_WIDGET_KEY,
         on_change=ui.remember_selection,
         args=(
@@ -435,30 +404,21 @@ if records is not None:
             ui.P21_SELECTED_CYCLE_PREDICTION_WIDGET_KEY,
         ),
     )
-    sensor = st.selectbox("Sensor history", SENSOR_COLUMNS)
+    estimate_slot = st.container()
     visible_history = [row for row in history if int(row["cycle"]) <= cycle]
-    st.line_chart(
-        {
-            "cycle": [int(row["cycle"]) for row in visible_history],
-            sensor: [float(row[sensor]) for row in visible_history],
-        },
-        x="cycle",
-        y=sensor,
-        y_label=sensor,
-        x_label="Cycle",
-    )
-    st.caption(
-        f"The {sensor} chart ends at cycle {cycle}; the prediction below uses that same observed prefix."
-    )
-    st.caption(
-        "Only readings through the selected cycle are used; this is not a maintenance guarantee."
-    )
-    st.info(
-        "A feature contribution shows how a sensor statistic shifted the model's estimate relative "
-        "to its reference. It does not mean that the sensor caused engine wear, and it does not "
-        "identify an FD001 fault type. FD001 is simulated; these cycle estimates are not a "
-        "maintenance diagnosis."
-    )
+    with st.expander("Sensor history", expanded=False):
+        sensor = st.selectbox("Sensor", SENSOR_COLUMNS)
+        st.line_chart(
+            {
+                "cycle": [int(row["cycle"]) for row in visible_history],
+                sensor: [float(row[sensor]) for row in visible_history],
+            },
+            x="cycle",
+            y=sensor,
+            y_label=sensor,
+            x_label="Cycle",
+        )
+        st.caption(f"{sensor} through cycle {cycle}")
     replay_point_count = min(len(visible_history), MAX_REPLAY_POINTS)
     if replay_point_count == 1:
         replay_cutoffs = [cycle]
@@ -492,9 +452,36 @@ if records is not None:
             )
             result = replay.points[-1].prediction
     except (PredictionArtifactError, PredictionInputError) as error:
-        st.warning(f"Prediction is unavailable: {error}")
-        st.write("Check the saved development model bundle and the selected training history.")
+        estimate_slot.warning(f"Prediction is unavailable: {error}")
     else:
+        with estimate_slot:
+            _render_estimate(
+                engine,
+                result.observed_cycle,
+                result.displayed_rul_cycles,
+                result.model_name,
+                result.model_version,
+                history_id=source,
+            )
+            render_prediction_trace(
+                [(point.cutoff_cycle, point.prediction.displayed_rul_cycles) for point in replay.points],
+                engine=engine,
+            )
+        with st.expander("Prediction details"):
+            st.caption(
+                f"{partition} · {result.input_window_rows} rows used · "
+                f"Raw estimate: {result.raw_rul_cycles:.2f} cycles"
+            )
+            if partition == "FD001/train":
+                membership = {
+                    "fitting": "Seen during fitting",
+                    "validation": "Not seen during fitting (development validation engine)",
+                    "unknown": "Unknown (not listed or split unavailable)",
+                }[training_usage]
+                st.caption(f"Engine fit membership: {membership}")
+            st.caption(
+                "FD001 is simulated; this estimate is not a fault diagnosis or maintenance advice."
+            )
         timeline_rows = [
             {
                 "Observed cycle": point.cutoff_cycle,
@@ -504,40 +491,20 @@ if records is not None:
             }
             for point in replay.points
         ]
-        st.subheader("Earlier-cycle prediction timeline")
-        st.line_chart(
-            {
-                "Observed cycle": [row["Observed cycle"] for row in timeline_rows],
-                "Estimated remaining cycles": [
-                    row["Estimated remaining cycles"] for row in timeline_rows
-                ],
-            },
-            x="Observed cycle",
-            y="Estimated remaining cycles",
-            x_label="Observed cycle",
-            y_label="Estimated remaining cycles",
-        )
-        st.dataframe(timeline_rows, hide_index=True, width="stretch")
-        st.caption(
-            f"Timeline contains {len(timeline_rows)} observed cutoffs through cycle {cycle}; "
-            "later readings are excluded at every cutoff."
-        )
-        st.metric("Estimated remaining cycles", f"{result.displayed_rul_cycles:.2f}")
-        st.write(f"Model: {result.model_name} ({result.model_version})")
-        if partition == "FD001/train":
-            membership = {
-                "fitting": "Seen during fitting",
-                "validation": "Not seen during fitting (development validation engine)",
-                "unknown": "Unknown (not listed or split unavailable)",
-            }[training_usage]
-            st.write(f"Engine fit membership: {membership}")
-        else:
-            st.write("Engine fit membership: Not applicable to this non-FD001/train example.")
-        st.caption(
-            f"{partition} engine {engine}, observed cycle {result.observed_cycle}; "
-            f"{result.input_window_rows} observed rows in the feature window. "
-            f"Raw estimate: {result.raw_rul_cycles:.2f} cycles."
-        )
+        with st.expander("Prediction over time"):
+            st.line_chart(
+                {
+                    "Observed cycle": [row["Observed cycle"] for row in timeline_rows],
+                    "Estimated remaining cycles": [
+                        row["Estimated remaining cycles"] for row in timeline_rows
+                    ],
+                },
+                x="Observed cycle",
+                y="Estimated remaining cycles",
+                x_label="Observed cycle",
+                y_label="Estimated remaining cycles",
+            )
+            st.dataframe(timeline_rows, hide_index=True, width="stretch")
         if "short_window" in result.warnings:
             st.warning(
                 "The available feature window is short; the estimate uses fewer observations."
@@ -548,160 +515,155 @@ if records is not None:
             st.warning(
                 "The displayed estimate is clipped to zero; the raw estimate is shown above."
             )
-        st.subheader("Frozen final Decision Tree feature contributions")
-        st.caption(
-            "This is a separate explanation from the development estimate above. "
-            "Positive SHAP contributions move the final tree estimate above its reference baseline; "
-            "negative contributions move it below. Values are in RUL cycles, not causal effects."
-        )
-        if st.button("Show feature contributions", key="show_final_tree_contributions"):
-            try:
-                with st.spinner("Checking the frozen model and calculating contributions..."):
-                    final_explanation = explain_final_tree_history(
-                        visible_history,
-                        dataset_partition=partition,
-                        unit_id=engine,
-                        artifact_root=ui.PROJECT_ROOT,
-                        training_path=ui.PROJECT_ROOT / "data" / "raw" / "train_FD001.txt",
-                    )
-            except (
-                OSError,
-                ValueError,
-                TypeError,
-                RuntimeError,
-                KeyError,
-                EOFError,
-                ImportError,
-                pickle.UnpicklingError,
-            ) as error:
-                st.info(f"Final Decision Tree explanation is unavailable: {error}")
-            else:
-                st.write(
-                    f"Frozen model: `{final_explanation.model_name}` "
-                    f"({final_explanation.model_version}); engine {engine}, "
-                    f"observed cycle {final_explanation.observed_cycle}."
-                )
-                st.metric("Final raw RUL estimate", f"{final_explanation.raw_rul_cycles:.2f} cycles")
-                st.metric("SHAP reference baseline", f"{final_explanation.base_value_cycles:.2f} cycles")
-                positive = sorted(
-                    (item for item in final_explanation.contributions if item.contribution_cycles > 0),
-                    key=lambda item: -item.contribution_cycles,
-                )[:5]
-                negative = sorted(
-                    (item for item in final_explanation.contributions if item.contribution_cycles < 0),
-                    key=lambda item: item.contribution_cycles,
-                )[:5]
-                if positive:
-                    st.write("Largest positive contributions")
-                    st.dataframe(
-                        [
-                            {
-                                "Feature": item.feature_name,
-                                "Feature value": item.feature_value,
-                                "Contribution (cycles)": item.contribution_cycles,
-                            }
-                            for item in positive
-                        ],
-                        hide_index=True,
-                        width="stretch",
-                    )
-                else:
-                    st.info("No positive feature contributions for this explanation.")
-                if negative:
-                    st.write("Largest negative contributions")
-                    st.dataframe(
-                        [
-                            {
-                                "Feature": item.feature_name,
-                                "Feature value": item.feature_value,
-                                "Contribution (cycles)": item.contribution_cycles,
-                            }
-                            for item in negative
-                        ],
-                        hide_index=True,
-                        width="stretch",
-                    )
-                else:
-                    st.info("No negative feature contributions for this explanation.")
-                st.caption(
-                    "Baseline plus all signed contributions reconstructs the raw estimate within "
-                    f"{final_explanation.additivity_error_cycles:.2g} cycles. "
-                    "The result depends on the documented FD001/train reference sample and does not "
-                    "measure model accuracy or confidence."
-                )
-        st.subheader("Frozen final model comparison")
-        st.caption(
-            "Compare the frozen final models on this same observed history prefix. "
-            "The raw spread describes disagreement between models; it is not a confidence interval."
-        )
-        if st.button("Compare frozen final models", key="compare_frozen_final_models"):
-            try:
-                with st.spinner("Loading verified frozen models and comparing raw estimates..."):
-                    comparison = compare_final_models(
-                        visible_history,
-                        dataset_partition=partition,
-                        unit_id=engine,
-                        artifact_root=ui.PROJECT_ROOT,
-                    )
-            except (
-                OSError,
-                ValueError,
-                TypeError,
-                RuntimeError,
-                KeyError,
-                EOFError,
-                ImportError,
-                OverflowError,
-                pickle.UnpicklingError,
-            ) as error:
-                st.info(f"Frozen model comparison is unavailable: {error}")
-            else:
-                st.write(
-                    f"{comparison.dataset_partition} engine {comparison.unit_id}, "
-                    f"observed cycle {comparison.observed_cycle}. Successful estimates are raw "
-                    "and unclipped."
-                )
-                if comparison.predictions:
-                    st.dataframe(
-                        [
-                            {
-                                "Model": prediction.model_name,
-                                "Version": prediction.model_version,
-                                "Raw estimate (cycles)": prediction.raw_rul_cycles,
-                            }
-                            for prediction in comparison.predictions
-                        ],
-                        hide_index=True,
-                        width="stretch",
-                    )
-                    spread = comparison.raw_spread_cycles
-                    if spread is None:
-                        st.info("Model disagreement is unavailable for these results.")
-                    else:
-                        st.metric("Raw model disagreement (max − min)", f"{spread:.2f} cycles")
-                        st.caption(
-                            f"Successful-model raw range: {comparison.raw_min_rul_cycles:.2f}–"
-                            f"{comparison.raw_max_rul_cycles:.2f} cycles. This range describes "
-                            "model disagreement, not prediction uncertainty or confidence."
+        with st.expander("Explore model explanation"):
+            if st.button("Show feature contributions", key="show_final_tree_contributions"):
+                try:
+                    with st.spinner("Checking the frozen model and calculating contributions..."):
+                        final_explanation = explain_final_tree_history(
+                            visible_history,
+                            dataset_partition=partition,
+                            unit_id=engine,
+                            artifact_root=ui.PROJECT_ROOT,
+                            training_path=ui.PROJECT_ROOT / "data" / "raw" / "train_FD001.txt",
                         )
+                except (
+                    OSError,
+                    ValueError,
+                    TypeError,
+                    RuntimeError,
+                    KeyError,
+                    EOFError,
+                    ImportError,
+                    pickle.UnpicklingError,
+                ) as error:
+                    st.info(f"Final Decision Tree explanation is unavailable: {error}")
                 else:
-                    st.info("No frozen final model produced a usable estimate; no spread is available.")
-                if comparison.failures:
-                    st.write("Unavailable or incompatible models")
-                    st.dataframe(
-                        [
-                            {
-                                "Model": failure.model_name,
-                                "Status": failure.code,
-                                "Reason": failure.reason,
-                            }
-                            for failure in comparison.failures
-                        ],
-                        hide_index=True,
-                        width="stretch",
+                    st.write(
+                        f"Frozen model: `{final_explanation.model_name}` "
+                        f"({final_explanation.model_version}); engine {engine}, "
+                        f"observed cycle {final_explanation.observed_cycle}."
                     )
+                    st.metric("Final raw RUL estimate", f"{final_explanation.raw_rul_cycles:.2f} cycles")
+                    st.metric("SHAP reference baseline", f"{final_explanation.base_value_cycles:.2f} cycles")
+                    positive = sorted(
+                        (item for item in final_explanation.contributions if item.contribution_cycles > 0),
+                        key=lambda item: -item.contribution_cycles,
+                    )[:5]
+                    negative = sorted(
+                        (item for item in final_explanation.contributions if item.contribution_cycles < 0),
+                        key=lambda item: item.contribution_cycles,
+                    )[:5]
+                    if positive:
+                        st.write("Largest positive contributions")
+                        st.dataframe(
+                            [
+                                {
+                                    "Feature": item.feature_name,
+                                    "Feature value": item.feature_value,
+                                    "Contribution (cycles)": item.contribution_cycles,
+                                }
+                                for item in positive
+                            ],
+                            hide_index=True,
+                            width="stretch",
+                        )
+                    else:
+                        st.info("No positive feature contributions for this explanation.")
+                    if negative:
+                        st.write("Largest negative contributions")
+                        st.dataframe(
+                            [
+                                {
+                                    "Feature": item.feature_name,
+                                    "Feature value": item.feature_value,
+                                    "Contribution (cycles)": item.contribution_cycles,
+                                }
+                                for item in negative
+                            ],
+                            hide_index=True,
+                            width="stretch",
+                        )
+                    else:
+                        st.info("No negative feature contributions for this explanation.")
                     st.caption(
-                        "Failed models are listed separately and are excluded from the raw range."
+                        "Baseline plus all signed contributions reconstructs the raw estimate within "
+                        f"{final_explanation.additivity_error_cycles:.2g} cycles. "
+                        "The result depends on the documented FD001/train reference sample and does not "
+                        "measure model accuracy or confidence."
                     )
+            if st.button("Compare frozen final models", key="compare_frozen_final_models"):
+                try:
+                    with st.spinner("Loading verified frozen models and comparing raw estimates..."):
+                        comparison = compare_final_models(
+                            visible_history,
+                            dataset_partition=partition,
+                            unit_id=engine,
+                            artifact_root=ui.PROJECT_ROOT,
+                        )
+                except (
+                    OSError,
+                    ValueError,
+                    TypeError,
+                    RuntimeError,
+                    KeyError,
+                    EOFError,
+                    ImportError,
+                    OverflowError,
+                    pickle.UnpicklingError,
+                ) as error:
+                    st.info(f"Frozen model comparison is unavailable: {error}")
+                else:
+                    st.write(
+                        f"{comparison.dataset_partition} engine {comparison.unit_id}, "
+                        f"observed cycle {comparison.observed_cycle}. Successful estimates are raw "
+                        "and unclipped."
+                    )
+                    if comparison.predictions:
+                        st.dataframe(
+                            [
+                                {
+                                    "Model": prediction.model_name,
+                                    "Version": prediction.model_version,
+                                    "Raw estimate (cycles)": prediction.raw_rul_cycles,
+                                }
+                                for prediction in comparison.predictions
+                            ],
+                            hide_index=True,
+                            width="stretch",
+                        )
+                        spread = comparison.raw_spread_cycles
+                        if spread is None:
+                            st.info("Model disagreement is unavailable for these results.")
+                        else:
+                            st.metric("Raw model disagreement (max − min)", f"{spread:.2f} cycles")
+                            st.caption(
+                                f"Successful-model raw range: {comparison.raw_min_rul_cycles:.2f}–"
+                                f"{comparison.raw_max_rul_cycles:.2f} cycles. This range describes "
+                                "model disagreement, not prediction uncertainty or confidence."
+                            )
+                    else:
+                        st.info("No frozen final model produced a usable estimate; no spread is available.")
+                    if comparison.failures:
+                        st.write("Unavailable or incompatible models")
+                        st.dataframe(
+                            [
+                                {
+                                    "Model": failure.model_name,
+                                    "Status": failure.code,
+                                    "Reason": failure.reason,
+                                }
+                                for failure in comparison.failures
+                            ],
+                            hide_index=True,
+                            width="stretch",
+                        )
+                        st.caption(
+                            "Failed models are listed separately and are excluded from the raw range."
+                        )
 else:
-    st.write("Choose an engine once the selected history is available.")
+    if source != "Upload CSV":
+        st.write("Choose an engine once the selected history is available.")
+
+with st.expander("Related pages"):
+    st.page_link(st.Page(_app_dir / "modules" / "1_Fleet_Overview.py"), label="Continue to Fleet Overview")
+    st.page_link(st.Page(_app_dir / "modules" / "2_Engine_Explorer.py"), label="Return to Engine Explorer")

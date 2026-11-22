@@ -149,7 +149,7 @@ def test_model_laboratory_displays_verified_forest_validation_scores(monkeypatch
     )
 
     page = AppTest.from_file(
-        str(PROJECT_ROOT / "app/pages/5_Model_Laboratory.py"), default_timeout=30
+        str(PROJECT_ROOT / "app/modules/5_Model_Laboratory.py"), default_timeout=30
     ).run()
 
     assert not page.exception
@@ -187,7 +187,7 @@ def test_model_laboratory_says_forest_scores_are_unavailable_when_bundle_missing
     _prepare_model_laboratory(monkeypatch, tmp_path, forest_scores=None)
 
     page = AppTest.from_file(
-        str(PROJECT_ROOT / "app/pages/5_Model_Laboratory.py"), default_timeout=30
+        str(PROJECT_ROOT / "app/modules/5_Model_Laboratory.py"), default_timeout=30
     ).run()
 
     assert not page.exception
@@ -224,7 +224,7 @@ def test_model_laboratory_displays_verified_mlp_results_and_checkpoint_selection
     _prepare_model_laboratory(monkeypatch, tmp_path, forest_scores=None, mlp_scores=scores)
 
     page = AppTest.from_file(
-        str(PROJECT_ROOT / "app/pages/5_Model_Laboratory.py"), default_timeout=30
+        str(PROJECT_ROOT / "app/modules/5_Model_Laboratory.py"), default_timeout=30
     ).run()
 
     assert not page.exception
@@ -312,7 +312,7 @@ def test_model_laboratory_separates_official_test_scores_from_development(monkey
     )
 
     page = AppTest.from_file(
-        str(PROJECT_ROOT / "app/pages/5_Model_Laboratory.py"), default_timeout=30
+        str(PROJECT_ROOT / "app/modules/5_Model_Laboratory.py"), default_timeout=30
     ).run()
 
     assert not page.exception
@@ -353,14 +353,23 @@ def test_model_laboratory_separates_official_test_scores_from_development(monkey
     assert any(item.label == "Download summary CSV" for item in page.get("download_button"))
     assert any(item.label == "Download per-engine CSV" for item in page.get("download_button"))
     assert any("500 per-engine rows" in item.value for item in page.caption)
+    frame = next(item for item in page.get("iframe") if "Model Test Arena" in item.proto.srcdoc)
+    payload_tag = frame.proto.srcdoc.split('<script id="payload"', 1)[1]
+    arena = json.loads(payload_tag.split(">", 1)[1].split("</script>", 1)[0])
+    assert arena["sampleCount"] == len(arena["engines"]) == 100
+    assert [model["rmse"] for model in arena["models"]] == [25.0] * 5
+    last_engine = arena["engines"][-1]
+    assert last_engine["id"] == 100 and last_engine["observed"] == 120
+    assert last_engine["errors"]["decision-tree-rul-v1"] == {"residual": 35.0, "raw": 135.0}
 
 
 def test_model_laboratory_labels_missing_official_report(monkeypatch, tmp_path):
     _prepare_model_laboratory(monkeypatch, tmp_path, forest_scores=None)
 
     page = AppTest.from_file(
-        str(PROJECT_ROOT / "app/pages/5_Model_Laboratory.py"), default_timeout=30
+        str(PROJECT_ROOT / "app/modules/5_Model_Laboratory.py"), default_timeout=30
     ).run()
 
     assert not page.exception
     assert any("Verified official test results are unavailable" in item.value for item in page.info)
+    assert not page.get("iframe")

@@ -12,6 +12,11 @@ from fleetpulse.data.loader import HISTORY_COLUMNS
 FIXTURE = Path(__file__).parent / "fixtures" / "synthetic_engine_history.csv"
 
 
+def _open_raw_preview(app):
+    app.session_state["fp_home_full_training"] = True
+    return app.run()
+
+
 @pytest.fixture
 def synthetic_training_root(tmp_path):
     with FIXTURE.open(newline="", encoding="utf-8") as source:
@@ -25,23 +30,28 @@ def synthetic_training_root(tmp_path):
     return tmp_path
 
 
-@pytest.mark.parametrize("page", [None, "pages/2_Engine_Explorer.py"])
+@pytest.mark.parametrize("page", [None, "modules/2_Engine_Explorer.py"])
 def test_dataset_pages_show_counts_and_preview_from_loader(page, synthetic_training_root, monkeypatch):
     monkeypatch.setattr(ui, "PROJECT_ROOT", synthetic_training_root)
     app = AppTest.from_file(str(PROJECT_ROOT / "app" / "Home.py"), default_timeout=30).run()
     if page:
         app = app.switch_page(page).run()
+    else:
+        assert not app.metric
+        assert not app.dataframe
+        app = _open_raw_preview(app)
 
     assert not app.exception
     assert {item.label: item.value for item in app.metric} == {"Records": "3", "Engines": "1"}
     assert len(app.dataframe) == (5 if page else 1)
     assert app.dataframe[0].value["cycle"].tolist() == [1, 2, 3]
     assert app.dataframe[0].value["unit_id"].tolist() == [900001] * 3
-    assert not app.warning
+    warnings = [item.value for item in app.warning]
+    assert warnings == ([] if page else ["Packaged FD001 training histories are missing or invalid."])
 
 
 @pytest.mark.parametrize("content", [None, "1 2 3\n"])
-@pytest.mark.parametrize("page", [None, "pages/2_Engine_Explorer.py"])
+@pytest.mark.parametrize("page", [None, "modules/2_Engine_Explorer.py"])
 def test_missing_or_malformed_data_is_explained_without_fake_counts(
     content, page, tmp_path, monkeypatch
 ):
@@ -53,6 +63,8 @@ def test_missing_or_malformed_data_is_explained_without_fake_counts(
     app = AppTest.from_file(str(PROJECT_ROOT / "app" / "Home.py"), default_timeout=30).run()
     if page:
         app = app.switch_page(page).run()
+    else:
+        app = _open_raw_preview(app)
 
     assert not app.exception
     assert any("Engine history data is not available" in item.value for item in app.warning)
@@ -67,6 +79,7 @@ def test_invalid_history_is_not_presented_as_valid(synthetic_training_root, monk
     path.write_text("\n".join([rows[0], rows[0]]) + "\n", encoding="utf-8")
     monkeypatch.setattr(ui, "PROJECT_ROOT", synthetic_training_root)
     app = AppTest.from_file(str(PROJECT_ROOT / "app" / "Home.py"), default_timeout=30).run()
+    app = _open_raw_preview(app)
 
     assert not app.exception
     assert any("invalid records" in item.value for item in app.error)

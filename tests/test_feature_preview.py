@@ -32,7 +32,7 @@ def test_feature_preview_passes_only_selected_engine_prefix(tmp_path, monkeypatc
 
     monkeypatch.setattr(preview_service, "engineer_features", capture)
     app = AppTest.from_file(str(PROJECT_ROOT / "app" / "Home.py"), default_timeout=30).run()
-    page = app.switch_page("pages/2_Engine_Explorer.py").run()
+    page = app.switch_page("modules/2_Engine_Explorer.py").run()
     page.selectbox[0].set_value(900002).run()
     page.selectbox[2].set_value(2).run()
     assert not page.exception
