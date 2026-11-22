@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FleetPulse 3D Forecast Deck</title>
+  <style>/* STYLES */</style>
+</head>
+<body>
+  <main>
+    <header>
+      <div><h1 id="title"></h1><p id="scope"></p></div>
+      <button id="orbit" type="button" aria-pressed="false">Orbit</button>
+    </header>
+    <canvas id="deck" role="img"></canvas>
+    <section class="tools" aria-label="Inspect estimate">
+      <label><span id="point-label"></span><select id="point"></select></label>
+      <div class="readout">
+        <strong id="estimate"></strong>
+        <span id="context"></span>
+      </div>
+      <button id="play" class="primary" type="button">Play checkpoints</button>
+    </section>
+  </main>
+  <script type="application/json" id="payload">/* DATA */</script>
+  <script>/* SCRIPT */</script>
+</body>
+</html>

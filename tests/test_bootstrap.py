@@ -41,8 +41,9 @@ def test_home_empty_state(tmp_path, monkeypatch):
     monkeypatch.setattr(ui, "PROJECT_ROOT", tmp_path)
     app = AppTest.from_file(str(PROJECT_ROOT / "app" / "Home.py"), default_timeout=10).run()
     assert not app.exception
-    assert any(
-        "Verified model bundles and evaluation reports" in item.value
-        for item in app.info
-    )
-    assert any("Engine history data is not available" in item.value for item in app.warning)
+    assert any("Packaged FD001 training histories are missing" in item.value for item in app.warning)
+    replay = next(link for link in app.page_link if link.value == "Launch 3D engine replay")
+    sandbox = next(link for link in app.page_link if link.value == "Try the scheduling sandbox")
+    assert replay.proto.disabled
+    assert not sandbox.proto.disabled
+    assert sandbox.proto.query_string == "sandbox=1"

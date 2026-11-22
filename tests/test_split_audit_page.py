@@ -36,7 +36,7 @@ def test_audit_displays_verified_manifest_and_rejects_tampering(tmp_path, monkey
     path.write_text(json.dumps(manifest), encoding="utf-8")
     monkeypatch.setattr(ui, "PROJECT_ROOT", tmp_path)
     page = AppTest.from_file(str(PROJECT_ROOT / "app" / "Home.py"), default_timeout=30).run()
-    page = page.switch_page("pages/5_Model_Laboratory.py").run()
+    page = page.switch_page("modules/5_Model_Laboratory.py").run()
     assert not page.exception
     assert {item.label: item.value for item in page.metric} == {
         "Fitting engines": "8", "Validation engines": "2"

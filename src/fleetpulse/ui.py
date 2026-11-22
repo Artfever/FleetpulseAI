@@ -77,10 +77,13 @@ def _render_training_data_help() -> None:
     )
 
 
-def render_training_data() -> list[dict[str, int | float]] | None:
+def render_training_data(*, compact: bool = False) -> list[dict[str, int | float]] | None:
     """Display actual FD001 training histories or an actionable load error."""
-    st.subheader("FD001 training histories")
-    st.caption("Simulated NASA C-MAPSS training data; engine IDs belong to the training partition.")
+    if compact:
+        st.caption("NASA C-MAPSS FD001 training data")
+    else:
+        st.subheader("FD001 training histories")
+        st.caption("Simulated NASA C-MAPSS training data; engine IDs belong to the training partition.")
     path = PROJECT_ROOT / "data" / "raw" / "train_FD001.txt"
     try:
         records = load_engine_history(path)
@@ -97,23 +100,27 @@ def render_training_data() -> list[dict[str, int | float]] | None:
     if report.warnings:
         st.warning(f"The training history has {len(report.warnings)} quality warnings; review the source.")
 
-    st.write("Preview: first 10 records in file order.")
-    render_dataset_preview(
-        record_count=len(records),
-        engine_count=len({record["unit_id"] for record in records}),
-        preview=records[:10],
-    )
+    if not compact:
+        st.write("Preview: first 10 records in file order.")
+        render_dataset_preview(
+            record_count=len(records),
+            engine_count=len({record["unit_id"] for record in records}),
+            preview=records[:10],
+        )
     return records
 
 
-def render_packaged_training_subset() -> list[dict[str, int | float]] | None:
+def render_packaged_training_subset(*, compact: bool = False) -> list[dict[str, int | float]] | None:
     """Load the small, explicitly labeled FD001/train deployment subset."""
-    st.subheader("Packaged FD001/train prefix subset")
-    st.info(
-        "Small simulated NASA training-data subset: engines 4, 5 and 12, truncated at cycles "
-        "164, 58 and 7. It supports the three deployment parity examples only; it is not a "
-        "complete dataset or evidence of model quality or maintenance readiness."
-    )
+    if compact:
+        st.caption("Packaged FD001 parity sample")
+    else:
+        st.subheader("Packaged FD001/train prefix subset")
+        st.info(
+            "Small simulated NASA training-data subset: engines 4, 5 and 12, truncated at cycles "
+            "164, 58 and 7. It supports the three deployment parity examples only; it is not a "
+            "complete dataset or evidence of model quality or maintenance readiness."
+        )
     path = PROJECT_ROOT / "data" / "demo" / "fd001_training_prefixes.txt"
     try:
         records = load_engine_history(path)

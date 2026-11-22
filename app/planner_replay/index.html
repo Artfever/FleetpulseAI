@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>FleetPulse Maintenance Hangar</title>
+  <style>/* STYLES */</style>
+</head>
+<body>
+  <main>
+    <header>
+      <div><h1>Maintenance Hangar</h1><p id="source"></p></div>
+      <div class="methods" role="group" aria-label="Compare scheduler">
+        <button id="edd" aria-pressed="true">EDD</button>
+        <button id="ga" aria-pressed="false">Genetic algorithm</button>
+      </div>
+    </header>
+    <div class="scoreboard">
+      <div><span title="Late cycles × job priority, summed across jobs">Weighted late cycles</span><strong id="weighted"></strong></div>
+      <div><span>Late jobs</span><strong id="late-count"></strong></div>
+      <div><span>Finish cycle</span><strong id="makespan"></strong></div>
+    </div>
+    <div class="stage">
+      <canvas id="hangar" role="img" aria-label="Isometric timeline of maintenance teams and scheduled jobs"></canvas>
+      <div class="legend">
+        <span class="on-time">On time</span><span class="late">Finishes late</span>
+        <span class="deadline">Selected deadline</span><span class="horizon">Soft horizon</span>
+      </div>
+      <button id="orbit" type="button" aria-pressed="false">Orbit view</button>
+    </div>
+    <div class="transport">
+      <button id="play" class="primary">Play schedule</button>
+      <label for="cycle"><span>Relative cycle</span><output id="cycle-value" for="cycle"></output>
+        <input id="cycle" type="range" min="0" step="any" value="0">
+      </label>
+      <button id="reset" type="button">Reset</button>
+    </div>
+    <section class="job" aria-label="Inspect scheduled job">
+      <label>Inspect job <select id="job"></select></label>
+      <div id="job-info"><strong id="job-status"></strong><span id="job-times"></span></div>
+    </section>
+  </main>
+  <script type="application/json" id="payload">/* DATA */</script>
+  <script>/* SCRIPT */</script>
+</body>
+</html>

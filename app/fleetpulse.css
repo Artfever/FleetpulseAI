@@ -1,0 +1,185 @@
+:root {
+  --fp-panel: light-dark(#fffefa, #22272d);
+  --fp-raised: light-dark(#eeede9, #2a3037);
+  --fp-active: light-dark(#dce7ef, #303b46);
+  --fp-text: light-dark(#20262b, #f1f2ef);
+  --fp-muted: light-dark(#4b5661, #bec6ce);
+  --fp-divider: light-dark(#c3c7c9, #454e58);
+  --fp-control: light-dark(#6f7880, #77838e);
+  --fp-accent: light-dark(#285777, #a8c5df);
+  --fp-font: system-ui, "Segoe UI", sans-serif;
+  --fp-mono: ui-monospace, Consolas, "Liberation Mono", monospace;
+}
+
+[data-testid="stAppViewContainer"] { font-family: var(--fp-font); }
+[data-testid="stMainBlockContainer"] { padding-top: 3.35rem; max-width: 86rem; }
+[data-testid="stMainBlockContainer"] h1,
+[data-testid="stMainBlockContainer"] h2,
+[data-testid="stMainBlockContainer"] h3 {
+  font-family: var(--fp-font);
+  letter-spacing: -.035em;
+}
+[data-testid="stMainBlockContainer"] h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.12;
+}
+[data-testid="stCaptionContainer"] p { color: var(--fp-muted); }
+
+[data-testid="stSidebarContent"] { display: flex; flex-direction: column; }
+[data-testid="stSidebarContent"] > [data-testid="stSidebarUserContent"] {
+  order: 1;
+  padding-block: 0 .45rem;
+}
+[data-testid="stSidebarContent"] > [data-testid="stSidebarNav"] {
+  order: 2;
+  border: 0;
+  padding-bottom: 1rem;
+}
+[data-testid="stSidebarNavLink"] {
+  color: var(--fp-muted);
+  min-height: 2.55rem;
+  border: 1px solid transparent;
+  border-inline-start: 2px solid transparent;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+[data-testid="stSidebarNavLink"]:hover { color: var(--fp-text); background: var(--fp-raised); }
+[data-testid="stSidebarNavLink"][aria-current="page"] {
+  background: var(--fp-active);
+  color: var(--fp-text);
+  border-inline-start-color: var(--fp-accent);
+  font-weight: 650;
+}
+.fp-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  border-bottom: 1px solid var(--fp-divider);
+  padding: .25rem 0 1.15rem;
+  line-height: 1.25;
+}
+.fp-brand-mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 2.25rem;
+  height: 2.25rem;
+  border-radius: 4px;
+  background: var(--fp-active);
+  color: var(--fp-accent);
+  font: 700 .85rem var(--fp-mono);
+}
+.fp-sidebar-brand strong { display: block; color: var(--fp-text); font-weight: 650; }
+.fp-sidebar-brand small { display: block; color: var(--fp-muted); margin-top: .2rem; }
+
+:where([data-testid="stMain"], [data-testid="stSidebar"]) :focus-visible {
+  outline: 2px solid var(--fp-accent);
+  outline-offset: 2px;
+}
+[data-testid="stPageLink"] a {
+  color: var(--fp-accent);
+  width: fit-content;
+}
+[data-testid="stPageLink"] a:hover { background: var(--fp-active); text-decoration: underline; }
+[data-testid="stButton"] button,
+[data-testid="stFormSubmitButton"] button,
+[data-testid="stDownloadButton"] button { min-height: 2.4rem; font-weight: 600; }
+[data-testid="stTabs"] [role="tablist"] { border-bottom: 1px solid var(--fp-divider); }
+[data-testid="stExpander"] details,
+[data-testid="stForm"] { border-color: var(--fp-divider); }
+[data-testid="stMetric"] {
+  background: var(--fp-panel);
+  border: 1px solid var(--fp-divider);
+  border-radius: 10px;
+  padding: .85rem 1rem;
+}
+[data-testid="stMetricValue"] {
+  color: var(--fp-text);
+  font-family: var(--fp-mono);
+  font-variant-numeric: tabular-nums;
+}
+[data-testid="stPlotlyChart"] {
+  background: var(--fp-panel);
+  border: 1px solid var(--fp-divider);
+  border-radius: 6px;
+  padding: .45rem;
+}
+
+.st-key-fleetpulse_hero {
+  background: var(--fp-panel);
+  border: 1px solid var(--fp-divider);
+  border-radius: 6px;
+  padding: clamp(1.25rem, 3.5vw, 2.5rem);
+}
+.st-key-fleetpulse_hero h1 {
+  font-size: clamp(2.55rem, 5.5vw, 4.2rem);
+  line-height: 1;
+  padding-block: 0;
+}
+.st-key-fp_home_primary [data-testid="stPageLink"] a {
+  color: light-dark(#f8fafc, #17212b);
+  background: var(--fp-accent);
+  border: 1px solid var(--fp-accent);
+  border-radius: 4px;
+  padding: .55rem .8rem;
+  font-weight: 650;
+}
+.st-key-fp_home_primary [data-testid="stPageLink"] a:hover {
+  background: light-dark(#214763, #c5d9ea);
+}
+.st-key-fp_home_primary [data-testid="stPageLink"] a :is(span, p) { color: inherit; }
+.st-key-fp_home_primary [data-testid="stPageLink"] a[aria-disabled="true"] {
+  color: var(--fp-muted);
+  background: var(--fp-raised);
+  border-color: var(--fp-divider);
+}
+.st-key-fp_home_secondary [data-testid="stPageLink"] a {
+  border: 1px solid var(--fp-control);
+  border-radius: 4px;
+  padding: .55rem .8rem;
+  font-weight: 650;
+}
+.st-key-fp_home_primary,
+.st-key-fp_home_secondary { width: fit-content; }
+.st-key-fp_home_readiness { background: var(--fp-panel); border-color: var(--fp-divider); }
+p.fp-eyebrow {
+  color: var(--fp-accent);
+  font: 600 .78rem var(--fp-mono);
+  letter-spacing: .055em;
+  text-transform: uppercase;
+  margin-bottom: 0;
+}
+p.fp-lead { color: var(--fp-muted); font-size: 1.12rem; max-width: 50ch; }
+.st-key-fp_module_actions [data-testid="stPageLink"] a {
+  background: var(--fp-panel);
+  border: 1px solid var(--fp-divider);
+  border-radius: 4px;
+  padding: .5rem .75rem;
+}
+.st-key-fp_module_actions [data-testid="stPageLink"] a:hover { background: var(--fp-active); }
+.st-key-fleetpulse_workflows [class*="st-key-fp_card_"],
+.st-key-fp_sandbox_panel {
+  height: 100%;
+  background: var(--fp-panel);
+  border-color: var(--fp-divider);
+}
+.st-key-fleetpulse_workflows [class*="st-key-fp_card_"]:focus-within { border-color: var(--fp-accent); }
+.st-key-fleetpulse_workflows [class*="st-key-fp_card_"] h3 {
+  font-size: 1.15rem;
+  padding-block: 0;
+}
+@media (max-width: 900px) {
+  [data-testid="stMainBlockContainer"] { padding-top: 2.85rem; }
+  [data-testid="stHorizontalBlock"] {
+    flex-direction: column !important;
+    gap: .65rem !important;
+  }
+  [data-testid="stHorizontalBlock"] > [data-testid="column"] {
+    width: 100% !important;
+    flex: 1 1 100% !important;
+    min-width: 0 !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-testid="stSidebarNavLink"], [data-testid="stPageLink"] a { transition: none; }
+}

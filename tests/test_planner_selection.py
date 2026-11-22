@@ -66,7 +66,7 @@ def test_selected_fleet_snapshot_is_available_on_planner_page(monkeypatch, tmp_p
     )
 
     app = AppTest.from_file(str(PROJECT_ROOT / "app/Home.py"), default_timeout=30).run()
-    fleet = app.switch_page("pages/1_Fleet_Overview.py").run()
+    fleet = app.switch_page("modules/1_Fleet_Overview.py").run()
     assert not fleet.exception
     fleet.multiselect[0].set_value([5]).run()
     fleet.session_state[ui.P20_FLEET_SCENARIO_STATE_KEY] = "stale scenario"
@@ -83,7 +83,7 @@ def test_selected_fleet_snapshot_is_available_on_planner_page(monkeypatch, tmp_p
     assert ui.P20_FLEET_COMPARISON_STATE_KEY not in fleet.session_state
     assert ui.P20_FLEET_COMPARISON_ARTIFACT_STATE_KEY not in fleet.session_state
 
-    planner = app.switch_page("pages/4_Maintenance_Planner.py").run()
+    planner = app.switch_page("modules/4_Maintenance_Planner.py").run()
     assert not planner.exception
     assert any("Loaded 1 selected engine records" in item.value for item in planner.success)
     saved = planner.dataframe[0].value
@@ -153,10 +153,10 @@ def test_planner_reports_saved_fleet_prediction_errors(monkeypatch, tmp_path):
     monkeypatch.setattr(services, "predict_fleet", lambda *args, **kwargs: (failed_prediction,))
 
     app = AppTest.from_file(str(PROJECT_ROOT / "app/Home.py"), default_timeout=30).run()
-    fleet = app.switch_page("pages/1_Fleet_Overview.py").run()
+    fleet = app.switch_page("modules/1_Fleet_Overview.py").run()
     fleet.multiselect[0].set_value([4]).run()
     fleet.button[0].click().run()
-    planner = app.switch_page("pages/4_Maintenance_Planner.py").run()
+    planner = app.switch_page("modules/4_Maintenance_Planner.py").run()
 
     planner.button[0].click().run()
 
@@ -169,7 +169,7 @@ def test_planner_explains_empty_selection(monkeypatch, tmp_path):
     monkeypatch.setattr(ui, "PROJECT_ROOT", tmp_path)
     app = AppTest.from_file(str(PROJECT_ROOT / "app/Home.py"), default_timeout=30).run()
 
-    planner = app.switch_page("pages/4_Maintenance_Planner.py").run()
+    planner = app.switch_page("modules/4_Maintenance_Planner.py").run()
 
     assert not planner.exception
     assert not planner.dataframe

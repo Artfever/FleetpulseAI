@@ -30,7 +30,7 @@ def test_selecting_two_engines_shows_only_their_ordered_cycles(tmp_path, monkeyp
     )
     monkeypatch.setattr(ui, "PROJECT_ROOT", tmp_path)
     app = AppTest.from_file(str(PROJECT_ROOT / "app" / "Home.py"), default_timeout=30).run()
-    page = app.switch_page("pages/2_Engine_Explorer.py").run()
+    page = app.switch_page("modules/2_Engine_Explorer.py").run()
 
     assert not page.exception
     assert page.selectbox[0].value == 900001
@@ -56,7 +56,7 @@ def test_selecting_two_engines_shows_only_their_ordered_cycles(tmp_path, monkeyp
 def test_missing_training_data_has_no_engine_selector(tmp_path, monkeypatch):
     monkeypatch.setattr(ui, "PROJECT_ROOT", tmp_path)
     app = AppTest.from_file(str(PROJECT_ROOT / "app" / "Home.py"), default_timeout=30).run()
-    page = app.switch_page("pages/2_Engine_Explorer.py").run()
+    page = app.switch_page("modules/2_Engine_Explorer.py").run()
 
     assert not page.exception
     assert page.warning

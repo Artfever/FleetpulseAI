@@ -43,7 +43,7 @@ def test_chart_tracks_engine_and_sensor_selection(tmp_path, monkeypatch):
     )
     monkeypatch.setattr(ui, "PROJECT_ROOT", tmp_path)
     app = AppTest.from_file(str(PROJECT_ROOT / "app" / "Home.py"), default_timeout=30).run()
-    page = app.switch_page("pages/2_Engine_Explorer.py").run()
+    page = app.switch_page("modules/2_Engine_Explorer.py").run()
     page.selectbox[0].set_value(900002).run()
     page.selectbox[1].set_value("sensor_2").run()
 
