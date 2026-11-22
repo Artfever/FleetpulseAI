@@ -73,7 +73,7 @@ def test_scheduler_loader_rejects_modified_snapshot(tmp_path) -> None:
 
 def test_model_laboratory_displays_saved_p22_tables_and_figures() -> None:
     page = AppTest.from_file(
-        str(PROJECT_ROOT / "app/pages/5_Model_Laboratory.py"), default_timeout=45
+        str(PROJECT_ROOT / "app/modules/5_Model_Laboratory.py"), default_timeout=45
     ).run()
 
     assert not page.exception
@@ -87,7 +87,7 @@ def test_model_laboratory_displays_saved_p22_tables_and_figures() -> None:
 
 def test_planner_displays_saved_p22_scheduler_studies_separately() -> None:
     page = AppTest.from_file(
-        str(PROJECT_ROOT / "app/pages/4_Maintenance_Planner.py"), default_timeout=45
+        str(PROJECT_ROOT / "app/modules/4_Maintenance_Planner.py"), default_timeout=45
     ).run()
 
     assert not page.exception

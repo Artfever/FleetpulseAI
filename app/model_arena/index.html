@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FleetPulse Model Test Arena</title>
+  <style>/* STYLES */</style>
+</head>
+<body>
+  <main>
+    <header>
+      <div><h1>Model Test Arena</h1><p id="cohort"></p></div>
+      <div class="modes" role="group" aria-label="Evidence view">
+        <button id="mae" aria-pressed="true">MAE</button>
+        <button id="rmse" aria-pressed="false">RMSE</button>
+        <button id="residual" aria-pressed="false">Engine scan</button>
+      </div>
+    </header>
+    <div class="stage">
+      <canvas id="arena" role="img" aria-label="3D error towers for the five evaluated models"></canvas>
+      <div class="readout">
+        <span id="measure"></span>
+        <strong id="lead"></strong>
+        <span id="detail"></span>
+      </div>
+      <button id="orbit" aria-pressed="false">Orbit</button>
+      <div id="legend" class="legend" hidden><span>Predicted high</span><span>Predicted low</span></div>
+    </div>
+    <div id="scanner" class="scanner" hidden>
+      <button id="play" class="primary">Play engine scan</button>
+      <label for="engine"><span>Test engine ID</span><output id="engine-value" for="engine"></output>
+        <input id="engine" type="range" min="0" step="1" value="0">
+      </label>
+    </div>
+    <div id="models" class="models" role="group" aria-label="Inspect model"></div>
+    <p id="scope" class="scope">Saved final results. Error is measured in operating cycles.</p>
+  </main>
+  <script id="payload" type="application/json">/* DATA */</script>
+  <script>/* SCRIPT */</script>
+</body>
+</html>

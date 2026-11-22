@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+from contextlib import nullcontext
 from pathlib import Path
 
 import plotly.graph_objects as go
@@ -17,7 +18,8 @@ from fleetpulse.services import (
     model_provenance_from_manifest,
     predict_fleet,
 )
-from fleetpulse.ui_presentation import module_header, module_links
+from fleetpulse.ui_forecast_scene import render_fleet_deck
+from fleetpulse.ui_presentation import module_links
 
 _APP_DIR = Path(__file__).resolve().parents[1]
 _PACKAGED = "Packaged FD001/train parity subset"
@@ -155,21 +157,23 @@ def _save_selection(selected: list[dict], provenance: dict) -> None:
         st.session_state.pop(ui.P20_FLEET_COMPARISON_ARTIFACT_STATE_KEY, None)
         st.success(f"Saved {count} selected engine records for the planner.")
         st.page_link(
-            st.Page(_APP_DIR / "pages" / "4_Maintenance_Planner.py"),
+            st.Page(_APP_DIR / "modules" / "4_Maintenance_Planner.py"),
             label="Open Maintenance Planner",
-            icon=":material/event:",
+            icon=":material/event_available:",
         )
 
 
 def _render_snapshot(rows: list[dict], provenance: dict, details) -> None:
-    selection, review = st.columns([2, 1])
-    engine_ids = [row["Engine ID"] for row in rows]
-    selected_ids = selection.multiselect("Engine IDs", engine_ids, default=engine_ids)
-    threshold = review.number_input("Review threshold (cycles)", min_value=0.0, value=50.0, step=5.0)
-    threshold_only = st.checkbox(
-        "Show only estimates at or below the threshold",
-        help="Rows without an estimate stay visible for review.",
-    )
+    controls = st.expander("Engine selection and threshold") if len(rows) > _CHART_LIMIT else nullcontext()
+    with controls:
+        selection, review = st.columns([2, 1])
+        engine_ids = [row["Engine ID"] for row in rows]
+        selected_ids = selection.multiselect("Engine IDs", engine_ids, default=engine_ids)
+        threshold = review.number_input("Review threshold (cycles)", min_value=0.0, value=50.0, step=5.0)
+        threshold_only = st.checkbox(
+            "Show only estimates at or below the threshold",
+            help="Rows without an estimate stay visible for review.",
+        )
 
     selected_set = set(selected_ids)
     chosen = [row for row in rows if row["Engine ID"] in selected_set]
@@ -198,14 +202,26 @@ def _render_snapshot(rows: list[dict], provenance: dict, details) -> None:
         counts[2].metric("Lowest estimate", "—")
 
     if shown_estimates:
-        st.subheader("Remaining life by engine")
-        if len(shown_estimates) > _CHART_LIMIT:
-            st.caption(f"Showing the {_CHART_LIMIT} lowest visible estimates. All rows are below.")
-        st.plotly_chart(
+        render_fleet_deck(
+            [
+                (row["Engine ID"], row["Observed cycle"], row["Predicted RUL (cycles)"])
+                for row in shown_estimates[:_CHART_LIMIT]
+            ],
+            threshold=threshold,
+            total=len(shown_estimates),
+        )
+        details.plotly_chart(
             _ranking(shown_estimates[:_CHART_LIMIT], threshold),
             key="fp_fleet_ranking",
             alt="Selected engine estimates ordered from lowest to highest remaining cycles",
         )
+
+    hidden = len(chosen) - len(visible)
+    if hidden:
+        st.caption(f"The save action includes all selected engines, including {hidden} hidden by the filter.")
+    elif chosen:
+        st.caption("The save action includes all selected engines.")
+    _save_selection(chosen, provenance)
 
     if visible:
         visible_rows = [
@@ -227,21 +243,10 @@ def _render_snapshot(rows: list[dict], provenance: dict, details) -> None:
         st.info("No engines match the current selection and filter.")
     if without_estimate:
         st.warning(f"Missing estimates: {len(without_estimate)}. Check Source and model details.")
-    hidden = len(chosen) - len(visible)
-    if hidden:
-        st.caption(f"The save action includes all selected engines, including {hidden} hidden by the filter.")
-    elif chosen:
-        st.caption("The save action includes all selected engines.")
-    _save_selection(chosen, provenance)
 
 
-module_header(
-    "fleet",
-    "FD001 / Fleet",
-    "Fleet Overview",
-    "Review simulated remaining-life estimates and select engines for the planner.",
-    "Saved Decision Tree",
-)
+st.title("Fleet Overview", anchor=False)
+st.caption("Review simulated engine estimates and choose the fleet to send to Maintenance Planner.")
 source = st.selectbox("History source", [_PACKAGED, _LOCAL])
 overview = st.container()
 details = st.expander("Source and model details")
@@ -267,7 +272,8 @@ with overview:
         else:
             _render_snapshot(*snapshot, details)
 
-module_links(
-    (_APP_DIR / "pages" / "2_Engine_Explorer.py", "Inspect an engine history", ":material/timeline:"),
-    (_APP_DIR / "pages" / "3_RUL_Prediction.py", "Open RUL Prediction", ":material/insights:"),
-)
+with st.expander("Related pages"):
+    module_links(
+        (_APP_DIR / "modules" / "2_Engine_Explorer.py", "Inspect an engine history", ":material/view_in_ar:"),
+        (_APP_DIR / "modules" / "3_RUL_Prediction.py", "Open RUL Prediction", ":material/query_stats:"),
+    )

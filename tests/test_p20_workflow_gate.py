@@ -15,7 +15,7 @@ pytestmark = pytest.mark.skipif(
 
 def test_real_saved_model_fleet_selection_reaches_both_schedulers():
     app = AppTest.from_file(str(PROJECT_ROOT / "app/Home.py"), default_timeout=60).run()
-    fleet = app.switch_page("pages/1_Fleet_Overview.py").run()
+    fleet = app.switch_page("modules/1_Fleet_Overview.py").run()
 
     assert not fleet.exception
     assert fleet.dataframe[0].value["Engine ID"].tolist() == [4, 5, 12]
@@ -40,7 +40,7 @@ def test_real_saved_model_fleet_selection_reaches_both_schedulers():
     fleet.button[0].click().run()
     assert not fleet.exception
 
-    planner = app.switch_page("pages/4_Maintenance_Planner.py").run()
+    planner = app.switch_page("modules/4_Maintenance_Planner.py").run()
     assert not planner.exception
     planner.button[0].click().run()
     assert not planner.exception

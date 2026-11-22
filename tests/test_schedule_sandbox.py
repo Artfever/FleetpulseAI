@@ -12,7 +12,7 @@ from fleetpulse.ui_schedule_sandbox import DEMO_BASELINE
 
 def _planner():
     app = AppTest.from_file(str(PROJECT_ROOT / "app/Home.py"), default_timeout=45).run()
-    app.switch_page("pages/4_Maintenance_Planner.py")
+    app.switch_page("modules/4_Maintenance_Planner.py")
     app.query_params["sandbox"] = "1"
     return app
 

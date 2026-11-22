@@ -23,7 +23,7 @@ def test_ground_truth_is_separate_and_changes_with_training_engine(tmp_path, mon
     )
     monkeypatch.setattr(ui, "PROJECT_ROOT", tmp_path)
     page = AppTest.from_file(str(PROJECT_ROOT / "app" / "Home.py"), default_timeout=30).run()
-    page = page.switch_page("pages/2_Engine_Explorer.py").run()
+    page = page.switch_page("modules/2_Engine_Explorer.py").run()
 
     assert not page.exception
     assert [tab.label for tab in page.tabs] == ["Sensor histories", "Training ground truth", "Development feature preview"]
@@ -47,7 +47,7 @@ def test_ground_truth_is_separate_and_changes_with_training_engine(tmp_path, mon
 def test_missing_training_file_has_no_ground_truth_tab(tmp_path, monkeypatch):
     monkeypatch.setattr(ui, "PROJECT_ROOT", tmp_path)
     page = AppTest.from_file(str(PROJECT_ROOT / "app" / "Home.py"), default_timeout=30).run()
-    page = page.switch_page("pages/2_Engine_Explorer.py").run()
+    page = page.switch_page("modules/2_Engine_Explorer.py").run()
     assert not page.exception
     assert page.warning
     assert not page.tabs

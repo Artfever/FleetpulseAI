@@ -11,7 +11,7 @@ from fleetpulse.ui_engine_replay import check_presenter_estimate, render_aircraf
 from fleetpulse.ui_presentation import eyebrow
 from fleetpulse.visualization import sensor_figure
 
-_PAGES = Path(__file__).resolve().parents[1] / "pages"
+_PAGES = Path(__file__).resolve().parents[1] / "modules"
 
 
 def workflow_card(
@@ -42,10 +42,6 @@ with st.container(key="fleetpulse_hero"):
             "estimate and compare the resulting maintenance schedules.</p>",
             unsafe_allow_html=True,
         )
-        st.caption(
-            "For the demo, replay Engine 4, inspect its remaining-life estimate, "
-            "then add a team to the sandbox’s worked scheduling example."
-        )
         with st.container(horizontal=True, gap="small"):
             with st.container(key="fp_home_primary", width="content"):
                 st.page_link(
@@ -58,7 +54,7 @@ with st.container(key="fleetpulse_hero"):
                 st.page_link(
                     st.Page(_PAGES / "4_Maintenance_Planner.py"),
                     label="Try the scheduling sandbox",
-                    icon=":material/event:",
+                    icon=":material/event_available:",
                     query_params={"sandbox": "1"},
                 )
     with instrument:
@@ -89,7 +85,7 @@ with st.container(key="fleetpulse_workflows"):
             "Review the fleet and compare available engine estimates.",
             "1_Fleet_Overview.py",
             "Open Fleet Overview",
-            ":material/grid_view:",
+            ":material/space_dashboard:",
         )
     with explorer:
         workflow_card(
@@ -98,7 +94,7 @@ with st.container(key="fleetpulse_workflows"):
             "Orbit the aircraft in 3D and replay an engine’s recorded sensor history.",
             "2_Engine_Explorer.py",
             "Explore an engine history",
-            ":material/timeline:",
+            ":material/view_in_ar:",
         )
     with prediction:
         workflow_card(
@@ -107,7 +103,7 @@ with st.container(key="fleetpulse_workflows"):
             "Estimate remaining cycles from an engine history.",
             "3_RUL_Prediction.py",
             "Open RUL Prediction",
-            ":material/insights:",
+            ":material/query_stats:",
         )
 
     planner, lab = st.columns(2)
@@ -118,7 +114,7 @@ with st.container(key="fleetpulse_workflows"):
             "Compare schedules under the same simulated constraints.",
             "4_Maintenance_Planner.py",
             "Open Maintenance Planner",
-            ":material/event:",
+            ":material/event_available:",
         )
     with lab:
         workflow_card(
@@ -127,12 +123,12 @@ with st.container(key="fleetpulse_workflows"):
             "Inspect evaluation results and the artifacts behind them.",
             "5_Model_Laboratory.py",
             "Review model evidence",
-            ":material/science:",
+            ":material/biotech:",
         )
 
 
 if sample:
-    with st.container(key="fp_signal", border=True):
+    with st.expander("Recorded telemetry"):
         st.subheader("Packaged telemetry")
         st.caption("Recorded readings from the packaged FD001 training prefixes.")
         engine_column, sensor_column = st.columns(2)

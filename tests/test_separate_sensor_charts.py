@@ -23,7 +23,7 @@ def test_selected_channels_have_separate_labeled_charts(tmp_path, monkeypatch):
     )
     monkeypatch.setattr(ui, "PROJECT_ROOT", tmp_path)
     page = AppTest.from_file(str(PROJECT_ROOT / "app" / "Home.py"), default_timeout=30).run()
-    page = page.switch_page("pages/2_Engine_Explorer.py").run()
+    page = page.switch_page("modules/2_Engine_Explorer.py").run()
     page.multiselect[0].set_value(["sensor_1", "sensor_20"]).run()
 
     assert not page.exception

@@ -30,7 +30,7 @@ def synthetic_training_root(tmp_path):
     return tmp_path
 
 
-@pytest.mark.parametrize("page", [None, "pages/2_Engine_Explorer.py"])
+@pytest.mark.parametrize("page", [None, "modules/2_Engine_Explorer.py"])
 def test_dataset_pages_show_counts_and_preview_from_loader(page, synthetic_training_root, monkeypatch):
     monkeypatch.setattr(ui, "PROJECT_ROOT", synthetic_training_root)
     app = AppTest.from_file(str(PROJECT_ROOT / "app" / "Home.py"), default_timeout=30).run()
@@ -51,7 +51,7 @@ def test_dataset_pages_show_counts_and_preview_from_loader(page, synthetic_train
 
 
 @pytest.mark.parametrize("content", [None, "1 2 3\n"])
-@pytest.mark.parametrize("page", [None, "pages/2_Engine_Explorer.py"])
+@pytest.mark.parametrize("page", [None, "modules/2_Engine_Explorer.py"])
 def test_missing_or_malformed_data_is_explained_without_fake_counts(
     content, page, tmp_path, monkeypatch
 ):

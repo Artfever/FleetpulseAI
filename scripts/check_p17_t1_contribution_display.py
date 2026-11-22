@@ -12,7 +12,7 @@ from fleetpulse import PROJECT_ROOT, services, ui
 from fleetpulse.data.loader import load_engine_history
 
 PREFIX_PATH = PROJECT_ROOT / "data" / "demo" / "fd001_training_prefixes.txt"
-PAGE_PATH = PROJECT_ROOT / "app" / "pages" / "3_RUL_Prediction.py"
+PAGE_PATH = PROJECT_ROOT / "app" / "modules" / "3_RUL_Prediction.py"
 
 
 def build_report() -> dict[str, object]:

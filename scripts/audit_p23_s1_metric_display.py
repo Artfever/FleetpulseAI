@@ -23,7 +23,7 @@ from scripts.audit_p13_bundles import (
 def audit_metric_display() -> dict[str, object]:
     """Require the rendered table, sealed P13 scores, and frozen bundles to agree."""
     app = AppTest.from_file(
-        str(PROJECT_ROOT / "app/pages/5_Model_Laboratory.py"), default_timeout=60
+        str(PROJECT_ROOT / "app/modules/5_Model_Laboratory.py"), default_timeout=60
     ).run()
     if app.exception:
         raise RuntimeError(f"Model Laboratory raised an exception: {app.exception[0].message}")

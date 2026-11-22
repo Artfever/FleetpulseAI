@@ -17,7 +17,7 @@ FleetpulseAI/
   pyproject.toml
   app/
     Home.py
-    pages/  (Streamlit pages)
+    modules/  (Streamlit pages)
   src/fleetpulse/
     __init__.py
     data/__init__.py
@@ -38,7 +38,7 @@ FleetpulseAI/
 ```
 
 At the inspected base `45b8279`, the root package, Home, bootstrap tests and docs
-were tracked. The six package subfolders, `app/pages/`, `data/`, and `artifacts/`
+were tracked. The six package subfolders, `app/modules/`, `data/`, and `artifacts/`
 were absent. This change adds package markers and empty-directory markers only.
 The package docstrings describe pending work; they supply no loader, features,
 models, evaluation, scheduling, or service implementation. Taha owns the actual

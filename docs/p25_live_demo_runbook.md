@@ -51,15 +51,24 @@ The table is a proposed rehearsal plan, not evidence that the group has rehearse
 
 ## Click-by-click flow (3½ minutes)
 
+### Visual opening (optional)
+
+1. On **Home**, click **Launch 3D engine replay**. Start presenter mode and pause at Engine 4's final checkpoint. With the saved Decision Tree available, cycle 164 should show about **34.20 cycles**.
+2. In **Fleet Overview**, inspect Engine 4 on the 3D deck. In **RUL Prediction**, play the recorded-cutoff sequence. Each mark is an estimate made from the history through that cutoff.
+3. In the **Maintenance Planner** hangar, select **Job B** and scrub to cycle 2. Under EDD it is queued, and under GA it has completed. For this one-team Appendix B example, weighted tardiness is 6 for EDD and 2 for GA.
+4. In **Model Laboratory**, switch from MAE to RMSE. The lowest displayed MAE is 18.16 cycles for Dense RUL MLP, and the lowest RMSE is 24.17 cycles for XGBoost on the same 100-engine test set.
+
+### Uploaded history to a schedule
+
 1. **Home:** point out the navigation and the simulated-data notice. Say that the app estimates cycles; it does not diagnose a physical fault.
 2. **RUL Prediction:** choose **Upload CSV** as the history source.
 3. In **Engine history CSV**, select the path printed by `export_demo_upload.py`.
-4. Confirm the app reports successful validation and shows engine 4 with 164 of 164 rows. If it reports a schema or unavailable-model error, show the error honestly and switch to the report/screenshots; do not edit column meanings or assert a prediction.
+4. Confirm the app reports that the CSV is ready for engine 4. Open **Preview uploaded rows** to see the 164-row count. If validation fails or the bundle is unavailable, show that state and use the report or screenshots.
 5. Keep the selected `decision-tree-rul-v1` bundle. Click **Predict remaining cycles**. Point out raw/display RUL around **34.20 cycles**, observed cycle **164**, and **30** feature-window rows. The stored browser record has the exact raw output `34.19607843137255` cycles.
-6. Open **Maintenance Planner**. Add/save the prediction if the UI asks, then click **Build selected-fleet planning inputs**. Confirm the row carries `user/upload`, engine 4, and planner RUL around 34.1961 cycles.
+6. Click **Save this prediction for Maintenance Planner**. Open the Planner, expand **Selected fleet**, and click **Build selected-fleet planning inputs**. Confirm the row carries `user/upload`, engine 4, and planner RUL around 34.1961 cycles.
 7. Set one team, duration 1, priority 1, buffer 2, and soft horizon 6 only if those are not already visible. State that these are demo assumptions, not NASA measurements.
 8. Compare EDD and GA. For this one-job case, both should show zero weighted tardiness, makespan 1 cycle, and overflow 0. The purpose is to show how one prediction flows into a shared scheduling scenario, not to claim a GA advantage.
-9. Open **Model Laboratory**. Point to the dedicated **Official held-out test results (FD001/test)** table, separate from the P22 study table. Explain that the five scores summarize 100 simulated test engines and were not used for model selection.
+9. Open **Model Laboratory**. Expand **Official test details and downloads** for the held-out FD001/test table. The five scores summarize 100 simulated test engines per model and are for final reporting.
 10. End with the limitations: simulated FD001 only; no per-engine uncertainty guarantee or real-fleet evidence; no maintenance-duration labels; a local run does not verify the current hosted SHA.
 
 Recorded reference values, versions, screenshots, and the prior six-screen browser result are in [P24-T1 browser evidence](p24_t1_browser_demo_evidence.md). The checked Model Laboratory screenshot and its limitations are in [P24-T2 evidence](p24_t2_screenshots_known_issues.md). Those are prior local captures; this guide does not claim a new browser rehearsal.

@@ -12,7 +12,7 @@ from fleetpulse import PROJECT_ROOT, deployment, services, ui
 def _page(monkeypatch, tmp_path):
     monkeypatch.setattr(ui, "PROJECT_ROOT", tmp_path)
     return AppTest.from_file(
-        str(PROJECT_ROOT / "app/pages/1_Fleet_Overview.py"), default_timeout=30
+        str(PROJECT_ROOT / "app/modules/1_Fleet_Overview.py"), default_timeout=30
     )
 
 
@@ -107,6 +107,12 @@ def test_fleet_overview_displays_prediction_identity_cycle_model_and_version(
     assert details["Warnings"].tolist() == ["", "cycle_gaps", ""]
     assert "non_finite_reading" in details["Error"].tolist()[2]
     assert any("Missing estimates: 1" in item.value for item in page.warning)
+    frame = page.get("iframe")[0].proto.srcdoc
+    data = json.loads(frame.split('id="payload">', 1)[1].split("</script>", 1)[0])
+    assert data["points"] == [
+        {"engine": 4, "cycle": 164, "value": 34.196},
+        {"engine": 5, "cycle": 58, "value": 158.16},
+    ]
 
 
 def test_fleet_overview_explains_missing_saved_model_without_fake_predictions(
@@ -124,6 +130,7 @@ def test_fleet_overview_explains_missing_saved_model_without_fake_predictions(
 
     assert not page.exception
     assert not page.dataframe
+    assert not page.get("iframe")
     assert any("Fleet predictions are unavailable" in item.value for item in page.warning)
 
 

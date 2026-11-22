@@ -22,7 +22,7 @@ def test_page_shell_loads_without_data(filename, title, missing, tmp_path, monke
     monkeypatch.setattr(ui, "PROJECT_ROOT", tmp_path)
     app = AppTest.from_file(str(PROJECT_ROOT / "app" / "Home.py"), default_timeout=10).run()
     assert not app.exception
-    page = app.switch_page(f"pages/{filename}").run()
+    page = app.switch_page(f"modules/{filename}").run()
 
     assert not page.exception
     assert [heading.value for heading in page.title] == [title]
@@ -42,7 +42,7 @@ def test_page_shell_loads_without_data(filename, title, missing, tmp_path, monke
     if title not in ("Fleet Overview", "Maintenance Planner"):
         assert page.markdown
 
-    home = app.switch_page("Home.py").run()
+    home = app.switch_page("views/home.py").run()
     assert not home.exception
     assert [heading.value for heading in home.title] == ["FleetPulse AI"]
     assert any("Packaged FD001 training histories are missing" in item.value for item in home.warning)

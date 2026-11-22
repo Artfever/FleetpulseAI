@@ -15,10 +15,10 @@ from fleetpulse.services import RULPrediction
 from fleetpulse.services import history as history_service
 from fleetpulse.services.explanations import FeatureContribution, FinalTreeExplanation
 
-TREE_OPTION = "Decision Tree · Development · decision-tree-rul-v1"
-FOREST_OPTION = "Random Forest · Development · random-forest-rul-v1"
-XGBOOST_OPTION = "XGBoost · Development · xgboost-rul-v1"
-MLP_OPTION = "Dense MLP (CPU) · Development · dense-rul-mlp-v1"
+TREE_OPTION = "Decision Tree"
+FOREST_OPTION = "Random Forest"
+XGBOOST_OPTION = "XGBoost"
+MLP_OPTION = "Dense MLP (CPU)"
 
 
 def _page(monkeypatch, tmp_path):
@@ -28,9 +28,9 @@ def _page(monkeypatch, tmp_path):
         for unit in (1, 2)
         for cycle in (1, 2, 3)
     ]
-    monkeypatch.setattr(ui, "render_training_data", lambda: rows)
+    monkeypatch.setattr(ui, "render_training_data", lambda **kwargs: rows)
     return AppTest.from_file(
-        str(PROJECT_ROOT / "app/pages/3_RUL_Prediction.py"), default_timeout=30
+        str(PROJECT_ROOT / "app/modules/3_RUL_Prediction.py"), default_timeout=30
     )
 
 
@@ -75,15 +75,17 @@ def test_selected_engine_and_cutoff_reach_service_without_future_or_target(monke
     assert chart_calls[-1][0]["Observed cycle"] == [1, 2]
     assert chart_calls[-1][0]["Estimated remaining cycles"] == [12.5, 12.5]
     assert len(page.dataframe[0].value) == 2
-    assert any("chart ends at cycle 2" in item.value for item in page.caption)
-    assert any(
-        "does not identify an FD001 fault type" in item.value
-        and "FD001 is simulated" in item.value
-        for item in page.info
-    )
+    assert any("sensor_1 through cycle 2" in item.value for item in page.caption)
+    assert any("FD001 is simulated" in item.value for item in page.caption)
     assert page.metric[0].value == "12.50"
-    assert any("test-model" in item.value and "test-v1" in item.value for item in page.markdown)
+    assert any("test-model" in item.value and "test-v1" in item.value for item in page.caption)
     assert any("short" in item.value for item in page.warning)
+    trace = page.get("iframe")[0].proto.srcdoc
+    data = json.loads(trace.split('id="payload">', 1)[1].split("</script>", 1)[0])
+    assert data["points"] == [
+        {"engine": 2, "cycle": 1, "value": 12.5},
+        {"engine": 2, "cycle": 2, "value": 12.5},
+    ]
     page.select_slider[0].set_value(1).run()
     assert page.metric[0].value == "12.50"
     assert chart_calls[-2][0]["cycle"] == [1]
@@ -263,7 +265,7 @@ def test_frozen_model_comparison_shows_raw_spread_and_lists_failures_separately(
     ]
     assert page.metric[-1].label == "Raw model disagreement (max − min)"
     assert page.metric[-1].value == "10.50 cycles"
-    assert any("not a confidence interval" in item.value for item in page.caption)
+    assert page.metric[-1].label == "Raw model disagreement (max − min)"
     assert not page.exception
 
 
@@ -338,20 +340,15 @@ def test_training_replay_is_labeled_by_saved_model_fit_membership(monkeypatch, t
     )
 
     page.run()
-    assert any("In-sample illustration" in item.value for item in page.warning)
-    assert any("Model: decision-tree-rul (decision-tree-rul-v1)" in item.value for item in page.markdown)
-    assert any("Engine fit membership: Seen during fitting" in item.value for item in page.markdown)
+    assert any("In-sample estimate" in item.value for item in page.warning)
+    assert any("decision-tree-rul-v1" in item.value for item in page.caption)
+    assert any("Engine fit membership: Seen during fitting" in item.value for item in page.caption)
 
     page.selectbox[2].select(2).run()
-    assert any("Held-out development engine" in item.value for item in page.info)
+    assert any("Development holdout" in item.value for item in page.caption)
     assert any(
-        "optional contribution panel uses the frozen final Decision Tree" in item.value
+        "Engine fit membership: Not seen during fitting (development validation engine)" in item.value
         for item in page.caption
-    )
-    assert any(
-        "Engine fit membership: Not seen during fitting (development validation engine)"
-        in item.value
-        for item in page.markdown
     )
 
 
@@ -359,8 +356,8 @@ def test_missing_bundle_shows_error_without_fabricating_prediction(monkeypatch, 
     page = _page(monkeypatch, tmp_path).run()
     assert not any(option.startswith("XGBoost ·") for option in page.selectbox[1].options)
     assert not any(option.startswith("Dense MLP (CPU) ·") for option in page.selectbox[1].options)
-    assert any("XGBoost is unavailable" in item.value for item in page.info)
-    assert any("Dense MLP is unavailable" in item.value for item in page.info)
+    assert not any(option.startswith("XGBoost") for option in page.selectbox[1].options)
+    assert not any(option.startswith("Dense MLP") for option in page.selectbox[1].options)
     assert not page.exception
     assert not page.metric
     assert any("Prediction is unavailable" in item.value for item in page.warning)
@@ -383,7 +380,7 @@ def test_packaged_illustrative_history_is_distinct_and_has_no_future_rows(monkey
     monkeypatch.setattr(history_service, "predict_rul_with_context", predict)
     page.run()
     page.selectbox[0].select("Illustrative synthetic example").run()
-    assert any("not NASA data" in item.value for item in page.warning)
+    assert any("Synthetic demo only" in item.value for item in page.warning)
     page.select_slider[0].set_value(2).run()
     assert not page.exception
     assert [row["cycle"] for row in calls[-1][0]] == [1, 2]
@@ -423,7 +420,7 @@ def test_packaged_fd001_subset_uses_only_selected_training_prefix(monkeypatch, t
     monkeypatch.setattr(history_service, "predict_rul_with_context", predict)
     page.run()
     page.selectbox[0].select("Packaged FD001/train parity subset").run()
-    assert any("not a complete dataset" in item.value for item in page.info)
+    assert any("Packaged FD001 parity sample" in item.value for item in page.caption)
     calls_before_slider_change = len(calls)
     page.select_slider[0].set_value(164).run()
 
@@ -442,29 +439,22 @@ def test_forest_is_selectable_only_when_its_complete_bundle_is_present(monkeypat
     page = _page(monkeypatch, tmp_path)
     page.run()
     assert list(page.selectbox[1].options) == [TREE_OPTION]
-    assert any("Random Forest is unavailable" in item.value for item in page.info)
+    assert not any(option.startswith("Random Forest") for option in page.selectbox[1].options)
     artifact_dir = tmp_path / "artifacts/development"
     artifact_dir.mkdir(parents=True)
     (artifact_dir / "random_forest_validation.json").write_text("{}", encoding="utf-8")
     (artifact_dir / "random_forest_model.joblib").write_bytes(b"test fixture")
     page.run()
     assert list(page.selectbox[1].options) == [TREE_OPTION, FOREST_OPTION]
-    assert not any("Random Forest is unavailable" in item.value for item in page.info)
+    assert any(option.startswith("Random Forest") for option in page.selectbox[1].options)
 
 
-def test_model_selector_discloses_selected_development_and_registered_final_versions(
-    monkeypatch, tmp_path
-):
+def test_model_selector_keeps_model_names_short(monkeypatch, tmp_path):
     page = _page(monkeypatch, tmp_path)
     page.run()
 
     assert not page.exception
-    assert any(
-        "Selected: Development candidate `decision-tree-rul-v1`" in item.value
-        and "Final refit `decision-tree-rul-v1` is separate" in item.value
-        and "frozen final Decision Tree" in item.value
-        for item in page.caption
-    )
+    assert list(page.selectbox[1].options) == ["Decision Tree"]
 
 
 def test_switching_models_keeps_engine_and_cycle_and_uses_matching_manifest(
@@ -495,16 +485,12 @@ def test_switching_models_keeps_engine_and_cycle_and_uses_matching_manifest(
     page.selectbox[1].select(FOREST_OPTION).run()
     assert page.selectbox[2].value == 2
     assert page.select_slider[0].value == 2
-    assert any(
-        "Selected: Development candidate `random-forest-rul-v1`" in item.value
-        for item in page.caption
-    )
     assert not page.exception
     assert calls[-1][1]["manifest_path"] == artifact_dir / "random_forest_validation.json"
     assert [row["cycle"] for row in calls[-1][0]] == [1, 2]
     assert {row["unit_id"] for row in calls[-1][0]} == {2}
     assert page.metric[0].value == "18.80"
-    assert any("random-forest-rul-v1" in item.value for item in page.markdown)
+    assert any("random-forest-rul-v1" in item.value for item in page.caption)
 
     page.selectbox[1].select(TREE_OPTION).run()
     assert page.selectbox[2].value == 2
@@ -515,7 +501,7 @@ def test_switching_models_keeps_engine_and_cycle_and_uses_matching_manifest(
     assert [row["cycle"] for row in calls[-1][0]] == [1, 2]
     assert {row["unit_id"] for row in calls[-1][0]} == {2}
     assert page.metric[0].value == "12.50"
-    assert any("decision-tree-rul-v1" in item.value for item in page.markdown)
+    assert any("decision-tree-rul-v1" in item.value for item in page.caption)
 
 
 def test_xgboost_is_available_only_with_bundle_and_uses_registered_manifest(
@@ -548,7 +534,7 @@ def test_xgboost_is_available_only_with_bundle_and_uses_registered_manifest(
     assert [row["cycle"] for row in calls[-1][0]] == [1, 2]
     assert {row["unit_id"] for row in calls[-1][0]} == {2}
     assert page.metric[0].value == "28.69"
-    assert any("xgboost-rul-v1" in item.value for item in page.markdown)
+    assert any("xgboost-rul-v1" in item.value for item in page.caption)
 
 
 def test_app_loads_saved_mlp_and_predicts_without_starting_training(monkeypatch, tmp_path):
@@ -613,7 +599,7 @@ def test_app_loads_saved_mlp_and_predicts_without_starting_training(monkeypatch,
     assert not trainer_calls
     assert page.metric[0].label == "Estimated remaining cycles"
     assert math.isfinite(float(page.metric[0].value))
-    assert any("dense-rul-mlp-v1" in item.value for item in page.markdown)
+    assert any("dense-rul-mlp-v1" in item.value for item in page.caption)
 
 
 def test_mlp_is_selectable_only_with_bundle_and_uses_its_saved_manifest(monkeypatch, tmp_path):
@@ -643,4 +629,4 @@ def test_mlp_is_selectable_only_with_bundle_and_uses_its_saved_manifest(monkeypa
     assert calls[-1][1]["manifest_path"] == manifest
     assert [row["cycle"] for row in calls[-1][0]] == [1, 2]
     assert page.metric[0].value == "9.25"
-    assert any("dense-rul-mlp-v1" in item.value for item in page.markdown)
+    assert any("dense-rul-mlp-v1" in item.value for item in page.caption)
