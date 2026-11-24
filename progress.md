@@ -52,12 +52,20 @@ The packaged engine 1 through cycle 100 examples returned 51.96570206, 141.19947
 - `reports/environments/FD00x-official-predictions.json` holds the unpaired per-engine official outputs locally.
 - The independent audit ran with `.venv/Scripts/python.exe $audit`, where `$audit` was the local temporary `fleetpulse-environment-audit.py` script. The official reproducer is the committed three-stage CLI above.
 
-## Verification in progress
+## Verification and integration
 
 - `.venv/Scripts/python.exe -m ruff check .` and `git diff --check` passed during development.
 - `.venv/Scripts/python.exe -m pytest -q tests/test_prediction_page.py tests/test_upload_page.py tests/test_p21_t2_session_state.py` passed 20 in 113.04 s.
 - `.venv/Scripts/python.exe -m pytest -q tests/test_cmapss_environments.py -k 'planner_schedulers or missing_bundle or corrupt_model'` passed 3 in 31.91 s against available bundles.
-- `.venv/Scripts/python.exe -m streamlit run app/Home.py --server.headless true --server.address 127.0.0.1 --server.port 18647 --browser.gatherUsageStats false` started and the local health endpoint returned `ok`. Chrome on 1365×900 and 390×844 displayed FD001 and confirmed FD002 and FD003 estimate cards and rendered canvases without horizontal overflow. FD004 release and final suite pending.
+- `.venv/Scripts/python.exe -m streamlit run app/Home.py --server.headless true --server.address 127.0.0.1 --server.port 18647 --browser.gatherUsageStats false` started and the local health endpoint returned `ok`. Chrome on 1365×900 and 390×844 displayed FD001 and confirmed FD002 and FD003 estimate cards and rendered canvases without horizontal overflow.
 
 - A verification run exposed a stale three-argument location in the new history cache call. Updated that call to use the source SHA-256 cache key and restarted the full suite. Stopped the superseded run after observing its failure. The repeat browser script also narrows its estimate selector to the result card to avoid matching the existing FD001 chart axis.
 - The clean staged copy was exported with git checkout-index, using the existing installed interpreter and the exported src directory. It contains the tracked demo and release files without the ignored raw histories or development artifacts.
+
+- PR [#558](https://github.com/Artfever/FleetpulseAI/pull/558) is open against dev. Implementation commit: a42983d. The clean staged copy on port 18649 returned health ok. Chrome at 1365x900 and 390x844 loaded all three packaged histories, returned 51.97 / 141.20 / 234.01 cycles, rendered all three canvases, and had no horizontal overflow.
+- The clean copy exercised FD002–FD004 with shipped weights and histories alone. The existing FD001 predictor path still uses its existing provisioned Decision Tree artifact. A local session with that artifact verified the FD001 estimate at desktop and phone widths.
+
+- Clean copy: `.venv/Scripts/python.exe -m pytest -q tests/test_cmapss_environments.py` with the staged source on the Python module path passed all 7 tests in 31.35 s. Chrome opened Model Laboratory's new official test section on the clean copy.
+- Final local full command `.venv/Scripts/python.exe -m pytest -q` passed all 762 tests in 348.86 s. `.venv/Scripts/python.exe -m ruff check .` and `git diff --cached --check` passed.
+- Implementation revision a42983d passed all five Development CI checks in run [45388587995](https://github.com/Artfever/FleetpulseAI/actions/runs/45388587995). The CI pytest job passed 754 tests and skipped 8 in 35.20 s. There were no review conversations at this check.
+- Hosted verification requires the Streamlit deployment to load this revision. The existing FD001 deployment still requires its separately configured Decision Tree bundle. The new environments serve from the tracked release bundles and packaged demo samples.
