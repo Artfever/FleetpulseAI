@@ -40,13 +40,60 @@ from fleetpulse.services import (
     model_provenance_from_manifest,
     predict_uploaded_csv,
 )
+from fleetpulse.services.environments import ENVIRONMENTS
 from fleetpulse.services.history import MAX_REPLAY_POINTS, replay_engine_history
+from fleetpulse.ui_environments import clear_environment_handoff, render_environment_prediction
 from fleetpulse.ui_forecast_scene import render_prediction_trace
 
 _app_dir = Path(__file__).resolve().parents[1]
 st.html(_app_dir / "rul_prediction.css")
 with st.container(key="fp_rul_header"):
     st.title("RUL Prediction", anchor=False)
+
+def _render_estimate(
+    engine: int,
+    cycle: int,
+    value: float,
+    model_name: str,
+    model_version: str,
+    *,
+    history_id: str,
+) -> None:
+    """Restart the card's reveal when its prediction context changes."""
+    signature = (history_id, engine, cycle, value, model_name, model_version)
+    card_id = hashlib.sha256(repr(signature).encode()).hexdigest()[:16]
+    with st.container(key=f"fp_rul_estimate_{card_id}"):
+        st.metric("Estimated remaining cycles", f"{value:.2f}")
+        st.caption(f"Engine {engine} · Cycle {cycle} · {model_name} {model_version}")
+
+
+def _clear_saved_upload_from_planner() -> None:
+    """Invalidate an uploaded planner snapshot and its derived comparisons."""
+    selected_rows = st.session_state.get(ui.P15_SELECTED_FLEET_STATE_KEY, [])
+    if not any(row.get("Dataset") == "user/upload" for row in selected_rows):
+        return
+    st.session_state.pop(ui.P15_SELECTED_FLEET_STATE_KEY, None)
+    st.session_state.pop(ui.P15_SELECTED_FLEET_PROVENANCE_STATE_KEY, None)
+    st.session_state.pop(ui.P20_FLEET_SCENARIO_STATE_KEY, None)
+    st.session_state.pop(ui.P20_FLEET_COMPARISON_STATE_KEY, None)
+    st.session_state.pop(ui.P20_FLEET_COMPARISON_ARTIFACT_STATE_KEY, None)
+
+
+environment_options = tuple(ENVIRONMENTS)
+previous_environment = st.session_state.get("fp_active_rul_environment", "FD001")
+environment = st.radio(
+    "Environment", environment_options, index=environment_options.index(previous_environment),
+    horizontal=True, key="fp_rul_env",
+)
+st.caption(ENVIRONMENTS[environment])
+if previous_environment != environment:
+    st.session_state["fp_active_rul_environment"] = environment
+    st.session_state.pop(ui.P21_UPLOADED_PREDICTION_STATE_KEY, None)
+    _clear_saved_upload_from_planner()
+    clear_environment_handoff()
+if environment != "FD001":
+    render_environment_prediction(environment, _render_estimate)
+    st.stop()
 
 source_column, model_column = st.container(key="fp_rul_controls_source").columns(2)
 
@@ -108,35 +155,6 @@ selected_model = model_column.selectbox(
     on_change=ui.remember_selection,
     args=(ui.P21_SELECTED_MODEL_STATE_KEY, ui.P21_SELECTED_MODEL_WIDGET_KEY),
 )
-
-
-def _render_estimate(
-    engine: int,
-    cycle: int,
-    value: float,
-    model_name: str,
-    model_version: str,
-    *,
-    history_id: str,
-) -> None:
-    """Restart the card's reveal when its prediction context changes."""
-    signature = (history_id, engine, cycle, value, model_name, model_version)
-    card_id = hashlib.sha256(repr(signature).encode()).hexdigest()[:16]
-    with st.container(key=f"fp_rul_estimate_{card_id}"):
-        st.metric("Estimated remaining cycles", f"{value:.2f}")
-        st.caption(f"Engine {engine} · Cycle {cycle} · {model_name} {model_version}")
-
-
-def _clear_saved_upload_from_planner() -> None:
-    """Invalidate an uploaded planner snapshot and its derived comparisons."""
-    selected_rows = st.session_state.get(ui.P15_SELECTED_FLEET_STATE_KEY, [])
-    if not any(row.get("Dataset") == "user/upload" for row in selected_rows):
-        return
-    st.session_state.pop(ui.P15_SELECTED_FLEET_STATE_KEY, None)
-    st.session_state.pop(ui.P15_SELECTED_FLEET_PROVENANCE_STATE_KEY, None)
-    st.session_state.pop(ui.P20_FLEET_SCENARIO_STATE_KEY, None)
-    st.session_state.pop(ui.P20_FLEET_COMPARISON_STATE_KEY, None)
-    st.session_state.pop(ui.P20_FLEET_COMPARISON_ARTIFACT_STATE_KEY, None)
 
 
 partition = "FD001/train"

@@ -103,3 +103,14 @@ credentials.json
 /docs/taha.md
 /docs/implementationplan.md
 /docs/FleetPulse_Phase_Implementation_Plan.md
+
+# C-MAPSS subset release files
+!artifacts/environments/
+artifacts/environments/*
+!artifacts/environments/FD00[234]/
+artifacts/environments/FD00[234]/*
+!artifacts/environments/FD00[234]/manifest.json
+!artifacts/environments/FD00[234]/model.json
+!artifacts/environments/FD00[234]/evaluation.json
+!data/demo/fd00[234]_training_prefix.txt
+/project data set/

@@ -1,0 +1,26 @@
+{
+  "subset": "FD002",
+  "partition": "FD002/test",
+  "model_version": "fd002-xgboost-v1",
+  "model_sha256": "2466a89425460e4f4002f940d3a4fe99b2a9ffd9d294c411331fe94615ac2f95",
+  "bundle_sha256": "bcc01eb13e93d32f5600f506fa40ed63477a722da1236c30b3b613d6aa5af2f9",
+  "test_sha256": "de7b5bf7e998a985c378488480528b7c02cff1406a46740def362dda8d9b4e02",
+  "answers_sha256": "c851dd96a6ea6998d3c4a8f834d3c8013aa90e93a6ed950dc826ad0655b2906b",
+  "predictions_sha256": "c31f037816579ece360e13ac6842eef2a03b3781625f5cff3004b1ece1b5e8fb",
+  "model": {
+    "engines": 259,
+    "mae_cycles": 19.62378941723739,
+    "rmse_cycles": 27.152785738874396,
+    "mean_signed_error_cycles": 5.523325170789446,
+    "short_rul_engines": 61,
+    "short_rul_mae_cycles": 6.263229096522097
+  },
+  "constant_mean": {
+    "engines": 259,
+    "mae_cycles": 50.863157689103105,
+    "rmse_cycles": 60.16234878009541,
+    "mean_signed_error_cycles": 26.969417996706454,
+    "short_rul_engines": 61,
+    "short_rul_mae_cycles": 94.97441831318217
+  }
+}
