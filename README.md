@@ -48,6 +48,17 @@ The [P26 runnable package inventory](docs/p26_a1_runnable_package.md) lists the 
 - [Repeatable demo procedure](docs/p25_live_demo_runbook.md)
 - [P26 delivery map and evidence limits](docs/p26_t1_delivery_manifest.md)
 
+## Additional C-MAPSS environments
+
+In **RUL Prediction**, choose FD002, FD003, or FD004 to use its dedicated
+XGBoost bundle. Each option includes a small training sample for a fresh
+checkout and accepts a headered CSV from the matching subset. **Model
+Laboratory** shows the separate official test summaries. FD001 remains
+the course project and the default environment.
+
+See [the environment progress record](progress.md) for the exact training,
+scoring, and verification commands and the measured results.
+
 ## Reproduce training and evaluation
 
 With the original, checksum-verified `data/raw/train_FD001.txt` available, rebuild development features and train/reload the P06 Decision Tree with:

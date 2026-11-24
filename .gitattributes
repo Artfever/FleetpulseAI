@@ -1,1 +1,5 @@
 /artifacts/split_manifest.json text eol=lf
+
+# Preserve bytes used by C-MAPSS release and sample checksums.
+/artifacts/environments/** -text
+/data/demo/fd00[234]_training_prefix.txt -text

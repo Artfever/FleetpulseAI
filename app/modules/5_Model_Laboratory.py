@@ -33,6 +33,7 @@ from fleetpulse.evaluation.selection_manifest import load_selection_manifest
 from fleetpulse.features import FeatureConfig
 from fleetpulse.features.build_dataset import manifest_digest
 from fleetpulse.features.dataset_io import load_feature_dataset
+from fleetpulse.ui_environments import render_environment_scores
 from fleetpulse.ui_model_arena import render_model_arena
 from fleetpulse.ui_presentation import module_links
 
@@ -535,6 +536,8 @@ with arena_panel:
         render_model_arena(official_results, csv_exports)
     else:
         st.info("The arena needs a verified FD001/test report. See Official test details and downloads.")
+
+render_environment_scores()
 
 with st.expander("Related pages"):
     module_links(

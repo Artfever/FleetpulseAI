@@ -1,0 +1,26 @@
+{
+  "subset": "FD004",
+  "partition": "FD004/test",
+  "model_version": "fd004-xgboost-v1",
+  "model_sha256": "e8e654b254095b33dede6e6d3cdf5eee2abb684987a8baf409a8ebba5f41e635",
+  "bundle_sha256": "5de8b417155edffa4d2dbda73f059f406cdb2b521bc7cf552aa7722d9db529ce",
+  "test_sha256": "1dc675fff0624bac10786927c6715b37d1297657137400d2b1a3138d777a3ba5",
+  "answers_sha256": "196b836b85a95ac7fdbbf29c5fdf1657382eafa445644d114ffaaf50dc2975e1",
+  "predictions_sha256": "e2820a2bce56aaacd0fa9c58fcd9b271cde684ef23e2e5fc1ccd8d670e6f0d86",
+  "model": {
+    "engines": 248,
+    "mae_cycles": 26.01658962234374,
+    "rmse_cycles": 34.964151772924595,
+    "mean_signed_error_cycles": 15.631008567348603,
+    "short_rul_engines": 53,
+    "short_rul_mae_cycles": 9.031071986792222
+  },
+  "constant_mean": {
+    "engines": 248,
+    "mae_cycles": 60.035201298875734,
+    "rmse_cycles": 71.82790486974375,
+    "mean_signed_error_cycles": 46.758997974423835,
+    "short_rul_engines": 53,
+    "short_rul_mae_cycles": 118.61330412171536
+  }
+}

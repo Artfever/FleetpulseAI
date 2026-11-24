@@ -1,0 +1,26 @@
+{
+  "subset": "FD003",
+  "partition": "FD003/test",
+  "model_version": "fd003-xgboost-v1",
+  "model_sha256": "b1e363050d6a593640068180665ded5134cce1d3fc79a1b02247a4dbd81292a0",
+  "bundle_sha256": "19f44ab95ca0f45c23fab06b3083b0f9ca4044b9d712a52525b8c5c37ec683f8",
+  "test_sha256": "299babd63c8d987cef079c4a425429f33b3a34797d803bbe2ad48c29dbd0d790",
+  "answers_sha256": "df1e0566306b174a2de41c67a3e7a51877889598b78643fc3e5685259091b7cb",
+  "predictions_sha256": "9764a52d558b98e2bcfd887d4d3e434d391a177e0bfa1174d3d656e82fb62443",
+  "model": {
+    "engines": 100,
+    "mae_cycles": 23.079617567062378,
+    "rmse_cycles": 32.78336213610666,
+    "mean_signed_error_cycles": 16.824352979660034,
+    "short_rul_engines": 20,
+    "short_rul_mae_cycles": 7.311927843093872
+  },
+  "constant_mean": {
+    "engines": 100,
+    "mae_cycles": 63.270898058252435,
+    "rmse_cycles": 75.18009423903638,
+    "mean_signed_error_cycles": 62.757063106796124,
+    "short_rul_engines": 20,
+    "short_rul_mae_cycles": 121.62706310679614
+  }
+}
