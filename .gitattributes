@@ -3,3 +3,7 @@
 # Preserve bytes used by C-MAPSS release and sample checksums.
 /artifacts/environments/** -text
 /data/demo/fd00[234]_training_prefix.txt -text
+
+# Keep original C-MAPSS bytes, including source whitespace.
+/data/raw/train_FD00[1-4].txt -text whitespace=cr-at-eol,-blank-at-eol
+/data/raw/test_FD00[1-4].txt -text whitespace=cr-at-eol,-blank-at-eol
