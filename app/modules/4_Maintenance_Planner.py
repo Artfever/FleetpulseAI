@@ -325,7 +325,20 @@ with st.expander(f"Selected fleet ({len(selected_fleet)} engines)" if selected_f
                 heading="Selected fleet: compare schedules",
             )
     else:
-        st.info("No fleet is selected yet. Save engines from Fleet Overview to plan them here.")
+        st.info("No fleet is selected yet. Save engines or an uploaded prediction to plan here.")
+        fleet_action, upload_action = st.columns(2)
+        fleet_action.page_link(
+            st.Page(_app_dir / "modules" / "1_Fleet_Overview.py"),
+            label="Choose engines from Fleet Overview",
+            icon=":material/space_dashboard:",
+            width="stretch",
+        )
+        upload_action.page_link(
+            st.Page(_app_dir / "modules" / "3_RUL_Prediction.py"),
+            label="Use an uploaded prediction",
+            icon=":material/upload_file:",
+            width="stretch",
+        )
 
 examples = dict(zip(("A", "B", "C"), appendix_b_jobs(), strict=True))
 labels = {job.engine: label for label, job in examples.items()}
