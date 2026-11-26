@@ -24,6 +24,8 @@ data/*
 !data/raw/
 data/raw/*
 !data/raw/.gitkeep
+!data/raw/train_FD00[1-4].txt
+!data/raw/test_FD00[1-4].txt
 !data/demo/
 data/demo/*
 !data/demo/illustrative_history.txt

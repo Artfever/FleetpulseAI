@@ -1,6 +1,6 @@
 # FleetPulse AI
 
-FleetPulse is a Streamlit application for estimating the remaining useful life (RUL) of simulated NASA C-MAPSS FD001 engine histories and comparing illustrative maintenance schedules. It includes a small tracked training-history demo subset and verified model/evaluation artifacts; full raw datasets and development outputs are provisioned locally and are not all tracked in Git. These simulated-data estimates are not aircraft fault diagnoses or maintenance recommendations. See the [data, feature, and service architecture report](docs/report/p25_a1_data_features_architecture.md) for provenance, leakage boundaries, and implementation details.
+FleetPulse is a Streamlit application for estimating the remaining useful life (RUL) of simulated NASA C-MAPSS FD001 engine histories and comparing illustrative maintenance schedules. It includes a small tracked training-history demo subset and verified model/evaluation artifacts; the full C-MAPSS train and test histories are tracked, while official RUL answer files and development outputs are provisioned locally. These simulated-data estimates are not aircraft fault diagnoses or maintenance recommendations. See the [data, feature, and service architecture report](docs/report/p25_a1_data_features_architecture.md) for provenance, leakage boundaries, and implementation details.
 
 ## Get started
 
@@ -61,7 +61,7 @@ scoring, and verification commands and the measured results.
 
 ## Reproduce training and evaluation
 
-With the original, checksum-verified `data/raw/train_FD001.txt` available, rebuild development features and train/reload the P06 Decision Tree with:
+Use the tracked, checksum-verified `data/raw/train_FD001.txt` to rebuild development features and train/reload the P06 Decision Tree with:
 
 ```powershell
 .venv/Scripts/python.exe scripts/run_p06_validation.py
@@ -90,7 +90,7 @@ For the architecture/data walkthrough, see the [editable P25 slides](docs/slides
 app/                  Streamlit entrypoint and six current application pages
 src/fleetpulse/       Data, feature, model, evaluation, service, and optimization packages
 tests/                Automated tests
-data/                 Tracked demo subset; full raw datasets are local/ignored
+data/                 Tracked demo and train/test histories; local RUL answer files
 artifacts/            Tracked final bundles; development outputs are local/ignored
 docs/                 Setup, workflow, and project documentation
 planning/             Backlog manifest and issue mapping
