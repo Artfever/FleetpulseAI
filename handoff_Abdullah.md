@@ -1508,3 +1508,8 @@ P26 final handoff PR opened (2026-11-21): PR #553 (https://github.com/Artfever/F
 P26 child issue closure update (2026-11-21): Abdullah requested closure of the three remaining child issues. #184, #236, and #263 are now CLOSED with comments that state the closure was owner-directed. Those comments explicitly do not assert an independent teammate review for T2/A3, a named T3 submitter, course upload, or three-member SHA signoff. The merged evidence remains in PRs #550/#551/#552 and `docs/p26_t3_final_package_record.md`. Parent gate #31 remains OPEN because its shared acceptance gate still requires review/signoff of the exact archive, deployed-app evidence, and submission readiness. Next: obtain/record those gate decisions before closing #31; the ZIP is `dist/fleetpulse-submission.zip`, SHA-256 `b0c2159bf9a3499fceb3d2edf5c117f049b9b3a3ac1ff8e3b687d2c66ea706eb`.
 
 P26 closure-handoff PR opened: PR #554 (https://github.com/Artfever/FleetpulseAI/pull/554) targets `dev` with `Refs #31`; commit `9ffcd6e`. It records owner-directed closure of #184/#236/#263 while keeping the shared parent gate open. Required CI is pending.
+
+## 2026-11-26 - Publish C-MAPSS histories
+
+- Abdullah requested a direct fast-forward push to dev and a dev-to-main PR. Added the eight original FD001-FD004 train/test histories. Verified SHA-256 against FD001 provenance and the other subsets' training/evaluation manifests. Official RUL answer files remain ignored.
+- Updated the data policy and README. Preserved previous local UI, progress, and handoff edits in the original checkout by using a separate worktree. Next: inspect the staged data, push dev and open the protected main PR.
