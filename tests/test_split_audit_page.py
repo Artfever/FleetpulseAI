@@ -44,6 +44,10 @@ def test_audit_displays_verified_manifest_and_rejects_tampering(tmp_path, monkey
     assert page.dataframe[1].value["target_rul"].tolist() == [
         row["target_rul"] for row in manifest["validation_prefixes"]
     ]
+    captions = [caption.value for caption in page.caption]
+    assert any("Detailed validation replay requires local development files" in text for text in captions)
+    assert not any("run_p06_validation.py" in message.value for message in page.info)
+    assert not any("fitting_features.json" in message.value for message in page.info)
     assert list(rows[0]) == list(HISTORY_COLUMNS)
     manifest["validation_prefixes"][0]["target_rul"] = 999
     path.write_text(json.dumps(manifest), encoding="utf-8")
