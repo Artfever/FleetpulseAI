@@ -153,6 +153,11 @@ with st.expander("Development validation and selection"):
                 fitting_dataset_sha256=fitting_sha,
                 validation_dataset_sha256=validation_sha,
             )
+        except FileNotFoundError:
+            st.caption(
+                "Detailed validation replay requires local development files. "
+                "See the P11 candidate comparison above or Official test details and downloads below."
+            )
         except (OSError, ValueError, KeyError, TypeError) as error:
             st.info(
                 "Verified model comparison is unavailable. Run `python scripts/run_p06_validation.py` "
